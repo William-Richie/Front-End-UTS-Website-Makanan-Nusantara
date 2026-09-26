@@ -1,0 +1,130 @@
+$(document).ready(function() {
+    /* Navigation */
+    $('#hamburger-menu').on('click', function() {
+        $('#main-nav').slideToggle(300);
+    });
+
+    $('.nav-link').on('click', function() {
+        if ($(window).width() < 768) {$('#main-nav').slideUp(300);
+        }
+    });
+
+    $(window).resize(function() {
+        if ($(window).width() >= 768) {$('#main-nav').css('display', ''); 
+        }
+    });
+
+    /* Scrolling */
+    $('a.nav-link').on('click', function(event) {
+        if (this.hash !== "") {
+            event.preventDefault();
+            $('html, body').animate({
+                scrollTop: $(this.hash).offset().top - 60 
+            }, 500);
+        }
+    });
+
+    /* FAQ */
+    $('.faq-question').on('click', function() {
+        var $answer = $(this).next('.faq-answer');$('.faq-answer').not($answer).slideUp(300);$answer.slideToggle(300);
+    });
+
+    /* Tombol ke atas */
+    $(window).on('scroll', function() {
+        if ($(this).scrollTop() > 200) {
+            $('#back-to-top').fadeIn(200).css('display', 'flex');
+        } else {
+            $('#back-to-top').fadeOut(200);
+        }
+    });
+
+    $('#back-to-top').on('click', function() {
+        $('html, body').animate({ scrollTop: 0 }, 500);
+    });
+
+    /* Menu */
+    function muatMenuDariDatabase() {
+        $.get('/api/menu', function(response) {
+            let dataMenu = response.data;
+            let menuDikelompokkan = {};
+
+            dataMenu.forEach(function(item) {
+                if (!menuDikelompokkan[item.nama_kategori]) {
+                    menuDikelompokkan[item.nama_kategori] = [];
+                }
+                menuDikelompokkan[item.nama_kategori].push(item);
+            });
+
+            let htmlMenu = '';
+            
+            for (let kategori in menuDikelompokkan) {
+                htmlMenu += `
+                <div class="menu-group">
+                    <div class="category-header">${kategori}</div>
+                    <div class="menu-grid">
+                `;
+
+                menuDikelompokkan[kategori].forEach(function(makanan) {
+                    htmlMenu += `
+                        <div class="menu-item">
+                            <div class="dish-name">${makanan.nama_makanan}</div>
+                            <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
+                            <div class="menu-details">
+                                <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
+                                <button class="add-to-cart-btn">+ Keranjang</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                htmlMenu += `</div></div>`;
+            }
+
+            $('#tempat-menu-dinamis').html(htmlMenu);
+
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Gagal mengambil data:", errorThrown);
+            $('#tempat-menu-dinamis').html('<p style="text-align: center; color: red;">Gagal terhubung ke database. Cek console (F12) untuk detail error.</p>');
+        });
+    }
+
+    muatMenuDariDatabase();
+
+    /* Cart */
+    let cartItemCount = 0; 
+
+    function updateCartBadge() {
+        if (cartItemCount > 0) {
+            $('#cart-count').text(cartItemCount).css('display', 'flex'); 
+        } else {
+            $('#cart-count').css('display', 'none'); 
+        }
+    }
+
+    updateCartBadge(); 
+
+    $('#tempat-menu-dinamis').on('click', '.add-to-cart-btn', function(e) {
+        e.preventDefault(); 
+        
+        cartItemCount++; 
+        updateCartBadge(); 
+        
+        let $btn =$(this);
+        let originalText = $btn.text(); 
+        
+        $btn.text('Berhasil!');$btn.css({'background-color': '#27ae60', 'color': 'white'}); 
+        
+        setTimeout(function() {
+            $btn.text(originalText);$btn.css({'background-color': '', 'color': ''}); 
+        }, 1000);
+    });
+
+    $.post('/api/pengunjung');
+
+    $.get('/api/konten', function(data) {
+        let teksHeroHTML = data.teks_hero.replace(/\n/g, '<br>');
+        
+        $('#judul-hero').html(teksHeroHTML);
+        $('#deskripsi-about').text(data.teks_about);
+    });
+});

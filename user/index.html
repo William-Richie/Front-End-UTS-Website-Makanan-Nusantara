@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papeda Restaurant</title>
+    <link rel="stylesheet" href="/user/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo"></div>
+            <!-- Menu -->
+            <div class="hamburger" id="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <!-- Navigasi -->
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#menu" class="nav-link">Menu</a></li>
+                    <li><a href="#faq" class="nav-link">FAQ</a></li>
+                    <li><a href="#location" class="nav-link">Location</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="page-section">
+            <div class="hero-banner">
+                <h1 id="judul-hero">Welcome to Our<br>Papeda Restaurant</h1>
+            </div>
+            <div class="content-container text-content">
+                <h2>Tentang Kami</h2>
+                <p id="deskripsi-about">Selamat datang di Papeda Restaurant, tempat terbaik untuk menikmati hidangan khas Nusantara Timur. Kami menyajikan berbagai menu tradisional dengan cita rasa otentik yang akan memanjakan lidah Anda.</p>
+                
+                <h2 style="margin-top: 20px;">Keunggulan Kami</h2>
+                <p>Bahan-bahan yang kami gunakan selalu segar, dipadukan dengan resep rahasia yang diwariskan turun-temurun untuk menjaga keaslian rasa.</p>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="page-section">
+            <div class="hero-banner">
+                <h1>Taste Our Papeda<br>Menu's</h1>
+            </div>
+
+            <div class="content-container" id="tempat-menu-dinamis">
+                <p style="text-align: center; padding: 20px;">Memuat menu restoran...</p>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="page-section">
+            <div class="hero-banner">
+                <h1>This is FAQ Section</h1>
+            </div>
+            <div class="content-container">
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question">Apakah makanan di sini pedas?</div>
+                        <div class="faq-answer">Tingkat kepedasan bisa disesuaikan dengan selera Anda. Silakan beri catatan saat memesan.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Apakah menyediakan layanan pesan antar?</div>
+                        <div class="faq-answer">Ya, kami melayani pesan antar untuk radius 5km dari lokasi restoran kami.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Jam berapa restoran buka?</div>
+                        <div class="faq-answer">Kami buka setiap hari mulai pukul 10:00 pagi hingga 22:00 malam.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="page-section">
+            <div class="hero-banner">
+                <h1>Let's See Our<br>Restaurant Location</h1>
+            </div>
+            <div class="content-container text-content">
+                <h2>Kunjungi Kami</h2>
+                <p><strong>Alamat:</strong> Jl. Cendrawasih No. 45, Jakarta</p>
+                <p><strong>Telepon:</strong> (021) 1234-5678</p>
+                <p><strong>Email:</strong> halo@papedarestaurant.com</p>
+                <br>
+                <p><em>*Tersedia area parkir yang luas untuk kendaraan roda dua maupun roda empat.</em></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <div class="fab fab-action" id="cart-button">
+            <i class="fa-solid fa-cart-shopping cart-icon"></i>
+            <span class="cart-badge" id="cart-count">0</span>
+        </div> 
+        
+        <div class="fab fab-up" id="back-to-top">
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
+    <script src="/user/script.js" defer></script>
+</body>
+</html>
