@@ -64,3 +64,22 @@ img.preview {
 #btn-back-to-top:hover {
     background-color: #198754;
 }
+
+.stats-card .angka { 
+    font-size: 32px; 
+    font-weight: bold; 
+    color: #2c3e50; 
+}
+
+/* Maps */
+#map-admin {
+    height: 400px;
+    width: 100%;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    z-index: 1;
+}
+
+#btn-reset-lokasi {
+    display: none;
+}
