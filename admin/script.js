@@ -12,11 +12,11 @@ $(document).ready(function() {
 
     /* Statistik */
     function muatStatistikDanKonten() {
-        $.get('/api/statistik', function(data) {
+        $.get('http://localhost:3000/api/statistik', function(data) {
             $('#angka-pengunjung').text(data.jumlah_pengunjung);
         });
         
-        $.get('/api/konten', function(data) {
+        $.get('http://localhost:3000/api/konten', function(data) {
             $('#teks_hero').val(data.teks_hero);
             $('#teks_about').val(data.teks_about);
         });
@@ -25,7 +25,8 @@ $(document).ready(function() {
     muatStatistikDanKonten();
 
     /* Update Content */
-    $('#form-konten .btn-simpan').on('click', function() {
+    $('#form-konten .btn-simpan').on('click', function(e) {
+        e.preventDefault();
         let $btn =$(this);
         let originalText = $btn.text();$btn.prop('disabled', true).text('Memperbarui...'); 
 
@@ -35,7 +36,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: '/api/konten',
+            url: 'http://localhost:3000/api/konten',
             type: 'PUT',
             data: dataKonten,
             success: function(response) {
@@ -48,7 +49,7 @@ $(document).ready(function() {
 
     /* Data Menu */
     function muatDataMenu() {
-        $.get('/api/menu', function(response) {
+        $.get('http://localhost:3000/api/menu', function(response) {
             let rows = '';
             let jumlahMenu = 0;
             response.data.forEach(function(item) {
@@ -98,7 +99,7 @@ $(document).ready(function() {
 
         if (id) {
             $.ajax({
-                url: '/api/menu/' + id,
+                url: 'http://localhost:3000/api/menu/' + id,
                 type: 'PUT',
                 data: dataMenu,
                 success: function(response) {
@@ -110,11 +111,18 @@ $(document).ready(function() {
                 $btnSubmit.prop('disabled', false).text(originalText);
             });
         } else {
-            $.post('/api/menu', dataMenu, function(response) {
+            $.post('http://localhost:3000/api/menu', dataMenu, function(response) {
                 alert(response.pesan);
                 resetForm();
                 muatDataMenu();
-            }).always(function() {
+            })
+            .fail(function(xhr) {
+                console.log('ERROR:', xhr);
+                console.log('STATUS:', xhr.status);
+                console.log('RESPONSE:', xhr.responseText);
+                alert('Gagal menambahkan menu. Cek Console.');
+            })
+            .always(function() {
                 $btnSubmit.prop('disabled', false).text(originalText);
             });
         }
@@ -132,7 +140,7 @@ $(document).ready(function() {
         let id = $(this).data('id');
         if (confirm('Yakin ingin menghapus menu ini?')) {
             $.ajax({
-                url: '/api/menu/' + id,
+                url: 'http://localhost:3000/api/menu/' + id,
                 type: 'DELETE',
                 success: function(response) {
                     alert(response.pesan);
