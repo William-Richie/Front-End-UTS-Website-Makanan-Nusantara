@@ -3,35 +3,32 @@
     margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
-    font-family: sans-serif; 
+    font-family: 'Open Sans', sans-serif; 
+}
+
+h1, h2, h3 {
+    font-family: 'Lora', serif;
 }
 
 body { 
-    background-color: #f5f5f5; 
-    color: #333; 
+    background-color: #f7ede1; 
+    color: #3b2314; 
 }
 
 header { 
-    background-color: #f5f5f5; 
-    position: sticky; 
-    top: 0; 
-    z-index: 100; 
-    border-bottom: 1px solid #ccc; 
+    background-color: #f7ede1; 
+    border-bottom: 1px solid #d8c3ab; 
 }
 
 /* Header */
 .header-container { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
     padding: 15px 20px; 
-    position: relative; 
 }
 
 .logo { 
     width: 30px; 
     height: 30px; 
-    background-color: #b0b0b0; 
+    background-color: #a9744f; 
     border-radius: 50%; 
 }
 
@@ -45,7 +42,7 @@ header {
 .hamburger span { 
     width: 25px; 
     height: 3px; 
-    background-color: #888; 
+    background-color: #6b4226; 
     border-radius: 2px; 
 }
 
@@ -56,8 +53,8 @@ header {
     top: 100%; 
     left: 0; 
     width: 100%; 
-    background-color: #fff; 
-    border-bottom: 1px solid #ccc; 
+    background-color: #fffaf3; 
+    border-bottom: 1px solid #d8c3ab; 
 }
 
 #main-nav ul { 
@@ -70,8 +67,8 @@ header {
     display: block; 
     padding: 15px 20px; 
     text-decoration: none; 
-    color: #333; 
-    border-bottom: 1px solid #eee; 
+    color: #3b2314; 
+    border-bottom: 1px solid #eee2d5; 
 }
 
 /* Content */
@@ -85,7 +82,7 @@ main {
 }
 
 .hero-banner { 
-    background-color: #d1f5d3; 
+    background-color: #c9a17a; 
     text-align: center; 
     padding: 40px 20px; 
 }
@@ -93,7 +90,7 @@ main {
 .hero-banner h1 { 
     font-size: 18px; 
     font-weight: normal; 
-    color: #111; 
+    color: #3b2314; 
 }
 
 .content-container { 
@@ -104,20 +101,20 @@ main {
 .text-content h2 {
     font-size: 16px;
     margin-bottom: 10px;
-    color: #222;
+    color: #4a2c17;
 }
 
 .text-content h3 {
     font-size: 14px;
     margin-bottom: 8px;
-    color: #333;
+    color: #4a2c17;
 }
 
 .text-content p {
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 10px;
-    color: #555;
+    color: #5c4433;
 }
 
 /* Menu */
@@ -126,7 +123,7 @@ main {
 }
 
 .category-header {
-    background-color: #555; 
+    background-color: #6b4226; 
     color: white;
     display: inline-block;
     padding: 8px 20px;
@@ -151,11 +148,11 @@ main {
     gap: 8px; 
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(59,35,20,0.1);
 }
 
 .dish-name {
-    background-color: #333;
+    background-color: #4a2c17;
     color: #fff;
     font-size: 12px;
     font-weight: bold;
@@ -169,7 +166,7 @@ main {
     height: 110px; 
     object-fit: cover; 
     border-radius: 4px;
-    background-color: #eee; 
+    background-color: #eee2d5; 
 }
 
 .menu-details { 
@@ -181,12 +178,12 @@ main {
 
 .menu-price {
     font-weight: bold;
-    color: #2c3e50;
+    color: #6b4226;
     font-size: 13px;
 }
 
 .add-to-cart-btn {
-    background-color: #333;
+    background-color: #8b5e34;
     color: white;
     border: none;
     padding: 6px 10px;
@@ -198,7 +195,7 @@ main {
 }
 
 .add-to-cart-btn:hover {
-    background-color: #555;
+    background-color: #6b4226;
 }
 
 .add-to-cart-btn:active {
@@ -207,13 +204,11 @@ main {
 
 /* FAQ */
 .faq-list { 
-    display: flex; 
-    flex-direction: column; 
     gap: 10px; 
 }
 
 .faq-question { 
-    background-color: #333; 
+    background-color: #4a2c17; 
     color: #fff;
     padding: 12px 15px;
     cursor: pointer; 
@@ -223,7 +218,7 @@ main {
 }
 
 .faq-answer { 
-    background-color: #e0e0e0; 
+    background-color: #f0e4d6; 
     padding: 15px;
     display: none; 
     margin-top: 5px; 
@@ -245,7 +240,7 @@ main {
 .fab { 
     width: 45px; 
     height: 45px; 
-    background-color: #2a2a2a; 
+    background-color: #4a2c17; 
     border-radius: 50%; 
     color: white; 
     display: flex; 
@@ -254,12 +249,12 @@ main {
     cursor: pointer; 
     font-size: 20px; 
     font-weight: bold; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 4px 6px rgba(59,35,20,0.25); 
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .fab:hover {
-    background-color: #444;
+    background-color: #6b4226;
     transform: translateY(-2px); 
 }
 
@@ -267,13 +262,13 @@ main {
     display: none;
     align-items: center;
     justify-content: center;
-    background-color: #222;
+    background-color: #4a2c17;
     color: white;
     width: 45px;
     height: 45px;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(59,35,20,0.25);
     transition: background-color 0.3s;
 }
 
@@ -295,7 +290,7 @@ main {
     position: absolute;
     top: -4px;
     right: -4px;
-    background-color: #e74c3c; 
+    background-color: #c9622a; 
     color: white;
     font-size: 11px;
     font-weight: bold;
@@ -304,12 +299,16 @@ main {
     border-radius: 50%;
     justify-content: center;
     align-items: center;
-    border: 2px solid #f5f5f5; 
+    border: 2px solid #f7ede1; 
 }
 
 /* Tablet */
 @media (min-width: 768px) {
     .header-container, 
+    .papeda-img {
+        width: 260px;
+    }
+
     main { 
         max-width: 720px; 
         margin: 0 auto; 
@@ -340,7 +339,7 @@ main {
     }
     
     #main-nav ul li a:hover { 
-        color: #555; 
+        color: #8b5e34; 
     }
 
     .hero-banner h1 { 
@@ -356,6 +355,10 @@ main {
 /* Desktop */
 @media (min-width: 1024px) {
     .header-container, 
+    .papeda-img {
+        width: 560px;
+    }
+
     main { 
         max-width: 1000px; 
     }
@@ -368,4 +371,95 @@ main {
     .menu-grid { 
         grid-template-columns: repeat(4, 1fr); 
     }
+}
+
+/* HERO PAPEDA */
+.hero-papeda {
+    background: linear-gradient(135deg, #e8d5c4, #c9a17a);
+}
+
+/* Text */
+.hero-sub {
+    color: #4a2c17;
+}
+
+/* Area Papeda */
+.papeda-area {
+    width: 250px;
+    height: 250px;
+}
+
+/* Gambar Papeda */
+.papeda-img {
+    width: 200px;
+    margin-top: 50px;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Icon */
+.food-icon {
+    font-size: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Posisi icon */
+.chili {
+    top: 20px;
+    left: -10px;
+    color: #bb6b40;
+}
+
+.lime {
+    top: 10px;
+    right: 30px;
+    color: #7b560a;
+}
+
+.fish-1 {
+    bottom: 10px;
+    right: 10px;
+    color: #885f42;
+}
+
+.fish-2 {
+    left: -40px;
+    bottom: 100px;
+    color: #986540;
+}
+
+.star {
+    font-size: 16px;
+    color: #e2d386;
+}
+
+.star-1 {
+    bottom: 20px;
+    left: 20px;
+}
+
+.star-2 {
+    top: 100px;
+    right: 10px;
+}
+
+.smoke-img {
+  top: -20px;   
+  left: 40%;
+  transform: translateX(100%);
+  width: 100px; 
+  opacity: 0;
+  animation: smokeFade 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Animasi */
+@keyframes float {
+  50% { transform: translateY(10px); }
+}
+
+@keyframes smokeFade {
+  0%   { opacity: 0; transform: translate(-50%, 20px) scale(0.8); }
+  30%  { opacity: 0.6; }
+  60%  { opacity: 0.3; }
+  100% { opacity: 0; transform: translate(-50%, -60px) scale(1.2); }
 }
