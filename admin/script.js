@@ -47,107 +47,205 @@ $(document).ready(function() {
         });
     });
 
-    /* Data Menu */
-    function muatDataMenu() {
-        $.get('http://localhost:3000/api/menu', function(response) {
+    /* Function Menu + FAQ */
+    function muatData(endpoint, tbodySelector, counterSelector, templateHTML) {
+        $.get(`http://localhost:3000/api/${endpoint}`, function(response) {
             let rows = '';
-            let jumlahMenu = 0;
+            let jumlahData = 0;
             response.data.forEach(function(item) {
-                jumlahMenu++;
-                rows += `
-                    <tr>
-                        <td>${item.id}</td>
-                        <td><img src="${item.gambar}" class="preview" alt="foto"></td>
-                        <td>${item.nama_kategori}</td>
-                        <td>${item.nama_makanan}</td>
-                        <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
-                        <td>
-                            <button class="btn-edit" data-id="${item.id}" data-kategori="${item.nama_kategori}" data-nama="${item.nama_makanan}" data-harga="${item.harga}" data-gambar="${item.gambar}">Edit</button>
-                            <button class="btn-hapus" data-id="${item.id}">Hapus</button>
-                        </td>
-                    </tr>
-                `;
+                jumlahData++;
+                rows += templateHTML(item);
             });
-            $('#tabel-menu tbody').html(rows);
-            $('#angka-menu').text(jumlahMenu); 
+            $(tbodySelector).html(rows);
+            if (counterSelector) $(counterSelector).text(jumlahData);
         });
     }
 
-    muatDataMenu();
+    function simpanData(urlBase, idTarget, dataPayload, $btnElemen, callbackBerhasil) {
+        let textAsli = $btnElemen.text();$btnElemen.prop('disabled', true).text('Menyimpan...');
 
-    function resetForm() {
-        $('#form-tambah-menu')[0].reset();
-        $('#edit_id').val('');
-        $('#judul-form').text('Input Menu Baru');
-        $('#btn-submit').text('Simpan ke Database').css('background-color', '#27ae60');
-        $('#btn-cancel').hide();
+        let method = idTarget ? 'PUT' : 'POST';
+        let url = idTarget ? `${urlBase}/${idTarget}` : urlBase;
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: dataPayload,
+            success: function(response) {
+                alert(response.pesan);
+                callbackBerhasil();
+            },
+            error: function(xhr) {
+                console.log('ERROR:', xhr);
+                alert('Gagal menyimpan data. Cek Console.');
+            },
+            complete: function() {
+                $btnElemen.prop('disabled', false).text(textAsli);
+            }
+        });
+    }
+
+    function hapusData(urlBase, idTarget, callbackBerhasil) {
+        if (confirm('Yakin ingin menghapus data ini?')) {
+            $.ajax({
+                url: `${urlBase}/${idTarget}`,
+                type: 'DELETE',
+                success: function(response) {
+                    alert(response.pesan);
+                    callbackBerhasil();
+                }
+            });
+        }
+    }
+
+    function resetForm(formId, inputId, judulId, textJudul, btnSubmitId, btnCancelId) {
+        $(`#${formId}`)[0].reset();
+        $(`#${inputId}`).val('');
+        $(`#${judulId}`).text(textJudul);
+        $(`#${btnSubmitId}`).text('Simpan ke Database').css('background-color', '#27ae60');
+        $(`#${btnCancelId}`).hide();
+    }
+
+    function setFormEdit(judulId, textJudul, btnSubmitId, btnCancelId, tabSelector) {
+        $(`#${judulId}`).text(textJudul);
+        $(`#${btnSubmitId}`).text('Update Data').css('background-color', '#f39c12');
+        $(`#${btnCancelId}`).show();
+        $('html, body').animate({ scrollTop:$(tabSelector).offset().top - 20 }, 'fast');
+    }
+
+    function fiturPencarian(inputId, targetBarisTabel) {
+        $(`#${inputId}`).on('keyup', function() {
+            let keyword = $(this).val().toLowerCase();$(targetBarisTabel).filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
+            });
+        });
+    }
+
+    /* Data Menu */
+    const urlMenu = 'http://localhost:3000/api/menu';
+
+    function muatDataMenu() {
+        muatData('menu', '#tabel-menu tbody', '#angka-menu', function(item) {
+            let nilaiHarga = Number(item.harga);
+
+            if (isNaN(nilaiHarga)) {
+                nilaiHarga = 0;
+            }
+
+            return `
+                <tr>
+                    <td>${item.id}</td>
+                    <td><img src="${item.gambar}" class="preview" alt="foto"></td>
+                    <td>${item.nama_kategori}</td>
+                    <td>${item.nama_makanan}</td>
+                    <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm text-dark fw-bold btn-edit-menu btn-edit" data-id="${item.id}" data-kategori="${item.nama_kategori}" data-nama="${item.nama_makanan}" data-harga="${item.harga}" data-gambar="${item.gambar}">Edit</button>
+                        <button class="btn btn-danger btn-sm fw-bold btn-hapus-menu btn-hapus" data-id="${item.id}">Hapus</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function resetFormMenu() {
+        resetForm('form-tambah-menu', 'edit_id', 'judul-form', 'Input Menu Baru', 'btn-menu-submit', 'btn-menu-cancel');
     }
 
     $('#form-tambah-menu').on('submit', function(e) {
-        e.preventDefault(); 
-        
-        let $btnSubmit =$('#btn-submit');
-        let originalText = $btnSubmit.text();$btnSubmit.prop('disabled', true).text('Menyimpan...'); 
-        
-        let id = $('#edit_id').val();
-        let dataMenu = {
+        e.preventDefault();
+        let payload = {
             nama_kategori: $('#kategori').val(),
             nama_makanan: $('#nama_makanan').val(),
             harga: $('#harga').val(),
             gambar: $('#gambar').val()
         };
+        simpanData(urlMenu, $('#edit_id').val(), payload, $('#btn-menu-submit'), function() {
+            resetFormMenu(); 
+            muatDataMenu();
+        });
+    });
 
-        if (id) {
-            $.ajax({
-                url: 'http://localhost:3000/api/menu/' + id,
-                type: 'PUT',
-                data: dataMenu,
-                success: function(response) {
-                    alert(response.pesan);
-                    resetForm();
-                    muatDataMenu();
-                }
-            }).always(function() {
-                $btnSubmit.prop('disabled', false).text(originalText);
-            });
+    $(document).on('click', '.btn-edit-menu', function() {
+        $('#edit_id').val($(this).data('id'));
+        $('#kategori').val($(this).data('kategori'));
+        $('#nama_makanan').val($(this).data('nama'));
+        $('#harga').val($(this).data('harga'));
+        $('#gambar').val($(this).data('gambar'));
+        setFormEdit('judul-form', 'Edit Data Menu', 'btn-menu-submit', 'btn-menu-cancel', '#tab-menu');
+    });
+
+    $('#btn-menu-cancel').on('click', resetFormMenu);
+
+    $(document).on('click', '.btn-hapus-menu', function() {
+        hapusData(urlMenu, $(this).data('id'), muatDataMenu);
+    });
+
+    fiturPencarian('search-menu', '#tabel-menu tbody tr');
+    muatDataMenu();
+
+    /* Data FAQ */
+    const urlFaq = 'http://localhost:3000/api/faq';
+
+    function muatDataFaq() {
+        muatData('faq', '#tabel-faq tbody', null, function(item) {
+            return `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.pertanyaan}</td>
+                    <td>${item.jawaban}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${item.id}" data-pertanyaan="${item.pertanyaan}" data-jawaban="${item.jawaban}">Edit</button>
+                        <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${item.id}">Hapus</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function resetFormFaq() {
+        resetForm('form-faq', 'edit_id_faq', 'judul-form-faq', 'Input Pertanyaan Baru', 'btn-faq-submit', 'btn-faq-cancel');
+    }
+
+    $('#form-faq').on('submit', function(e) {
+        e.preventDefault();
+        let payload = {
+            pertanyaan: $('#judul_faq').val(),
+            jawaban: $('#jawaban_faq').val()
+        };
+        simpanData(urlFaq, $('#edit_id_faq').val(), payload, $('#btn-faq-submit'), function() {
+            resetFormFaq(); 
+            muatDataFaq();
+        });
+    });
+
+    $(document).on('click', '.btn-edit-faq', function() {
+        $('#edit_id_faq').val($(this).data('id'));
+        $('#judul_faq').val($(this).data('pertanyaan'));
+        $('#jawaban_faq').val($(this).data('jawaban'));
+        setFormEdit('judul-form-faq', 'Edit Data FAQ', 'btn-faq-submit', 'btn-faq-cancel', '#tab-faq');
+    });
+
+    $('#btn-faq-cancel').on('click', resetFormFaq);
+
+    $(document).on('click', '.btn-hapus-faq', function() {
+        hapusData(urlFaq, $(this).data('id'), muatDataFaq);
+    });
+
+    fiturPencarian('search-faq', '#tabel-faq tbody tr');
+    muatDataFaq();
+
+    /* Button Naik Ke Atas */
+    $('main').on('scroll', function() {
+        if ($(this).scrollTop() > 150) {
+            $('#btn-back-to-top').fadeIn(300);
         } else {
-            $.post('http://localhost:3000/api/menu', dataMenu, function(response) {
-                alert(response.pesan);
-                resetForm();
-                muatDataMenu();
-            })
-            .fail(function(xhr) {
-                console.log('ERROR:', xhr);
-                console.log('STATUS:', xhr.status);
-                console.log('RESPONSE:', xhr.responseText);
-                alert('Gagal menambahkan menu. Cek Console.');
-            })
-            .always(function() {
-                $btnSubmit.prop('disabled', false).text(originalText);
-            });
+            $('#btn-back-to-top').fadeOut(300);
         }
     });
 
-    $(document).on('click', '.btn-edit', function() {$('#edit_id').val($(this).data('id'));$('#kategori').val($(this).data('kategori'));$('#nama_makanan').val($(this).data('nama'));$('#harga').val($(this).data('harga'));$('#gambar').val($(this).data('gambar'));$('#judul-form').text('Edit Data Menu');
-        $('#btn-submit').text('Update Data').css('background-color', '#f39c12');
-        $('#btn-cancel').show();
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
-    });
-
-    $('#btn-cancel').on('click', resetForm);
-
-    $(document).on('click', '.btn-hapus', function() {
-        let id = $(this).data('id');
-        if (confirm('Yakin ingin menghapus menu ini?')) {
-            $.ajax({
-                url: 'http://localhost:3000/api/menu/' + id,
-                type: 'DELETE',
-                success: function(response) {
-                    alert(response.pesan);
-                    muatDataMenu(); 
-                }
-            });
-        }
+    $('#btn-back-to-top').on('click', function() {
+        $('main').animate({ scrollTop: 0 }, 'fast'); 
     });
 
     /* Maps */

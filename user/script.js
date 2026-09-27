@@ -25,8 +25,38 @@ $(document).ready(function() {
     });
 
     /* FAQ */
-    $('.faq-question').on('click', function() {
-        var $answer = $(this).next('.faq-answer');$('.faq-answer').not($answer).slideUp(300);$answer.slideToggle(300);
+    function muatFaqDariDatabase() {
+        $.get('/api/faq', function(response) {
+            let dataFaq = Array.isArray(response) ? response : (response.data || []);
+            let htmlFaq = '';
+
+            if (dataFaq.length === 0) {
+                htmlFaq = '<p class="text-center">Belum ada FAQ yang tersedia.</p>';
+            } else {
+                dataFaq.forEach(function(item) {
+                    htmlFaq += `
+                        <div class="faq-item">
+                            <div class="faq-question fw-bold">${item.pertanyaan}</div>
+                            <div class="faq-answer">${item.jawaban}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            $('#tempat-faq-dinamis').html(htmlFaq);
+            
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Gagal mengambil data FAQ:", errorThrown);
+            $('#tempat-faq-dinamis').html('<p style="text-align: center; color: red;">Gagal memuat FAQ.</p>');
+        });
+    }
+
+    muatFaqDariDatabase();
+
+    $('#tempat-faq-dinamis').on('click', '.faq-question', function() {
+        var $answer =$(this).next('.faq-answer');
+    
+        $('.faq-answer').not($answer).slideUp(300);
     });
 
     /* Tombol ke atas */
