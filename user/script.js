@@ -127,4 +127,23 @@ $(document).ready(function() {
         $('#judul-hero').html(teksHeroHTML);
         $('#deskripsi-about').text(data.teks_about);
     });
+
+    /* Maps */
+    $.get('http://localhost:3000/api/maps', function(data) {
+        let latResto = (data && data.latitude) ? parseFloat(data.latitude) : -6.200000;
+        let lngResto = (data && data.longitude) ? parseFloat(data.longitude) : 106.816666;
+
+        let mapUser = L.map('map-user').setView([latResto, lngResto], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapUser);
+
+        L.marker([latResto, lngResto]).addTo(mapUser)
+            .bindPopup('<b>Papeda Restaurant</b><br>Jl. Cendrawasih No. 45, Jakarta.')
+            .openPopup();
+            
+    }).fail(function() {
+        console.error("Gagal memuat data peta dari database.");
+    });
 });

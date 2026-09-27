@@ -149,4 +149,92 @@ $(document).ready(function() {
             });
         }
     });
+
+    /* Maps */
+    let mapAdmin = null;
+    let markerAdmin;
+    let latTersimpan = -6.200000;
+    let lngTersimpan = 106.816666;
+
+    $.get('http://localhost:3000/api/maps', function(data) {
+        if (data && !isNaN(parseFloat(data.latitude)) && !isNaN(parseFloat(data.longitude))) {
+            latTersimpan = parseFloat(data.latitude);
+            lngTersimpan = parseFloat(data.longitude);
+        }
+        $('#input-lat').val(latTersimpan);
+        $('#input-lng').val(lngTersimpan);
+    }).fail(function() {
+        $('#input-lat').val(latTersimpan);
+        $('#input-lng').val(lngTersimpan);
+        console.warn("Gagal mengambil kordinat dari database, menggunakan lokasi default.");
+    });
+
+    $('#admin-nav a[data-target="tab-lokasi"]').on('click', function() {
+        setTimeout(function() {
+            if (!mapAdmin) {
+                mapAdmin = L.map('map-admin').setView([latTersimpan, lngTersimpan], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapAdmin);
+
+                markerAdmin = L.marker([latTersimpan, lngTersimpan], {draggable: true}).addTo(mapAdmin);
+                
+                markerAdmin.on('dragend', function(e) {
+                    let posisi = markerAdmin.getLatLng();
+                    $('#input-lat').val(posisi.lat.toFixed(6));
+                    $('#input-lng').val(posisi.lng.toFixed(6));
+                    $('#btn-reset-lokasi').fadeIn();
+                });
+
+                mapAdmin.on('click', function(e) {
+                    markerAdmin.setLatLng(e.latlng);
+                    $('#input-lat').val(e.latlng.lat.toFixed(6));
+                    $('#input-lng').val(e.latlng.lng.toFixed(6));
+                    $('#btn-reset-lokasi').fadeIn();
+                });
+            } else {
+                mapAdmin.invalidateSize();
+            }
+        }, 350);
+    });
+
+    $('#btn-reset-lokasi').on('click', function() {
+        let posisiAwal = new L.LatLng(latTersimpan, lngTersimpan);
+        
+        markerAdmin.setLatLng(posisiAwal);
+        mapAdmin.setView(posisiAwal, 15);
+        
+        $('#input-lat').val(posisiAwal.lat.toFixed(6));
+        $('#input-lng').val(posisiAwal.lng.toFixed(6));
+        $(this).fadeOut();
+    });
+
+    $('#form-lokasi .btn-simpan').on('click', function(e) {
+        e.preventDefault();
+        
+        let newLat = parseFloat($('#input-lat').val());
+        let newLng = parseFloat($('#input-lng').val());
+        let $btn = $(this);
+        let originalText = $btn.text();
+        
+        $btn.text('Menyimpan...').prop('disabled', true);
+
+        $.ajax({
+            url: 'http://localhost:3000/api/maps',
+            type: 'PUT',
+            data: { latitude: newLat, longitude: newLng },
+            success: function(response) {
+                alert(response.pesan);
+                latTersimpan = newLat;
+                lngTersimpan = newLng;
+                $('#btn-reset-lokasi').fadeOut();
+            },
+            error: function() {
+                alert('Gagal update lokasi ke database.');
+            },
+            complete: function() {
+                $btn.text(originalText).prop('disabled', false);
+            }
+        });
+    });
 });

@@ -105,3 +105,36 @@ app.put('/api/konten', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server backend (Supabase) berjalan di http://localhost:${port}`);
 });
+
+/* MAPS */
+/* Get */
+app.get('/api/maps', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('maps')
+            .select('*')
+            .eq('id', 1)
+            .single();
+            
+        if (error) throw error;
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/* Put */
+app.put('/api/maps', async (req, res) => {
+    try {
+        const { latitude, longitude } = req.body;
+        const { error } = await supabase
+            .from('maps')
+            .update({ latitude, longitude })
+            .eq('id', 1);
+            
+        if (error) throw error;
+        res.json({ pesan: 'Lokasi restoran berhasil diperbarui di database!' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
