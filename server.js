@@ -19,7 +19,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 /* MENU */
 /* Get */
 app.get('/api/menu', async (req, res) => {
-    // Mengambil semua data dari tabel 'menu'
     const { data, error } = await supabase.from('menu').select('*');
     
     if (error) return res.status(500).json({ error: error.message });
@@ -64,6 +63,55 @@ app.delete('/api/menu/:id', async (req, res) => {
         
     if (error) return res.status(500).json({ error: error.message });
     res.json({ pesan: 'Menu berhasil dihapus!' });
+});
+
+/* FAQ */
+/* Get */
+app.get('/api/faq', async (req, res) => {
+    const { data, error } = await supabase.from('faq').select('*');
+    
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ data: data });
+});
+
+/* Create */
+app.post('/api/faq', async (req, res) => {
+    const { pertanyaan, jawaban } = req.body;
+    
+    const { data, error } = await supabase
+        .from('faq')
+        .insert([{ pertanyaan, jawaban }])
+        .select();
+        
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ pesan: 'FAQ berhasil ditambahkan!', id_baru: data[0].id });
+});
+
+/* Update */
+app.put('/api/faq/:id', async (req, res) => {
+    const id = req.params.id;
+    const { pertanyaan, jawaban } = req.body;
+    
+    const { error } = await supabase
+        .from('faq')
+        .update({ pertanyaan, jawaban })
+        .eq('id', id);
+        
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Data FAQ berhasil diperbarui!' });
+});
+
+/* Delete */
+app.delete('/api/faq/:id', async (req, res) => {
+    const id = req.params.id;
+    
+    const { error } = await supabase
+        .from('faq')
+        .delete()
+        .eq('id', id);
+        
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'FAQ berhasil dihapus!' });
 });
 
 /* STATISTIK PENGUNJUNG */
