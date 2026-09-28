@@ -1,16 +1,56 @@
 $(document).ready(function() {
-    /* Sidebar */
-    $('#admin-nav a').on('click', function(e) {
-        e.preventDefault(); 
+    let dataKontenAsli = { hero: '', about: '' };
+    /* Notification */
+    function tampilkanNotif(pesan, tipe = 'success') {
+        let $toastEl =$('#liveToast');
         
+        $toastEl.removeClass('text-bg-success text-bg-danger').addClass(`text-bg-${tipe}`);
+        
+        $('#pesan-notif').text(pesan);
+        
+        let toast = new bootstrap.Toast($toastEl[0], { delay: 3000 });
+        toast.show();
+    }
+
+    /* Sidebar */
+    $('#sidebar-toggle').on('click', function() {
+        $('.sidebar').addClass('show');
+        $('#sidebar-overlay').fadeIn(300);
+    });
+
+    $('#sidebar-overlay, #admin-nav a').on('click', function() {
+        if ($(window).width() <= 768) {
+            $('.sidebar').removeClass('show');
+            $('#sidebar-overlay').fadeOut(300);
+        }
+    });
+
+    $('#admin-nav a').on('click', function(e) {
+        e.preventDefault();
+         
+        if (typeof dataKontenAsli !== 'undefined') {
+            $('#teks_hero').val(dataKontenAsli.hero);
+            $('#teks_about').val(dataKontenAsli.about);
+            updateLivePreview(); 
+        }
+
         $('#admin-nav a').removeClass('active');
         $(this).addClass('active');
 
         let targetId = $(this).data('target');
-        $('.tab-section').hide();$('#' + targetId).fadeIn(300);
+        $('.tab-section').hide();
+        $('#' + targetId).fadeIn(300);
     });
 
-    /* Statistik */
+    /* Statistik & Konten */
+    function updateLivePreview() {
+        let heroText = $('#teks_hero').val() || '';
+        let aboutText = $('#teks_about').val() || '';
+
+        $('#preview-hero').html(heroText.replace(/\n/g, '<br>'));
+        $('#preview-about').text(aboutText);
+    }
+
     function muatStatistikDanKonten() {
         $.get('http://localhost:3000/api/statistik', function(data) {
             $('#angka-pengunjung').text(data.jumlah_pengunjung);
@@ -19,10 +59,19 @@ $(document).ready(function() {
         $.get('http://localhost:3000/api/konten', function(data) {
             $('#teks_hero').val(data.teks_hero);
             $('#teks_about').val(data.teks_about);
+            
+            dataKontenAsli.hero = data.teks_hero;
+            dataKontenAsli.about = data.teks_about;
+            
+            updateLivePreview();
         });
     }
 
     muatStatistikDanKonten();
+
+    $('#teks_hero, #teks_about').on('input', function() {
+        updateLivePreview();
+    });
 
     /* Update Content */
     $('#form-konten .btn-simpan').on('click', function(e) {
@@ -40,7 +89,10 @@ $(document).ready(function() {
             type: 'PUT',
             data: dataKonten,
             success: function(response) {
-                alert(response.pesan);
+                tampilkanNotif(response.pesan);
+
+                dataKontenAsli.hero = dataKonten.teks_hero;
+                dataKontenAsli.about = dataKonten.teks_about;
             }
         }).always(function() {
             $btn.prop('disabled', false).text(originalText);
@@ -72,12 +124,12 @@ $(document).ready(function() {
             type: method,
             data: dataPayload,
             success: function(response) {
-                alert(response.pesan);
+                tampilkanNotif(response.pesan);
                 callbackBerhasil();
             },
             error: function(xhr) {
                 console.log('ERROR:', xhr);
-                alert('Gagal menyimpan data. Cek Console.');
+                tampilkanNotif('Gagal menyimpan data. Cek Console.');
             },
             complete: function() {
                 $btnElemen.prop('disabled', false).text(textAsli);
@@ -85,18 +137,48 @@ $(document).ready(function() {
         });
     }
 
+    /* Delete */
+    let targetHapus = null;
+
     function hapusData(urlBase, idTarget, callbackBerhasil) {
-        if (confirm('Yakin ingin menghapus data ini?')) {
+        targetHapus = {
+            url: `${urlBase}/${idTarget}`,
+            callback: callbackBerhasil
+        };
+
+        let modalEl = document.getElementById('modalKonfirmasiHapus');
+        let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+
+    $('#btn-modal-hapus').on('click', function() {
+        if (targetHapus) {
+            let $btn =$(this);
+            let originalText = $btn.text();
+
+            $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Menghapus...');
+
             $.ajax({
-                url: `${urlBase}/${idTarget}`,
+                url: targetHapus.url,
                 type: 'DELETE',
                 success: function(response) {
-                    alert(response.pesan);
-                    callbackBerhasil();
+                    tampilkanNotif(response.pesan);
+                    targetHapus.callback();
+                    
+                    let modalEl = document.getElementById('modalKonfirmasiHapus');
+                    let modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                },
+                error: function() {
+                    tampilkanNotif('Gagal menghapus data.', 'danger');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text(originalText);
+                    targetHapus = null;
                 }
             });
         }
-    }
+    });
 
     function resetForm(formId, inputId, judulId, textJudul, btnSubmitId, btnCancelId) {
         $(`#${formId}`)[0].reset();
@@ -322,13 +404,13 @@ $(document).ready(function() {
             type: 'PUT',
             data: { latitude: newLat, longitude: newLng },
             success: function(response) {
-                alert(response.pesan);
+                tampilkanNotif(response.pesan);
                 latTersimpan = newLat;
                 lngTersimpan = newLng;
                 $('#btn-reset-lokasi').fadeOut();
             },
             error: function() {
-                alert('Gagal update lokasi ke database.');
+                tampilkanNotif('Gagal update lokasi ke database.');
             },
             complete: function() {
                 $btn.text(originalText).prop('disabled', false);
