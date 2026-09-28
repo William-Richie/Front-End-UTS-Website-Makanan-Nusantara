@@ -317,6 +317,117 @@ $(document).ready(function() {
     fiturPencarian('search-faq', '#tabel-faq tbody tr');
     muatDataFaq();
 
+    /* Pesanan */
+    let tabPesananAktif = 'pending';
+    let daftarPesanan = [];
+
+    function fetchPesanan() {
+        $.get('/api/pesanan', function(response) {
+            // Asumsi server.js mereturn JSON: { data: [...] }
+            daftarPesanan = response.data || [];
+            updateCountPesanan();
+            renderTabelPesanan(tabPesananAktif);
+        }).fail(function(xhr) {
+            console.error("Gagal mengambil data pesanan dari server:", xhr);
+        });
+    }
+
+    function updateCountPesanan() {
+        $('#count-pesanan-pending').text(daftarPesanan.filter(p => p.status === 'pending').length);
+        $('#count-pesanan-diproses').text(daftarPesanan.filter(p => p.status === 'diproses').length);
+    }
+
+    function renderTabelPesanan(statusFilter) {
+        let filtered = daftarPesanan.filter(p => p.status === statusFilter);
+        let $tbody =$('#pesanan-table-body');
+        $tbody.empty();
+
+        if (filtered.length === 0) {
+            $tbody.html('<tr><td colspan="6" class="text-center text-muted py-4">Tidak ada pesanan di kategori ini.</td></tr>');
+            return;
+        }
+
+        filtered.forEach(function (pesanan) {
+            let actionBtn = '';
+            let statusBadge = '';
+            
+            let shortId = pesanan.id ? pesanan.id.toString().substring(0, 8).toUpperCase() : "NA";
+            
+            if (pesanan.status === 'pending') {
+                statusBadge = '<span class="badge bg-secondary">Menunggu Konfirmasi</span>';
+                actionBtn = `<button class="btn btn-primary btn-sm fw-bold btn-konfirmasi-pesanan shadow-sm" data-id="${pesanan.id}"><i class="fa-solid fa-check me-1"></i> Konfirmasi</button>`;
+            } else if (pesanan.status === 'diproses') {
+                statusBadge = '<span class="badge bg-warning text-dark">Sedang Diproses</span>';
+                actionBtn = `<button class="btn btn-success btn-sm fw-bold btn-selesai-pesanan shadow-sm" data-id="${pesanan.id}"><i class="fa-solid fa-flag-checkered me-1"></i> Selesai</button>`;
+            }
+
+            let rowHtml = `
+                <tr>
+                    <td><strong>ORD-${shortId}</strong></td>
+                    <td>${pesanan.nama}</td>
+                    <td><small>${pesanan.item}</small></td>
+                    <td class="fw-bold text-success">Rp ${Number(pesanan.total).toLocaleString('id-ID')}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                </tr>
+            `;
+            $tbody.append(rowHtml);
+        });
+    }
+
+    function updateStatusPesanan(id, statusBaru, $btnElemen, pesanSukses) {
+        let originalText = $btnElemen.html();$btnElemen.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+
+        $.ajax({
+            url: `/api/pesanan/${id}`,
+            type: 'PUT',
+            data: { status: statusBaru },
+            success: function(response) {
+                if (typeof tampilkanNotif === 'function') {
+                    tampilkanNotif(pesanSukses, 'success');
+                } else {
+                    alert(pesanSukses);
+                }
+                fetchPesanan();
+            },
+            error: function(xhr) {
+                console.error("Gagal update pesanan:", xhr);
+                if (typeof tampilkanNotif === 'function') {
+                    tampilkanNotif("Gagal mengubah status pesanan.", 'danger');
+                } else {
+                    alert("Gagal mengubah status pesanan.");
+                }
+                $btnElemen.prop('disabled', false).html(originalText);
+            }
+        });
+    }
+
+    fetchPesanan();
+    setInterval(fetchPesanan, 10000);
+
+    $('.tab-pesanan-btn').on('click', function () {$('.tab-pesanan-btn').removeClass('active btn-primary btn-warning text-dark').addClass('btn-outline-primary').removeClass('btn-outline-warning');
+        
+        tabPesananAktif = $(this).data('status');
+        
+        if (tabPesananAktif === 'pending') {
+            $(this).addClass('active btn-primary').removeClass('btn-outline-primary');$('.tab-pesanan-btn[data-status="diproses"]').addClass('btn-outline-warning');
+        } else {
+            $(this).addClass('active btn-warning text-dark').removeClass('btn-outline-warning btn-outline-primary');$('.tab-pesanan-btn[data-status="pending"]').addClass('btn-outline-primary');
+        }
+        
+        renderTabelPesanan(tabPesananAktif);
+    });
+
+    $('#pesanan-table-body').on('click', '.btn-konfirmasi-pesanan', function () {
+        let id = $(this).data('id');
+        updateStatusPesanan(id, 'diproses', $(this), "Pesanan berhasil dikonfirmasi dan sedang diproses!");
+    });
+
+    $('#pesanan-table-body').on('click', '.btn-selesai-pesanan', function () {
+        let id = $(this).data('id');
+        updateStatusPesanan(id, 'selesai', $(this), "Pesanan telah selesai dan diarsipkan!");
+    });
+
     /* Button Naik Ke Atas */
     $('main').on('scroll', function() {
         if ($(this).scrollTop() > 150) {

@@ -186,3 +186,65 @@ app.put('/api/maps', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+/* PESANAN */
+/* Post */
+app.post('/api/pesanan', async (req, res) => {
+    try {
+        const { /*nama,*/ item, total } = req.body;
+        
+        const { data, error } = await supabase
+            .from('pesanan')
+            .insert([{ 
+                // nama: nama, 
+                item: item, 
+                total: parseInt(total), 
+                status: 'pending'
+            }]);
+
+        if (error) throw error;
+
+        res.status(201).json({ pesan: 'Pesanan berhasil dibuat', data: data });
+    } catch (error) {
+        console.error("Error POST /api/pesanan:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/* Get */
+app.get('/api/pesanan', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('pesanan')
+            .select('*')
+            .neq('status', 'selesai')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        res.status(200).json({ data: data });
+    } catch (error) {
+        console.error("Error GET /api/pesanan:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/* Put */
+app.put('/api/pesanan/:id', async (req, res) => {
+    try {
+        const idPesanan = req.params.id;
+        const { status } = req.body;
+
+        const { data, error } = await supabase
+            .from('pesanan')
+            .update({ status: status })
+            .eq('id', idPesanan);
+
+        if (error) throw error;
+
+        res.status(200).json({ pesan: `Status pesanan berhasil diubah menjadi ${status}` });
+    } catch (error) {
+        console.error("Error PUT /api/pesanan/:id:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
