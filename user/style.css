@@ -10,9 +10,12 @@ h1, h2, h3 {
     font-family: 'Lora', serif;
 }
 
-body { 
-    background-color: #f7ede1; 
-    color: #3b2314; 
+body {
+    background-image: url("../img/batik.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
 }
 
 header { 
@@ -509,4 +512,101 @@ main {
   30%  { opacity: 0.6; }
   60%  { opacity: 0.3; }
   100% { opacity: 0; transform: translate(-50%, -60px) scale(1.2); }
+}
+
+/* INTRO */
+body.intro-active { overflow: hidden; }
+
+#intro {
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    background:
+        url("../img/batik.png") center / cover,
+        linear-gradient(#f5e6da, #d9b594);
+    background-blend-mode: multiply;
+    transition: transform 1s cubic-bezier(.77,0,.18,1);
+}
+#intro.hide { transform: translateY(-100%); }
+
+.intro-eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: #9f734a;
+    animation: fadeUp .8s ease-out .1s both;
+}
+.intro-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #3b2314;
+    animation: fadeUp .9s ease-out .3s both;
+}
+.intro-sub {
+    font-family: 'Lato', sans-serif;
+    color: #5c4433;
+    animation: fadeUp .9s ease-out .5s both;
+}
+
+/* MEJA */
+.intro-table {
+    background: repeating-linear-gradient(90deg,
+        #e5cba3 0 90px, #d0ad74 90px 92px, #e5cba3 92px 180px);
+    border-block: 1px solid #d8c3ab;
+    box-shadow: inset 0 10px 25px rgba(107,66,38,.10),
+                inset 0 -10px 25px rgba(107,66,38,.10);
+    animation: tableWipe 1s cubic-bezier(.77,0,.18,1) .6s both;
+}
+
+.intro-item {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 130px;
+    animation: slideIn 1.1s cubic-bezier(.22,1,.36,1) calc(.9s + var(--i) * .3s) both;
+}
+
+.intro-item.hero {
+    flex-grow: 2;
+    max-width: 240px;
+}
+
+.intro-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 20%;
+    animation: var(--float, bob) 3.5s ease-in-out calc(2s + var(--i) * .3s) infinite;
+}
+
+/* Tombol */
+.intro-btn {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: .05em;
+    background: #4a2c17;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp .7s ease-out 3.4s forwards;
+    transition: background .25s, transform .25s, box-shadow .25s;
+}
+.intro-btn:hover {
+    background: #8b5e34;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(59,35,20,.25);
+}
+.intro-btn i { transition: transform .25s; }
+.intro-btn:hover i { transform: translateX(5px); }
+
+/* Keyframes */
+@keyframes fadeUp    { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes tableWipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes slideIn   { from { opacity: 0; transform: translateX(-70vw) rotate(var(--r, -180deg)) scale(.6); } to { opacity: 1; transform: none; } }
+@keyframes bob       { 50% { transform: translateY(-9px) rotate(3deg); } }
+@keyframes swing     { 0%,100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+@keyframes steam     { 0% { opacity: 0; transform: translateY(10px); } 40% { opacity: .9; } 100% { opacity: 0; transform: translateY(-16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-item, .intro-item img, .steam-path { animation: none; opacity: 1; }
 }

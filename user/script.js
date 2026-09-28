@@ -342,3 +342,12 @@ $(document).ready(function() {
         }
     });
 });
+
+document.body.classList.add('intro-active');
+
+document.getElementById('btn-start').addEventListener('click', () => {
+    const intro = document.getElementById('intro');
+    intro.classList.add('hide');
+    document.body.classList.remove('intro-active');
+    setTimeout(() => intro.remove(), 1000);
+});
