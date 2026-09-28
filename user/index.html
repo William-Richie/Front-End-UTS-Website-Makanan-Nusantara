@@ -4,13 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Papeda Restaurant</title>
-    <link rel="stylesheet" href="/user/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/user/style.css">
 </head>
-<body>
+<body class="intro-active">
+    <div id="intro" class="d-flex flex-column justify-content-center align-items-center text-center">
+
+        <div class="container mb-4">
+            <p class="intro-eyebrow mb-2">Cita Rasa Timur Indonesia</p>
+            <h1 class="intro-title display-4 mb-2">Papeda Restaurant</h1>
+            <p class="intro-sub mb-0">Dari sagu hingga kuah kuning, semua dimulai dari sini.</p>
+        </div>
+
+        <!-- Meja -->
+        <div class="intro-table w-100 py-4">
+            <div class="d-flex flex-nowrap justify-content-center align-items-center gap-1 gap-md-5 px-2 px-md-3">
+
+                <div class="intro-item" style="--i:0; --r:-200deg; --float:swing">
+                    <img src="../img/intro/spatula.png" alt="Spatula">
+                </div>
+                <div class="intro-item" style="--i:1; --r:-160deg">
+                    <img src="../img/intro/tepung.png" alt="Tepung sagu">
+                </div>
+                <div class="intro-item" style="--i:2; --r:-220deg">
+                    <img src="../img/intro/rempah.png" alt="Rempah">
+                </div>
+                <div class="intro-item" style="--i:3; --r:-200deg">
+                    <img src="../img/intro/kelapa.png" alt="Kelapa">
+                </div>
+                <div class="intro-item" style="--i:4; --r:-180deg">
+                    <img src="../img/intro/bumbu.png" alt="Bumbu">
+                </div>
+                <div class="intro-item" style="--i:5; --r:-240deg">
+                    <img src="../img/intro/garam.png" alt="Garam">
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-start" class="intro-btn btn rounded-pill px-5 py-2 mt-5">
+            Masuk ke Restoran <i class="fa-solid fa-arrow-right ms-2"></i>
+        </button>
+    </div>
 
     <header class="sticky-top">
         <div class="header-container d-flex justify-content-between align-items-center position-relative">
@@ -39,194 +76,221 @@
 
     <!-- Home Section -->
     <section id="home" class="page-section">
+        <div class="hero-papeda position-relative overflow-hidden">
+            <div class="container py-5 position-relative" style="z-index:1">
+                <div class="row align-items-center g-4 py-md-4">
 
-        <div class="hero-papeda d-flex flex-column flex-md-row
-                    justify-content-center align-items-center
-                    gap-4 py-5">
+                    <!-- Kolom teks -->
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="hero-eyebrow reveal">Cita Rasa Timur Indonesia</p>
+                        <h1 id="judul-hero" class="reveal" style="--d:.15s">
+                            Welcome to Our<br>Papeda Restaurant
+                        </h1>
+                        <p class="hero-sub mx-auto mx-md-0 reveal" style="--d:.3s">
+                            Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.
+                        </p>
+                        <div class="d-flex gap-2 justify-content-center justify-content-md-start reveal" style="--d:.45s">
+                            <a href="#menu" class="btn hero-btn">Lihat Menu</a>
+                            <a href="#reservation" class="btn hero-btn-outline">Reservasi</a>
+                        </div>
+                    </div>
 
-            <!-- Text -->
-            <div class="text-center text-md-start">
-                <h1 id="judul-hero">
-                    Welcome to Our<br>Papeda Restaurant
-                </h1>
+                    <!-- Kolom gambar -->
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <div class="papeda-area position-relative">
+                            <span class="food-icon chili position-absolute">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </span>
+                            <span class="food-icon lime position-absolute">
+                                <i class="fa-solid fa-lemon"></i>
+                            </span>
+                            <span class="food-icon fish-1 position-absolute">
+                                <i class="fa-solid fa-fish"></i>
+                            </span>
+                            <span class="food-icon fish-2 position-absolute">
+                                <i class="fa-solid fa-fish"></i>
+                            </span>
+                            <span class="food-icon star star-1 position-absolute">
+                                <i class="fa-solid fa-star"></i>
+                            </span>
+                            <span class="food-icon star star-2 position-absolute">
+                                <i class="fa-solid fa-star"></i>
+                            </span>
 
-                <p class="hero-sub">
-                    Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.
-                </p>
+                            <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
+                            <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                        </div>
+                    </div>
+
+                </div>
             </div>
-
-            <!-- Gambar Papeda -->
-            <div class="papeda-area position-relative">
-
-                <span class="food-icon chili position-absolute">
-                    <i class="fa-solid fa-pepper-hot"></i>
-                </span>
-
-                <span class="food-icon lime position-absolute">
-                    <i class="fa-solid fa-lemon"></i>
-                </span>
-
-                <span class="food-icon fish-1 position-absolute">
-                    <i class="fa-solid fa-fish"></i>
-                </span>
-
-                <span class="food-icon fish-2 position-absolute">
-                    <i class="fa-solid fa-fish"></i>
-                </span>
-
-                <span class="food-icon star star-1 position-absolute">
-                    <i class="fa-solid fa-star"></i>
-                </span>
-
-                <span class="food-icon star star-2 position-absolute">
-                    <i class="fa-solid fa-star"></i>
-                </span>
-
-                <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
-                <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
-
-            </div>
-
         </div>
-
     </section>
 
     <!-- About Section -->
-    <section class="page-section">
-            <div class="content-container text-content">
-                <h2>Tentang Kami</h2>
-                <p id="deskripsi-about">Selamat datang di Papeda Restaurant, tempat terbaik untuk menikmati hidangan khas Nusantara Timur. Kami menyajikan berbagai menu tradisional dengan cita rasa otentik yang akan memanjakan lidah Anda.</p>
-                
-                <h2 style="margin-top: 20px;">Keunggulan Kami</h2>
-                <p>Bahan-bahan yang kami gunakan selalu segar, dipadukan dengan resep rahasia yang diwariskan turun-temurun untuk menjaga keaslian rasa.</p>
-            </div>
-        </section>
-
-        <!-- Menu Section -->
-        <section id="menu" class="page-section">
-            <div class="hero-banner">
-                <h1>Taste Our Papeda<br>Menu's</h1>
+    <section id="about" class="page-section">
+        <div class="content-container text-content">
+            <div class="text-center mb-4 reveal">
+                <p class="hero-eyebrow">Tentang Kami</p>
+                <h2 class="section-title">Warisan Rasa dari Timur</h2>
+                <p id="deskripsi-about" class="mx-auto" style="max-width:600px">
+                    Selamat datang di Papeda Restaurant, tempat terbaik untuk menikmati hidangan khas Nusantara Timur. Kami menyajikan berbagai menu tradisional dengan cita rasa otentik yang akan memanjakan lidah Anda.
+                </p>
             </div>
 
-            <div class="content-container" id="tempat-menu-dinamis">
-                <p class="text-center py-4">Memuat menu restoran...</p>
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section id="faq" class="page-section">
-            <div class="hero-banner">
-                <h1>This is FAQ Section</h1>
-            </div>
-            <div class="content-container">
-                <div class="faq-list d-flex flex-column" id="tempat-faq-dinamis">
-                    <p class="text-center py-4">Memuat FAQ...</p>
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                <div class="col reveal" style="--d:.1s">
+                    <div class="feature-card h-100 text-center">
+                        <div class="feature-icon"><i class="fa-solid fa-leaf"></i></div>
+                        <h3>Bahan Segar</h3>
+                        <p>Sagu dan hasil laut dipilih segar setiap hari.</p>
+                    </div>
+                </div>
+                <div class="col reveal" style="--d:.25s">
+                    <div class="feature-card h-100 text-center">
+                        <div class="feature-icon"><i class="fa-solid fa-fire"></i></div>
+                        <h3>Resep Turun-temurun</h3>
+                        <p>Resep rahasia yang menjaga keaslian rasa.</p>
+                    </div>
+                </div>
+                <div class="col reveal" style="--d:.4s">
+                    <div class="feature-card h-100 text-center">
+                        <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
+                        <h3>Disajikan Sepenuh Hati</h3>
+                        <p>Suasana hangat ala rumah, cocok untuk keluarga.</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Location Section -->
-        <section id="location" class="page-section">
-            <div class="hero-banner">
-                <h1>Let's See Our<br>Restaurant Location</h1>
+    <!-- Menu Section -->
+    <section id="menu" class="page-section">
+        <div class="hero-banner reveal">
+            <h1>Taste Our Papeda<br>Menu's</h1>
+        </div>
+
+        <div class="content-container" id="tempat-menu-dinamis">
+            <p class="text-center py-4">Memuat menu restoran...</p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="page-section">
+        <div class="hero-banner reveal">
+            <h1>This is FAQ Section</h1>
+        </div>
+        <div class="content-container">
+            <div class="faq-list d-flex flex-column" id="tempat-faq-dinamis">
+                <p class="text-center py-4">Memuat FAQ...</p>
             </div>
-            <div class="content-container text-content">
-                <h2>Kunjungi Kami</h2>
-                <p><strong>Alamat:</strong> Jl. Cendrawasih No. 45, Jakarta</p>
-                <p><strong>Telepon:</strong> (021) 1234-5678</p>
-                <p><strong>Email:</strong> halo@papedarestaurant.com</p>
-                <br>
-                <p><em>*Tersedia area parkir yang luas untuk kendaraan roda dua maupun roda empat.</em></p>
-                <div id="map-user"></div>
+        </div>
+    </section>
+
+    <!-- Location Section -->
+    <section id="location" class="page-section">
+        <div class="hero-banner reveal">
+            <h1>Let's See Our<br>Restaurant Location</h1>
+        </div>
+        <div class="content-container text-content">
+            <h2>Kunjungi Kami</h2>
+            <p><strong>Alamat:</strong> Jl. Cendrawasih No. 45, Jakarta</p>
+            <p><strong>Telepon:</strong> (021) 1234-5678</p>
+            <p><strong>Email:</strong> halo@papedarestaurant.com</p>
+            <br>
+            <p><em>*Tersedia area parkir yang luas untuk kendaraan roda dua maupun roda empat.</em></p>
+            <div id="map-user"></div>
+        </div>
+    </section>
+
+    <!-- Reservation -->
+    <section id="reservation" class="page-section">
+        <div class="hero-banner reveal">
+            <h1>Reservation</h1>
+        </div>
+
+        <div class="content-containers text-content">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold" for="store-select">Select a store</label>
+                <select id="store-select" name="store" class="form-select" required>
+                    <option value="" disabled selected>-- Choose The Store --</option>
+                    <option value="gerai-a">Gerai A (Jakarta)</option>
+                    <option value="gerai-b">Gerai B (Bandung)</option>
+                    <option value="gerai-c">Gerai C (Bogor)</option>
+                    <option value="gerai-d">Gerai D (Jawa)</option>
+                    <option value="gerai-e">Gerai E (Papua)</option>
+                </select>
             </div>
-        </section>
 
-        <!-- reservation -->
-        <section id="reservation" class="page-section">
-            <div class="hero-banner">
-                <h1>Reservation</h1>
-            </div>
-
-            <div class="content-containers text-content">
-
-                <div class="store-select">
-                    <label><strong>Select a store</strong></label>
-                    <select id="store-select" name="store" required>
-                        <option value="" disabled selected>-- Choose The Store --</option>
-                        <option value="gerai-a">Gerai A (Jakarta)</option>
-                        <option value="gerai-b">Gerai B (Bandung)</option>
-                        <option value="gerai-c">Gerai C (Bogor)</option>
-                        <option value="gerai-d">Gerai D (Jawa)</option>
-                        <option value="gerai-e">Gerai E (Papua)</option>
-                    </select>
+            <form id="reservation-form-group" class="reservation-form-group" style="display: none;">
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" maxlength="32" required>
                 </div>
 
-                <form id="reservation-form-group" class="reservation-form-group" style="display: none;">
-                    <div class="reservation-form">
-                        <label for="name"><strong>Full Name:</strong></label>
-                        <input type="text" id="name" name="name" maxlength="32" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-bold">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" maxlength="64" placeholder="name@email.com" required>
+                </div>
 
-                    <div class="reservation-form">
-                        <label for="email"><strong>Email:</strong></label>
-                        <input type="email" id="email" name="email" maxlength="64" placeholder="name@email.com" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label fw-bold">Active Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="08xx-xxxx-xxxx" required>
+                </div>
 
-                    <div class="reservation-form">
-                        <label for="phone"><strong>Active Phone Number:</strong></label>
-                        <input type="tel" id="phone" name="phone" placeholder="08xx-xxxx-xxxx" required>
+                <div class="row g-3 mb-3">
+                    <div class="col-7">
+                        <label for="reservation-date" class="form-label fw-bold">Reservation Date</label>
+                        <input type="date" id="reservation-date" name="reservation_date" class="form-control" required>
                     </div>
-
-                    <div class="reservation-form">
-                        <label for="reservation-date"><strong>Reservation Date:</strong></label>
-                        <input type="date" id="reservation-date" name="reservation_date" required>
+                    <div class="col-5">
+                        <label for="total-person" class="form-label fw-bold">Guests</label>
+                        <input type="number" id="total-person" name="total_person" class="form-control" min="1" max="20" placeholder=". . ." required>
                     </div>
+                </div>
 
-                    <div class="reservation-form">
-                        <label for="total-person"><strong>Number of Guests:</strong></label>
-                        <input type="number" id="total-person" name="total_person" min="1" max="20" placeholder=". . ." required>
-                    </div>
-
-                    <div class="reservation-form">
-                        <label for="session"><strong>Time:</strong></label>
-                        <select id="session" name="session">
+                <div class="row g-3 mb-3">
+                    <div class="col-7">
+                        <label for="session" class="form-label fw-bold">Session</label>
+                        <select id="session" name="session" class="form-select">
                             <option value="morning">Morning (08.00 - 11.00)</option>
-                            <option value="afternoon">afternoon (12.00 - 18.00)</option>
+                            <option value="afternoon">Afternoon (12.00 - 18.00)</option>
                             <option value="night">Evening (18.00 - 21.00)</option>
                         </select>
                     </div>
-
-                    <div class="reservation-form">
-                        <label for="time"><strong>Arrival Time:</strong></label>
-                        <input type="time" id="time" name="time" required>
+                    <div class="col-5">
+                        <label for="time" class="form-label fw-bold">Arrival Time</label>
+                        <input type="time" id="time" name="time" class="form-control" required>
                     </div>
+                </div>
 
-                    <div class="reservation-form">
-                        <label for="room-type"><strong>Select The Room</strong></label>
-                        <select id="room-type" name="room_type" required>
-                            <option value="" disabled selected>-- Type of Room --</option>
-                            <optgroup label="Reguler">
-                                <option value="reguler-indoor">Reguler Indoor (No Smoking / AC)</option>
-                                <option value="reguler-outdoor">Reguler Outdoor (Free Smoking)</option>
-                            </optgroup>
-                            <optgroup label="VIP Room">
-                                <option value="vip-10">VIP Room 1 (1 Table, Recomended for 4 - 10 people)</option>
-                                <option value="vip-10-tv">VIP Room 1 ++ (1 Table + TV, Recomended for 4 - 10 people)</option>
-                                <option value="vip-20">VIP Room 2 (2 Table, Recomended for 8 - 20 people)</option>
-                                <option value="vip-20-tv">VIP Room 2 ++ (2 Table + TV, Recomended for 8 - 20 people)</option>
-                            </optgroup>
-                        </select>
-                    </div>
+                <div class="mb-3">
+                    <label for="room-type" class="form-label fw-bold">Select The Room</label>
+                    <select id="room-type" name="room_type" class="form-select" required>
+                        <option value="" disabled selected>-- Type of Room --</option>
+                        <optgroup label="Reguler">
+                            <option value="reguler-indoor">Reguler Indoor (No Smoking / AC)</option>
+                            <option value="reguler-outdoor">Reguler Outdoor (Free Smoking)</option>
+                        </optgroup>
+                        <optgroup label="VIP Room">
+                            <option value="vip-10">VIP Room 1 (1 Table, Recommended for 4 - 10 people)</option>
+                            <option value="vip-10-tv">VIP Room 1 ++ (1 Table + TV, Recommended for 4 - 10 people)</option>
+                            <option value="vip-20">VIP Room 2 (2 Table, Recommended for 8 - 20 people)</option>
+                            <option value="vip-20-tv">VIP Room 2 ++ (2 Table + TV, Recommended for 8 - 20 people)</option>
+                        </optgroup>
+                    </select>
+                </div>
 
-                    <div class="reservation-form">
-                        <label for="notes"><strong>Extra Note:</strong></label>
-                        <textarea id="notes" name="notes" rows="4" placeholder=". . ."></textarea>
-                    </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label fw-bold">Extra Note</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="4" placeholder=". . ."></textarea>
+                </div>
 
-                    <button type="submit" class="submit">Confirm</button>
-                </form>
-            </div>
-        </section>
+                <button type="submit" class="btn submit w-100 text-white fw-bold">Confirm</button>
+            </form>
+        </div>
+    </section>
     </main>
 
     <!-- Floating Action Buttons -->
