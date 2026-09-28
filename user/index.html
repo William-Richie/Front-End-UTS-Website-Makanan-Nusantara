@@ -231,7 +231,7 @@
 
     <!-- Floating Action Buttons -->
     <div class="fab-container">
-        <div class="fab fab-action d-flex justify-content-center align-items-center rounded-circle" id="cart-button">
+        <div class="fab fab-action d-flex justify-content-center align-items-center rounded-circle" id="cart-button" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar" style="cursor: pointer;">
             <i class="fa-solid fa-cart-shopping cart-icon"></i>
             <span class="cart-badge" id="cart-count">0</span>
         </div> 
@@ -241,7 +241,92 @@
         </div>
     </div>
 
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" aria-labelledby="cartSidebarLabel">
+        <div class="offcanvas-header bg-light border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="cartSidebarLabel">Keranjang Pesanan</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column">
+            <ul class="list-group list-group-flush mb-auto" id="cart-items-list">
+                <li class="list-group-item text-center text-muted border-0 mt-3" id="empty-cart-msg">Keranjang Anda masih kosong</li>
+            </ul>
+            
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                    <span>Total:</span>
+                    <span id="cart-total-price">Rp 0</span>
+                </div>
+                <button type="button" class="btn w-100 text-white" id="btn-checkout-cart" style="background-color: #5b3e31;">Lanjut ke Pembayaran</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Card -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true" style="z-index: 999999;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-light border-bottom">
+                    <h5 class="modal-title fw-bold" id="checkoutModalLabel">Konfirmasi Pesanan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-4 text-center">
+                        <p class="fw-bold mb-2">Pilih metode pesanan Anda:</p>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="orderType" id="dineIn" autocomplete="off" value="dine-in">
+                            <label class="btn btn-outline-secondary" for="dineIn"><i class="fa-solid fa-store"></i> Makan di Tempat</label>
+
+                            <input type="radio" class="btn-check" name="orderType" id="online" autocomplete="off" value="online">
+                            <label class="btn btn-outline-secondary" for="online"><i class="fa-solid fa-motorcycle"></i> Pesan Antar</label>
+                        </div>
+                    </div>
+
+                    <div id="dineInForm" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Pilih Gerai Restoran:</label>
+                            <select class="form-select" id="checkoutStore">
+                                <option value="" disabled selected>-- Pilih Lokasi --</option>
+                                <option value="Gerai A (Jakarta)">Gerai A (Jakarta)</option>
+                                <option value="Gerai B (Bandung)">Gerai B (Bandung)</option>
+                                <option value="Gerai C (Bogor)">Gerai C (Bogor)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="onlineForm" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Alamat Pengiriman:</label>
+                            <textarea class="form-control" id="deliveryAddress" rows="3" placeholder="Masukkan alamat lengkap Anda..."></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1 text-muted">
+                            <span>Subtotal Makanan:</span>
+                            <span id="modalSubtotal">Rp 0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 text-danger fw-bold">
+                            <span>Ongkos Kirim:</span>
+                            <span id="modalOngkir">Rp 0</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-2">
+                        <span>Total Bayar:</span>
+                        <span id="modalTotalBayar">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn w-100 text-white fw-bold" style="background-color: #5b3e31;" id="btn-confirm-pay" disabled>Konfirmasi & Bayar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/user/script.js" defer></script>
 </body>

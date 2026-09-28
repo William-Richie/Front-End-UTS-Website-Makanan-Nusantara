@@ -57,6 +57,8 @@ $(document).ready(function() {
         var $answer =$(this).next('.faq-answer');
     
         $('.faq-answer').not($answer).slideUp(300);
+
+        $answer.slideToggle(300);
     });
 
     /* Tombol ke atas */
@@ -101,7 +103,7 @@ $(document).ready(function() {
                             <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
                             <div class="menu-details">
                                 <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
-                                <button class="add-to-cart-btn">+ Keranjang</button>
+                                <button class="add-to-cart-btn" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>
                             </div>
                         </div>
                     `;
@@ -122,21 +124,42 @@ $(document).ready(function() {
 
     /* Cart */
     let cartItemCount = 0; 
+    let cartTotal = 0;
+    let cartItems = [];
 
     function updateCartBadge() {
         if (cartItemCount > 0) {
             $('#cart-count').text(cartItemCount).css('display', 'flex'); 
+            $('#empty-cart-msg').hide();
         } else {
             $('#cart-count').css('display', 'none'); 
+            $('#empty-cart-msg').show();
         }
+
+        $('#cart-total-price').text('Rp ' + cartTotal.toLocaleString('id-ID'));
     }
 
     updateCartBadge(); 
 
     $('#tempat-menu-dinamis').on('click', '.add-to-cart-btn', function(e) {
         e.preventDefault(); 
+
+        let itemName = $(this).data('nama');
+        let itemPrice = parseInt($(this).data('harga'));
         
         cartItemCount++; 
+        cartTotal += itemPrice;
+        cartItems.push(itemName);
+
+        let cartItemHtml = `
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                ${itemName}
+                <span>Rp ${itemPrice.toLocaleString('id-ID')}</span>
+            </li>
+        `;
+        
+        $('#cart-items-list').append(cartItemHtml);
+
         updateCartBadge(); 
         
         let $btn =$(this);
@@ -149,6 +172,132 @@ $(document).ready(function() {
         }, 1000);
     });
 
+    let currentOngkir = 0;
+
+    $('#btn-checkout-cart').on('click', function() {
+        if (cartItemCount === 0) {
+            alert("Keranjang Anda masih kosong. Silakan pesan menu terlebih dahulu!");
+            return;
+        }
+
+        var cartSidebarEl = document.getElementById('cartSidebar');
+        var cartOffcanvas = bootstrap.Offcanvas.getInstance(cartSidebarEl);
+        if(cartOffcanvas) cartOffcanvas.hide();
+
+        $('#modalSubtotal').text('Rp ' + cartTotal.toLocaleString('id-ID'));
+        $('#modalTotalBayar').text('Rp ' + cartTotal.toLocaleString('id-ID'));
+        
+        $('input[name="orderType"]').prop('checked', false);
+        $('#dineInForm, #onlineForm').hide();
+        $('#modalOngkir').text('Rp 0');
+        $('#deliveryAddress, #checkoutStore').val('');
+        $('#btn-confirm-pay').prop('disabled', true);
+        currentOngkir = 0;
+
+        var checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+        checkoutModal.show();
+    });
+
+    $('input[name="orderType"]').on('change', function() {
+        $('#btn-confirm-pay').prop('disabled', false);
+
+        if (this.value === 'dine-in') {
+            $('#dineInForm').slideDown(300);
+            $('#onlineForm').slideUp(300);
+            
+            currentOngkir = 0;
+            updateModalTotal();
+
+        } else if (this.value === 'online') {
+            $('#dineInForm').slideUp(300);
+            $('#onlineForm').slideDown(300);
+            
+            currentOngkir = Math.floor(Math.random() * 26 + 10) * 1000;
+            $('#modalOngkir').text('+ Rp ' + currentOngkir.toLocaleString('id-ID'));
+            
+            updateModalTotal();
+        }
+    });
+
+    function updateModalTotal() {
+        let finalTotal = cartTotal + currentOngkir;
+        $('#modalTotalBayar').text('Rp ' + finalTotal.toLocaleString('id-ID'));
+    }
+
+    $('#btn-confirm-pay').on('click', function() {
+        let orderType = $('input[name="orderType"]:checked').val();
+        let detailPesananStr = "";
+        let finalTotal = cartTotal + currentOngkir;
+        
+        if (orderType === 'dine-in') {
+            let store = $('#checkoutStore').val();
+            if (!store) {
+                alert('Silakan pilih lokasi gerai restoran terlebih dahulu!');
+                return;
+            }
+            detailPesananStr = `[Dine-in di ${store}] `;
+        } else if (orderType === 'online') {
+            let address = $('#deliveryAddress').val();
+            if (!address || !address.trim()) {
+                alert('Silakan masukkan alamat pengiriman Anda secara lengkap!');
+                return;
+            }
+            detailPesananStr = `[Online - Alamat: ${address}] `;
+        } else {
+             alert('Silakan pilih metode pesanan!');
+             return;
+        }
+
+        // let namaPelanggan = prompt("Silakan masukkan nama Anda untuk pesanan ini:");
+        // if (!namaPelanggan || !namaPelanggan.trim()) {
+        //     alert("Nama harus diisi untuk memproses pesanan!");
+        //     return;
+        // }
+
+        detailPesananStr += cartItems.join(', ');
+
+        let $btn =$(this);
+        let originalText = $btn.text();
+        
+        $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Memproses...');
+
+        $.ajax({
+            url: '/api/pesanan',
+            type: 'POST',
+            contentType: 'application/json', 
+            data: JSON.stringify({
+                // nama: namaPelanggan,
+                item: detailPesananStr,
+                total: finalTotal
+            }),
+            success: function(response) {
+                alert("Berhasil!\nPesanan Anda telah dibuat dan sedang menunggu konfirmasi admin.");
+                
+                cartItemCount = 0;
+                cartTotal = 0;
+                cartItems = []; 
+                currentOngkir = 0;
+                
+                $('#cart-items-list').find('li:not(#empty-cart-msg)').remove();
+                updateCartBadge();
+                
+                var modalEl = document.getElementById('checkoutModal');
+                var modalInst = bootstrap.Modal.getInstance(modalEl);
+                if(modalInst) {
+                    modalInst.hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error Checkout:", xhr.responseText || error);
+                alert("Terjadi kesalahan saat memproses pesanan. Pastikan server berjalan dan database terhubung.");
+            },
+            complete: function() {
+                $btn.prop('disabled', false).text('Konfirmasi Pesanan');
+            }
+        });
+    });
+
+    /* Banner hero */
     $.post('/api/pengunjung');
 
     $.get('/api/konten', function(data) {
