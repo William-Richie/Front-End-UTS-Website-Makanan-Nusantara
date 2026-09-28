@@ -38,7 +38,12 @@
 
     <!-- KONTEN UTAMA -->
     <main class="flex-grow-1 p-4 overflow-auto">
-        
+        <button id="sidebar-toggle" class="btn btn-dark d-md-none mb-4 shadow-sm">
+            <i class="fa-solid fa-bars"></i> Menu Admin
+        </button>
+
+        <div id="sidebar-overlay"></div>
+
         <!-- TAB 1: STATISTIK -->
         <section id="tab-statistik" class="tab-section active">
             <h1 class="mb-4 text-dark fw-bold fs-3">Statistik Website</h1>
@@ -117,19 +122,62 @@
 
         <!-- TAB 3: KELOLA KONTEN -->
         <section id="tab-konten" class="tab-section">
-            <div class="card shadow-sm border-0 p-4">
-                <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
-                <form id="form-konten">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Teks Sambutan (Hero Banner)</label>
-                        <input type="text" id="teks_hero" class="form-control" value="Memuat...">
+            <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 p-4 h-100">
+                        <form id="form-konten">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Teks Sambutan (Hero Banner)</label>
+                                <textarea id="teks_hero" class="form-control" rows="3">Memuat...</textarea>
+                                <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Deskripsi Tentang Kami</label>
+                                <textarea id="teks_about" class="form-control" rows="6">Memuat...</textarea>
+                            </div>
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan">Update Konten</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Deskripsi Tentang Kami</label>
-                        <textarea id="teks_about" class="form-control" rows="4">Memuat...</textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100 overflow-hidden" style="background-color: #f7ede1;">
+                        <div class="card-header bg-dark text-white">
+                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
+                        </div>
+                        
+                        <div class="card-body p-0 d-flex flex-column" style="overflow-y: auto;">
+                            
+                            <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3" style="overflow: hidden;">
+                                
+                                <div class="text-center text-lg-start" style="flex: 1;">
+                                    <h1 id="preview-hero" style="font-family: 'Lora', serif; font-size: 22px; color: #3b2314; margin-bottom: 10px;">Memuat...</h1>
+                                    <p class="hero-sub" style="color: #4a2c17; font-size: 13px;">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
+                                </div>
+
+                                <div class="papeda-area position-relative" style="transform: scale(0.65); transform-origin: center;">
+                                    <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
+                                    <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
+                                    <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                    <span class="food-icon fish-2 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                    <span class="food-icon star star-1 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                    <span class="food-icon star star-2 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                    
+                                    <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
+                                    <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                                </div>
+                            </div>
+
+                            <div class="content-container text-content p-4">
+                                <h2 style="font-family: 'Lora', serif; font-size: 16px; margin-bottom: 10px; color: #4a2c17;">Tentang Kami</h2>
+                                <p id="preview-about" style="font-size: 14px; line-height: 1.5; margin-bottom: 10px; color: #5c4433;">Memuat...</p>
+                            </div>
+                            
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-success w-100 fw-bold">Update Konten</button>
-                </form>
+                </div>
             </div>
         </section>
 
@@ -237,6 +285,37 @@
             <i class="fa-solid fa-arrow-up"></i>
         </button>
     </main>
+    
+    <!-- MODAL KONFIRMASI HAPUS -->
+    <div class="modal fade" id="modalKonfirmasiHapus" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold" id="modalHapusLabel">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Konfirmasi Hapus
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body fs-6 py-4">
+                    Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger fw-bold px-4" id="btn-modal-hapus">Ya, Hapus!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1100;">
+        <div id="liveToast" class="toast align-items-center border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fs-6 fw-semibold" id="pesan-notif"></div>
+                <button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
