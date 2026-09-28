@@ -343,6 +343,53 @@ $(document).ready(function() {
     });
 });
 
+// Scroll reveal
+const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('show');
+            io.unobserve(e.target);
+        }
+    });
+}, { threshold: 0.15 });
+
+function initReveal() {
+    document.querySelectorAll('.reveal:not(.show)').forEach(el => io.observe(el));
+}
+
+// Menu & FAQ dibuat dinamis oleh script.js: beri class reveal otomatis
+['tempat-menu-dinamis', 'tempat-faq-dinamis'].forEach(id => {
+    const box = document.getElementById(id);
+    if (!box) return;
+    new MutationObserver(() => {
+        box.querySelectorAll('.category-header, .menu-item, .faq-question').forEach(el => {
+            if (!el.classList.contains('reveal')) {
+                el.classList.add('reveal');
+                io.observe(el);
+            }
+        });
+    }).observe(box, { childList: true, subtree: true });
+});
+
+// Tombol intro
+document.getElementById('btn-start').addEventListener('click', () => {
+    const intro = document.getElementById('intro');
+    intro.classList.add('hide');
+    document.body.classList.remove('intro-active');
+    setTimeout(initReveal, 400);
+    setTimeout(() => intro.remove(), 1000);
+});
+
+// Badge keranjang membal saat jumlah berubah
+const badge = document.getElementById('cart-count');
+if (badge) {
+    new MutationObserver(() => {
+        badge.classList.remove('bump');
+        void badge.offsetWidth;
+        badge.classList.add('bump');
+    }).observe(badge, { childList: true, characterData: true, subtree: true });
+}
+
 document.body.classList.add('intro-active');
 
 document.getElementById('btn-start').addEventListener('click', () => {
