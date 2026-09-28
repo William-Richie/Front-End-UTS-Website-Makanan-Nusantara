@@ -176,4 +176,20 @@ $(document).ready(function() {
     }).fail(function() {
         console.error("Gagal memuat data peta dari database.");
     });
+
+    // reservation
+    let $reservationForm = $('#reservation-form-group');
+
+    $reservationForm.hide();
+
+    $('#store-select').on('change', function () {
+        let selectedStore = $(this).val();
+        console.log("Gerai dipilih:", selectedStore);
+
+        if (selectedStore && selectedStore !== "") {
+            $reservationForm.slideDown(300);
+        } else {
+            $reservationForm.slideUp(300);
+        }
+    });
 });

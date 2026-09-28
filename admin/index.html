@@ -27,8 +27,11 @@
             <li class="nav-item mb-2">
                 <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ</a>
             </li>
-            <li>
+            <li  class="nav-item mb-2">
                 <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
+            </li>
+            <li>
+                <a href="#" data-target="tab-reservasi" class="nav-link text-white">Kelola Reservasi</a>
             </li>
         </ul>
     </aside>
@@ -198,6 +201,37 @@
                 </form>
             </div>
         </section>
+
+        <!-- Reservation -->
+         <section id="tab-reservasi" class="tab-section">
+            <div class="card shadow-sm border-0 p-4 mb-4">
+                <h1 id="judul-form-faq" class="fs-4 fw-bold mb-4">Kelola Gerai</h1>
+
+                <div class="reservation-tabs">
+                    <button class="tab-btn active" data-status="pending">Pending <span class="badge" id="count-pending">0</span></button>
+                    <button class="tab-btn" data-status="approved">Approved <span class="badge" id="count-approved">0</span></button>
+                    <button class="tab-btn" data-status="complete">Complete <span class="badge" id="count-complete">0</span></button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Gerai</th>
+                                <th>Nama Tamu</th>
+                                <th>Kontak</th>
+                                <th>Tanggal & Waktu</th>
+                                <th>Jumlah Tamu</th>
+                                <th>Ruangan</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>      
+                        <tbody id="reservation-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+         </section>
 
         <button id="btn-back-to-top" title="Kembali ke atas">
             <i class="fa-solid fa-arrow-up"></i>

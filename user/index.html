@@ -29,6 +29,7 @@
                     <li><a href="#menu" class="nav-link">Menu</a></li>
                     <li><a href="#faq" class="nav-link">FAQ</a></li>
                     <li><a href="#location" class="nav-link">Location</a></li>
+                    <li><a href="#reservation" class="nav-link">Reservation</a></li>
                 </ul>
             </nav>
         </div>
@@ -137,6 +138,93 @@
                 <br>
                 <p><em>*Tersedia area parkir yang luas untuk kendaraan roda dua maupun roda empat.</em></p>
                 <div id="map-user"></div>
+            </div>
+        </section>
+
+        <!-- reservation -->
+        <section id="reservation" class="page-section">
+            <div class="hero-banner">
+                <h1>Reservation</h1>
+            </div>
+
+            <div class="content-containers text-content">
+
+                <div class="store-select">
+                    <label><strong>Select a store</strong></label>
+                    <select id="store-select" name="store" required>
+                        <option value="" disabled selected>-- Choose The Store --</option>
+                        <option value="gerai-a">Gerai A (Jakarta)</option>
+                        <option value="gerai-b">Gerai B (Bandung)</option>
+                        <option value="gerai-c">Gerai C (Bogor)</option>
+                        <option value="gerai-d">Gerai D (Jawa)</option>
+                        <option value="gerai-e">Gerai E (Papua)</option>
+                    </select>
+                </div>
+
+                <form id="reservation-form-group" class="reservation-form-group" style="display: none;">
+                    <div class="reservation-form">
+                        <label for="name"><strong>Full Name:</strong></label>
+                        <input type="text" id="name" name="name" maxlength="32" required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="email"><strong>Email:</strong></label>
+                        <input type="email" id="email" name="email" maxlength="64" placeholder="name@email.com" required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="phone"><strong>Active Phone Number:</strong></label>
+                        <input type="tel" id="phone" name="phone" placeholder="08xx-xxxx-xxxx" required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="reservation-date"><strong>Reservation Date:</strong></label>
+                        <input type="date" id="reservation-date" name="reservation_date" required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="total-person"><strong>Number of Guests:</strong></label>
+                        <input type="number" id="total-person" name="total_person" min="1" max="20" placeholder=". . ." required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="session"><strong>Time:</strong></label>
+                        <select id="session" name="session">
+                            <option value="morning">Morning (08.00 - 11.00)</option>
+                            <option value="afternoon">afternoon (12.00 - 18.00)</option>
+                            <option value="night">Evening (18.00 - 21.00)</option>
+                        </select>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="time"><strong>Arrival Time:</strong></label>
+                        <input type="time" id="time" name="time" required>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="room-type"><strong>Select The Room</strong></label>
+                        <select id="room-type" name="room_type" required>
+                            <option value="" disabled selected>-- Type of Room --</option>
+                            <optgroup label="Reguler">
+                                <option value="reguler-indoor">Reguler Indoor (No Smoking / AC)</option>
+                                <option value="reguler-outdoor">Reguler Outdoor (Free Smoking)</option>
+                            </optgroup>
+                            <optgroup label="VIP Room">
+                                <option value="vip-10">VIP Room 1 (1 Table, Recomended for 4 - 10 people)</option>
+                                <option value="vip-10-tv">VIP Room 1 ++ (1 Table + TV, Recomended for 4 - 10 people)</option>
+                                <option value="vip-20">VIP Room 2 (2 Table, Recomended for 8 - 20 people)</option>
+                                <option value="vip-20-tv">VIP Room 2 ++ (2 Table + TV, Recomended for 8 - 20 people)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="reservation-form">
+                        <label for="notes"><strong>Extra Note:</strong></label>
+                        <textarea id="notes" name="notes" rows="4" placeholder=". . ."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit">Confirm</button>
+                </form>
             </div>
         </section>
     </main>

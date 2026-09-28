@@ -237,6 +237,31 @@ main {
     z-index: 1;
 }
 
+/* Reservation */
+#reservation {
+    font-family: 'Lora', serif;
+}
+
+.content-containers {
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.store-select,
+.reservation-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.store-select label,
+.reservation-form label {
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: #2b2b2b;
+}
+
 /* Floating Button */
 .fab-container { 
     position: fixed; 

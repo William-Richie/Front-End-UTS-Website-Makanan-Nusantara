@@ -336,3 +336,111 @@ $(document).ready(function() {
         });
     });
 });
+
+$(document).ready(function () {
+    let reservasiList = [
+        {
+            id: 1,
+            gerai: "Gerai A (Jakarta)",
+            nama: "Budi Santoso",
+            telepon: "08123456789",
+            email: "budi@gmail.com",
+            tanggal: "2026-10-02",
+            jam: "12:56",
+            sesi: "Afternoon",
+            tamu: 4,
+            ruangan: "VIP Room 1 (1 Table)",
+            catatan: "Dekat jendela jika ada",
+            status: "pending"
+        },
+        {
+            id: 2,
+            gerai: "Gerai B (Bandung)",
+            nama: "Siti Rahma",
+            telepon: "08567890123",
+            email: "siti@gmail.com",
+            tanggal: "2026-10-02",
+            jam: "18:30",
+            sesi: "Evening",
+            tamu: 2,
+            ruangan: "Reguler Indoor",
+            catatan: "-",
+            status: "approved"
+        }
+    ];
+
+    let currentTab = 'pending';
+
+    function updateCounts() {
+        $('#count-pending').text(reservasiList.filter(item => item.status === 'pending').length);
+        $('#count-approved').text(reservasiList.filter(item => item.status === 'approved').length);
+        $('#count-complete').text(reservasiList.filter(item => item.status === 'complete').length);
+    }
+
+    function renderTabel(statusFilter) {
+        let filtered = reservasiList.filter(item => item.status === statusFilter);
+        let $tbody =$('#reservation-table-body');
+        $tbody.empty();
+
+        if (filtered.length === 0) {
+            $tbody.html('<tr><td colspan="8" style="text-align: center; color: #888; padding: 20px;">Tidak ada reservasi pada status ini.</td></tr>');
+            return;
+        }
+
+        filtered.forEach(function (res) {
+            let actionBtn = '';
+        
+            if (res.status === 'pending') {
+                actionBtn = `<button class="btn-action btn-approve" data-id="${res.id}">✓ Konfirmasi</button>`;
+            } else if (res.status === 'approved') {
+                actionBtn = `<button class="btn-action btn-complete" data-id="${res.id}">✓ Konfirmasi</button>`;
+            } else if (res.status === 'complete') {
+                actionBtn = `<span class="status-badge-done">Selesai</span>`;
+            }
+
+            let rowHtml = `
+                <tr>
+                    <td><strong>${res.gerai}</strong></td>
+                    <td>${res.nama}</td>
+                    <td>${res.telepon}<br><small style="color: #777;">${res.email}</small></td>
+                    <td>${res.tanggal}<br><small>${res.jam} (${res.sesi})</small></td>
+                    <td>${res.tamu} Orang</td>
+                    <td>${res.ruangan}</td>
+                    <td>${res.catatan}</td>
+                    <td>${actionBtn}</td>
+                </tr>
+            `;
+            $tbody.append(rowHtml);
+        });
+    }
+
+    updateCounts();
+    renderTabel(currentTab);
+
+    $('.tab-btn').on('click', function () {
+        $('.tab-btn').removeClass('active');$(this).addClass('active');
+
+        currentTab = $(this).data('status');
+        renderTabel(currentTab);
+    });
+
+    $('#reservation-table-body').on('click', '.btn-approve', function () {
+        let id = $(this).data('id');
+        let item = reservasiList.find(r => r.id === id);
+        if (item) {
+            item.status = 'approved';
+            updateCounts();
+            renderTabel(currentTab);
+        }
+    });
+
+    $('#reservation-table-body').on('click', '.btn-complete', function () {
+        let id = $(this).data('id');
+        let item = reservasiList.find(r => r.id === id);
+        if (item) {
+            item.status = 'complete';
+            updateCounts();
+            renderTabel(currentTab);
+        }
+    });
+});
