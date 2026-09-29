@@ -35,10 +35,24 @@ header, .sticky-top, .header-container {
 }
 
 .logo { 
-    width: 30px; 
-    height: 30px; 
-    background-color: #a9744f; 
+    width: 44px; 
+    height: 44px; 
+    overflow: hidden;
     border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    display: block; 
+    color: inherit;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
 }
 
 .hamburger { 
@@ -55,6 +69,43 @@ header, .sticky-top, .header-container {
     border-radius: 2px; 
 }
 
+.LOGIN {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.LOGIN a {
+    text-decoration: none;  
+    color: White; 
+    font-weight: 400;
+}
+
+.Sign-in{
+    padding: 6px 12px;
+    border: #4a2c17 solid 1px;
+    background-color: #4a2c17;
+    color: #ffffff;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.regist{
+    padding: 6px 12px;
+    border: #4a2c17 solid 1px;
+    background-color: #4a2c17;
+    color: #ffffff;
+    margin-right: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.Sign-in:hover .regist:hover {
+    background-color: #4a2c17;
+    color: #ffffff;
+}
+
 /* Navigation */
 #main-nav { 
     display: none; 
@@ -65,8 +116,8 @@ header, .sticky-top, .header-container {
     background-color: #fffaf3; 
     border-bottom: 1px solid #d8c3ab; 
 }
-
 #main-nav ul { 
+    margin-top: 10px;
     list-style: none; 
     display: flex; 
     flex-direction: column; 
