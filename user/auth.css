@@ -1,0 +1,131 @@
+/* Guest / User toggle */
+#auth-guest { display: flex; align-items: center; gap: 12px; }
+body.logged-in #auth-guest,
+body.logged-in #reservation-lock,
+body:not(.logged-in) #auth-user,
+body:not(.logged-in) #nav-myres,
+body:not(.logged-in) #my-reservation,
+body:not(.logged-in) #reservation .content-containers { display: none; }
+
+.Sign-in:hover, .regist:hover {
+    background-color: #6b4226; transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(74, 44, 23, .25);
+}
+
+/* User dropdown */
+.user-btn {
+    display: flex; align-items: center; gap: 8px; border: 0; border-radius: 50px;
+    background: #4a2c17; color: #fff; font-weight: 700; padding: 4px 14px 4px 4px; transition: .2s;
+}
+.user-btn:hover, .user-btn.show { background: #6b4226; color: #fff; }
+.user-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #f7ede1; color: #4a2c17;
+    display: grid; place-items: center; font-weight: 700;
+}
+.LOGIN .dropdown-menu {
+    background: #fffaf3; border: 1px solid #d8c3ab; border-radius: 14px; padding: 8px;
+    box-shadow: 0 10px 24px rgba(74, 44, 23, .18); animation: authPop .2s ease;
+}
+.LOGIN .dropdown-item { color: #3b2314; border-radius: 8px; padding: 8px 12px; }
+.LOGIN .dropdown-item i { width: 22px; color: #b5651d; }
+.LOGIN .dropdown-item:hover { background: #f0e1cf; color: #3b2314; }
+.LOGIN .dropdown-item.logout, .LOGIN .dropdown-item.logout i { color: #b02a37; }
+
+/* Buttons */
+.btn-papeda {
+    background: #4a2c17; color: #fff; font-weight: 700; border-radius: 50px;
+    padding: .55rem 1.5rem; border: 2px solid #4a2c17; transition: .2s;
+}
+.btn-papeda:hover { background: #6b4226; border-color: #6b4226; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 14px rgba(74, 44, 23, .3); }
+.btn-papeda-outline {
+    background: transparent; color: #4a2c17; font-weight: 700; border-radius: 50px;
+    padding: .55rem 1.5rem; border: 2px solid #4a2c17; transition: .2s;
+}
+.btn-papeda-outline:hover { background: #4a2c17; color: #fff; transform: translateY(-2px); }
+.btn-papeda-outline.btn-sm { padding: .25rem .9rem; }
+
+/* Modal */
+.auth-card { border-radius: 20px; }
+#authModal.fade .modal-dialog, #profileModal.fade .modal-dialog {
+    transform: scale(.85) translateY(30px);
+    transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), opacity .3s;
+}
+#authModal.show .modal-dialog, #profileModal.show .modal-dialog { transform: none; }
+
+.auth-side {
+    position: relative; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; color: #fff; padding: 2rem; min-height: 480px; overflow: hidden;
+    background: linear-gradient(160deg, #4a2c17, #6b4226 60%, #8a5a34);
+}
+.auth-side h4 { font-family: 'Playfair Display', serif; position: relative; z-index: 1; }
+.auth-logo {
+    width: 130px; height: 130px; object-fit: contain; position: relative; z-index: 1;
+    filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .35)); animation: authBob 3.5s ease-in-out infinite;
+}
+.auth-float { position: absolute; font-size: 1.7rem; color: rgba(247, 237, 225, .3); animation: authBob 4s ease-in-out infinite; }
+.auth-float.a1 { top: 9%; left: 12%; }
+.auth-float.a2 { top: 16%; right: 13%; animation-delay: .8s; }
+.auth-float.a3 { bottom: 15%; left: 15%; animation-delay: 1.4s; }
+.auth-float.a4 { bottom: 9%; right: 12%; animation-delay: .4s; }
+
+.gate-icon {
+    width: 64px; height: 64px; border-radius: 50%; background: #f0e1cf; color: #4a2c17;
+    display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 12px;
+    animation: authWiggle 3s ease-in-out infinite;
+}
+
+/* Tabs & form */
+.auth-tabs { display: flex; background: #f0e1cf; border-radius: 50px; padding: 4px; }
+.auth-tab {
+    flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 50px;
+    font-weight: 700; color: #6b4226; transition: .25s;
+}
+.auth-tab.active { background: #4a2c17; color: #fff; box-shadow: 0 4px 10px rgba(74, 44, 23, .3); }
+.auth-pane { display: none; }
+.auth-pane.active { display: block; animation: authFade .35s ease; }
+.auth-pane .input-group-text { background: #fffaf3; border-color: #d8c3ab; color: #b5651d; }
+.auth-pane .form-control, #form-profile .form-control { border-color: #d8c3ab; background: #fffaf3; }
+.auth-pane .form-control:focus, #form-profile .form-control:focus {
+    border-color: #6b4226; box-shadow: 0 0 0 .2rem rgba(107, 66, 38, .15);
+}
+.toggle-pass { cursor: pointer; }
+.auth-error {
+    background: #fdecea; color: #b02a37; border-radius: 10px; padding: 8px 12px;
+    font-size: .875rem; margin-bottom: 12px;
+}
+.auth-error.shake { animation: authShake .4s; }
+
+/* Kartu kunci reservasi */
+.auth-lock {
+    max-width: 520px; margin: 30px auto; padding: 32px 24px; background: #fffaf3;
+    border: 1px dashed #d8c3ab; border-radius: 20px; animation: authFade .5s ease;
+}
+
+/* My Reservation */
+.res-card {
+    background: #fffaf3; border: 1px solid #d8c3ab; border-radius: 16px; padding: 18px; height: 100%;
+    box-shadow: 0 4px 12px rgba(74, 44, 23, .08); animation: authFade .5s ease both;
+    transition: transform .2s, box-shadow .2s;
+}
+.res-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(74, 44, 23, .15); }
+.res-info { list-style: none; margin: 12px 0; }
+.res-info li { padding: 3px 0; color: #3b2314; font-size: .92rem; }
+.res-info i { width: 22px; color: #b5651d; }
+
+/* Toast */
+.auth-toast {
+    position: fixed; top: 80px; right: 20px; z-index: 2000; background: #4a2c17; color: #fff;
+    padding: 12px 18px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+    animation: authSlide .4s ease;
+}
+
+@keyframes authBob    { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes authFade   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes authPop    { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: none; } }
+@keyframes authSlide  { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@keyframes authShake  { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes authWiggle { 0%, 88%, 100% { transform: rotate(0); } 91% { transform: rotate(-12deg); } 94% { transform: rotate(10deg); } 97% { transform: rotate(-6deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-logo, .auth-float, .gate-icon, .res-card, .auth-pane.active { animation: none; }
+}
