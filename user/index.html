@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/user/style.css">
+    <link rel="stylesheet" href="/user/auth.css">
 </head>
 <body class="intro-active">
     <div id="intro" class="d-flex flex-column justify-content-center align-items-center text-center">
@@ -57,11 +58,22 @@
                 <div class="logo">
                     <img src="../img/Web-Icon/PAPEDA.png" alt="Logo Papeda">
                 </div>
-                <div class="Sign-in">
-                    <a href="#Login">Sign in</a>
+                <div id="auth-guest">
+                    <div class="Sign-in"><a href="#Login">Sign in</a></div>
+                    <div class="regist"><a href="#Registrasi">Registration</a></div>
                 </div>
-                <div class="regist">
-                    <a href="#Registrasi">Registration</a>
+
+                <div id="auth-user" class="dropdown">
+                    <button type="button" class="user-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="user-avatar" id="user-initial">U</span>
+                        <span id="user-name">User</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="menu-profile"><i class="fa-solid fa-user"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#my-reservation" id="menu-myres"><i class="fa-solid fa-calendar-check"></i> My Reservation</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item logout" href="#" id="menu-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                    </ul>
                 </div>
             </div>
 
@@ -80,6 +92,7 @@
                     <li><a href="#faq" class="nav-link">FAQ</a></li>
                     <li><a href="#location" class="nav-link">Location</a></li>
                     <li><a href="#reservation" class="nav-link">Reservation</a></li>
+                    <li id="nav-myres"><a href="#my-reservation" class="nav-link">My Reservation</a></li>
                 </ul>
             </nav>
         </div>
@@ -221,6 +234,15 @@
         <div class="hero-banner reveal">
             <h1>Reservation</h1>
         </div>
+        <div id="reservation-lock" class="auth-lock text-center">
+            <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
+            <h3>Login untuk Reservasi</h3>
+            <p class="text-muted">Silakan masuk atau buat akun terlebih dahulu untuk melanjutkan reservasi.</p>
+            <div class="d-flex gap-2 justify-content-center">
+                <button type="button" class="btn btn-papeda" data-auth="login">Login</button>
+                <button type="button" class="btn btn-papeda-outline" data-auth="register">Register</button>
+            </div>
+        </div>
 
         <div class="content-containers text-content">
 
@@ -302,6 +324,15 @@
 
                 <button type="submit" class="btn submit w-100 text-white fw-bold">Confirm</button>
             </form>
+        </div>
+    </section>
+    <!-- My Reservation -->
+    <section id="my-reservation" class="page-section">
+        <div class="hero-banner reveal"><h1>My Reservation</h1></div>
+        <div class="content-container">
+            <div id="my-reservation-list" class="row g-3">
+                <p class="text-center py-4">Memuat reservasi...</p>
+            </div>
         </div>
     </section>
     </main>
@@ -402,9 +433,99 @@
         </div>
     </div>
 
+        <!-- Auth Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content auth-card border-0 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-5 auth-side d-none d-md-flex">
+                        <span class="auth-float a1"><i class="fa-solid fa-pepper-hot"></i></span>
+                        <span class="auth-float a2"><i class="fa-solid fa-fish"></i></span>
+                        <span class="auth-float a3"><i class="fa-solid fa-lemon"></i></span>
+                        <span class="auth-float a4"><i class="fa-solid fa-leaf"></i></span>
+                        <img src="../img/Web-Icon/Papeda-icon.png" alt="Papeda" class="auth-logo">
+                        <h4 class="mt-3 mb-1">Papeda Restaurant</h4>
+                        <p class="small mb-0 opacity-75">Cita Rasa Timur Indonesia</p>
+                    </div>
+
+                    <div class="col-md-7 p-4 p-md-5 position-relative">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                        <div class="text-center mb-3">
+                            <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
+                            <h4 id="auth-title" class="fw-bold mb-1"></h4>
+                            <p id="auth-desc" class="text-muted small mb-0"></p>
+                        </div>
+
+                        <div class="auth-tabs mb-3">
+                            <button type="button" class="auth-tab active" data-tab="login">Login</button>
+                            <button type="button" class="auth-tab" data-tab="register">Register</button>
+                        </div>
+
+                        <form id="form-login" class="auth-pane active">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" id="login-email" class="form-control" placeholder="Email" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" id="login-password" class="form-control" placeholder="Password" required>
+                                <span class="input-group-text toggle-pass"><i class="fa-solid fa-eye"></i></span>
+                            </div>
+                            <div class="auth-error d-none"></div>
+                            <button type="submit" class="btn btn-papeda w-100">Login <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                        </form>
+
+                        <form id="form-register" class="auth-pane">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                <input type="text" id="reg-nama" class="form-control" placeholder="Nama lengkap" maxlength="32" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" id="reg-email" class="form-control" placeholder="Email" maxlength="64" required>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" id="reg-password" class="form-control" placeholder="Password (min. 6 karakter)" minlength="6" required>
+                                <span class="input-group-text toggle-pass"><i class="fa-solid fa-eye"></i></span>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-shield-halved"></i></span>
+                                <input type="password" id="reg-password2" class="form-control" placeholder="Ulangi password" required>
+                            </div>
+                            <div class="auth-error d-none"></div>
+                            <button type="submit" class="btn btn-papeda w-100">Buat Akun <i class="fa-solid fa-utensils ms-1"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content auth-card border-0">
+                <form id="form-profile" class="p-4">
+                    <div class="text-center mb-3">
+                        <div class="gate-icon"><i class="fa-solid fa-user"></i></div>
+                        <h5 class="fw-bold">Profile</h5>
+                    </div>
+                    <label class="form-label fw-bold small" for="profile-nama">Nama</label>
+                    <input type="text" id="profile-nama" class="form-control mb-3" maxlength="32" required>
+                    <label class="form-label fw-bold small" for="profile-email">Email</label>
+                    <input type="email" id="profile-email" class="form-control mb-3" disabled>
+                    <button type="submit" class="btn btn-papeda w-100">Simpan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/user/script.js" defer></script>
+    <script src="/user/auth.js" defer></script>
 </body>
 </html>
