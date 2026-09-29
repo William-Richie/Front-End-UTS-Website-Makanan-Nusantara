@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
@@ -148,6 +150,117 @@ app.put('/api/konten', async (req, res) => {
     const { error } = await supabase.from('konten_web').update({ teks_hero, teks_about }).eq('id', 1);
     if (error) return res.status(500).json({ error: error.message });
     res.json({ pesan: 'Konten web berhasil diperbarui!' });
+});
+
+/* AUTH */
+const buatToken = (u) => jwt.sign({ id: u.id, email: u.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+function auth(req, res, next) {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    try {
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
+        next();
+    } catch {
+        res.status(401).json({ error: 'Silakan login terlebih dahulu.' });
+    }
+}
+
+/* Register */
+app.post('/api/register', async (req, res) => {
+    try {
+        const nama = (req.body.nama || '').trim();
+        const email = (req.body.email || '').trim().toLowerCase();
+        const password = req.body.password || '';
+
+        if (!nama || !email || password.length < 6)
+            return res.status(400).json({ error: 'Nama, email, dan password (min. 6 karakter) wajib diisi.' });
+        if (!/^\S+@\S+\.\S+$/.test(email))
+            return res.status(400).json({ error: 'Format email tidak valid.' });
+
+        const { data: ada } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
+        if (ada) return res.status(409).json({ error: 'Email sudah terdaftar. Silakan login.' });
+
+        const hash = await bcrypt.hash(password, 10);
+        const { data, error } = await supabase
+            .from('users').insert([{ nama, email, password: hash }])
+            .select('id, nama, email').single();
+        if (error) throw error;
+
+        res.status(201).json({ token: buatToken(data), user: data });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+/* Login */
+app.post('/api/login', async (req, res) => {
+    try {
+        const email = (req.body.email || '').trim().toLowerCase();
+        const password = req.body.password || '';
+
+        const { data: u } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
+        if (!u || !(await bcrypt.compare(password, u.password)))
+            return res.status(401).json({ error: 'Email atau password salah.' });
+
+        const user = { id: u.id, nama: u.nama, email: u.email };
+        res.json({ token: buatToken(user), user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+/* Profil */
+app.get('/api/me', auth, async (req, res) => {
+    const { data, error } = await supabase.from('users').select('id, nama, email').eq('id', req.user.id).single();
+    if (error) return res.status(401).json({ error: 'Akun tidak ditemukan.' });
+    res.json({ user: data });
+});
+
+app.put('/api/me', auth, async (req, res) => {
+    const nama = (req.body.nama || '').trim();
+    if (!nama) return res.status(400).json({ error: 'Nama tidak boleh kosong.' });
+    const { data, error } = await supabase.from('users').update({ nama })
+        .eq('id', req.user.id).select('id, nama, email').single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ user: data });
+});
+
+/* RESERVASI */
+app.post('/api/reservasi', auth, async (req, res) => {
+    try {
+        const { gerai, nama, email, telepon, tanggal, jumlah, sesi, jam, ruangan, catatan } = req.body;
+
+        if (!gerai || !nama || !email || !telepon || !tanggal || !jumlah || !sesi || !jam || !ruangan)
+            return res.status(400).json({ error: 'Semua data reservasi wajib diisi.' });
+        if (jumlah < 1 || jumlah > 20)
+            return res.status(400).json({ error: 'Jumlah tamu 1 - 20 orang.' });
+        if (new Date(tanggal) < new Date(new Date().toDateString()))
+            return res.status(400).json({ error: 'Tanggal reservasi tidak boleh sudah lewat.' });
+
+        const { data, error } = await supabase.from('reservasi').insert([{
+            user_id: req.user.id, gerai, nama, email, telepon, tanggal,
+            jumlah: parseInt(jumlah), sesi, jam, ruangan, catatan
+        }]).select().single();
+        if (error) throw error;
+
+        res.status(201).json({ pesan: 'Reservasi berhasil dibuat!', data });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/reservasi', auth, async (req, res) => {
+    const { data, error } = await supabase.from('reservasi').select('*')
+        .eq('user_id', req.user.id).order('created_at', { ascending: false });
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ data });
+});
+
+app.put('/api/reservasi/:id/batal', auth, async (req, res) => {
+    const { error } = await supabase.from('reservasi').update({ status: 'dibatalkan' })
+        .eq('id', req.params.id).eq('user_id', req.user.id);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Reservasi dibatalkan.' });
 });
 
 app.listen(port, () => {
