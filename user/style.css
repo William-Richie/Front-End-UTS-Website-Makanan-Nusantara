@@ -84,6 +84,7 @@ header, .sticky-top, .header-container {
 .Sign-in{
     padding: 6px 12px;
     border: #4a2c17 solid 1px;
+    border-radius: 5px;
     background-color: #4a2c17;
     color: #ffffff;
     margin-left: 5px;
@@ -94,6 +95,7 @@ header, .sticky-top, .header-container {
 .regist{
     padding: 6px 12px;
     border: #4a2c17 solid 1px;
+    border-radius: 5px;
     background-color: #4a2c17;
     color: #ffffff;
     margin-right: 5px;
@@ -275,6 +277,17 @@ main {
     font-size: 13px;
 }
 
+.menu-item.menu-kosong {
+    opacity: 0.6; 
+    filter: grayscale(80%); 
+    pointer-events: none; 
+    position: relative;
+}
+
+.menu-item.menu-kosong .add-to-cart-btn {
+    pointer-events: auto; 
+}
+
 .add-to-cart-btn {
     background-color: #8b5e34;
     color: white;
@@ -293,6 +306,35 @@ main {
 
 .add-to-cart-btn:active {
     transform: scale(0.95);
+}
+
+.status-badge-kosong {
+    position: absolute;
+    top: 35px;
+    right: -5px;
+    background-color: #d9534f;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.add-to-cart-btn.disabled-btn {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.add-to-cart-btn.disabled-btn:hover {
+    background-color: #cccccc;
+}
+
+.add-to-cart-btn.disabled-btn:active {
+    transform: none;
 }
 
 /* FAQ */
