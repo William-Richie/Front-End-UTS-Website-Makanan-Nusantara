@@ -5,6 +5,7 @@ const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { stat } = require('fs');
 
 const app = express();
 const port = 3000;
@@ -29,11 +30,12 @@ app.get('/api/menu', async (req, res) => {
 
 /* Create */
 app.post('/api/menu', async (req, res) => {
-    const { nama_kategori, nama_makanan, harga, gambar } = req.body;
+    const { nama_kategori, nama_makanan, harga, gambar, status } = req.body;
+    const statusBool = (status === 'true' || status === true);
     
     const { data, error } = await supabase
         .from('menu')
-        .insert([{ nama_kategori, nama_makanan, harga, gambar }])
+        .insert([{ nama_kategori, nama_makanan, harga, gambar, status: statusBool }])
         .select();
         
     if (error) return res.status(400).json({ error: error.message });
@@ -43,11 +45,12 @@ app.post('/api/menu', async (req, res) => {
 /* Update */
 app.put('/api/menu/:id', async (req, res) => {
     const id = req.params.id;
-    const { nama_kategori, nama_makanan, harga, gambar } = req.body;
+    const { nama_kategori, nama_makanan, harga, gambar, status } = req.body;
+    const statusBool = (status === 'true' || status === true);
     
     const { error } = await supabase
         .from('menu')
-        .update({ nama_kategori, nama_makanan, harga, gambar })
+        .update({ nama_kategori, nama_makanan, harga, gambar, status: statusBool })
         .eq('id', id);
         
     if (error) return res.status(500).json({ error: error.message });

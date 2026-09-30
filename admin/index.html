@@ -96,6 +96,13 @@
                         <label class="form-label fw-semibold">Nama/Link Gambar</label>
                         <input type="text" id="gambar" class="form-control" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Status Ketersediaan</label>
+                        <select id="status_menu" class="form-select" required>
+                            <option value="false">Tidak Tersedia</option>
+                            <option value="true">Tersedia</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-success w-100 fw-bold" id="btn-menu-submit">Simpan ke Database</button>
                     <button type="button" class="btn btn-secondary w-100 fw-bold mt-2" id="btn-menu-cancel">Batal Edit</button>
                 </form>
@@ -116,6 +123,7 @@
                                 <th>Kategori</th>
                                 <th>Nama Makanan</th>
                                 <th>Harga</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

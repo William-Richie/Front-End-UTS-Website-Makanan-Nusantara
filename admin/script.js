@@ -122,7 +122,8 @@ $(document).ready(function() {
         $.ajax({
             url: url,
             type: method,
-            data: dataPayload,
+            contentType: 'application/json',
+            data: JSON.stringify(dataPayload),
             success: function(response) {
                 tampilkanNotif(response.pesan);
                 callbackBerhasil();
@@ -214,6 +215,27 @@ $(document).ready(function() {
                 nilaiHarga = 0;
             }
 
+            let badgeStatus = item.status 
+                ? `<button class="btn btn-success btn-sm fw-bold btn-toggle-status" 
+                    data-id="${item.id}" data-status="true" 
+                    data-kategori="${item.nama_kategori}" 
+                    data-nama="${item.nama_makanan}" 
+                    data-harga="${item.harga}" 
+                    data-gambar="${item.gambar}" 
+                    data-status="${item.status}">
+                        Tersedia
+                    </button>` 
+
+                : `<button class="btn btn-secondary btn-sm fw-bold btn-toggle-status" 
+                    data-id="${item.id}" data-status="false" 
+                    data-kategori="${item.nama_kategori}" 
+                    data-nama="${item.nama_makanan}" 
+                    data-harga="${item.harga}" 
+                    data-gambar="${item.gambar}" 
+                    data-status="${item.status}">
+                        Habis
+                    </button>`;
+
             return `
                 <tr>
                     <td>${item.id}</td>
@@ -221,6 +243,7 @@ $(document).ready(function() {
                     <td>${item.nama_kategori}</td>
                     <td>${item.nama_makanan}</td>
                     <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
+                    <td>${badgeStatus}</td>
                     <td>
                         <button class="btn btn-warning btn-sm text-dark fw-bold btn-edit-menu btn-edit" data-id="${item.id}" data-kategori="${item.nama_kategori}" data-nama="${item.nama_makanan}" data-harga="${item.harga}" data-gambar="${item.gambar}">Edit</button>
                         <button class="btn btn-danger btn-sm fw-bold btn-hapus-menu btn-hapus" data-id="${item.id}">Hapus</button>
@@ -232,6 +255,7 @@ $(document).ready(function() {
 
     function resetFormMenu() {
         resetForm('form-tambah-menu', 'edit_id', 'judul-form', 'Input Menu Baru', 'btn-menu-submit', 'btn-menu-cancel');
+        $('#status_menu').val('false');
     }
 
     $('#form-tambah-menu').on('submit', function(e) {
@@ -240,11 +264,30 @@ $(document).ready(function() {
             nama_kategori: $('#kategori').val(),
             nama_makanan: $('#nama_makanan').val(),
             harga: $('#harga').val(),
-            gambar: $('#gambar').val()
+            gambar: $('#gambar').val(),
+            status: $('#status_menu').val() === 'true'
         };
         simpanData(urlMenu, $('#edit_id').val(), payload, $('#btn-menu-submit'), function() {
             resetFormMenu(); 
             muatDataMenu();
+        });
+    });
+
+    $(document).on('click', '.btn-toggle-status', function() {
+        let $btn =$(this);
+        let id = $btn.data('id');
+        let isTersedia = String($btn.data('status')) === 'true';
+        let newStatus = !isTersedia;
+        let payload = {
+            nama_kategori: $btn.data('kategori'),
+            nama_makanan: $btn.data('nama'),
+            harga: $btn.data('harga'),
+            gambar: $btn.data('gambar'),
+            status: newStatus
+        };
+
+        simpanData(urlMenu, id, payload, $btn, function() {
+            muatDataMenu(); 
         });
     });
 
@@ -254,6 +297,10 @@ $(document).ready(function() {
         $('#nama_makanan').val($(this).data('nama'));
         $('#harga').val($(this).data('harga'));
         $('#gambar').val($(this).data('gambar'));
+
+        let statusEdit = $(this).data('status') === true ? 'true' : 'false';
+        $('#status_menu').val(statusEdit);
+
         setFormEdit('judul-form', 'Edit Data Menu', 'btn-menu-submit', 'btn-menu-cancel', '#tab-menu');
     });
 

@@ -97,13 +97,21 @@ $(document).ready(function() {
                 `;
 
                 menuDikelompokkan[kategori].forEach(function(makanan) {
+                    let isTersedia = (makanan.status === true || makanan.status === 'true');
+                    let cssKosong = isTersedia ? '' : 'menu-kosong';
+                    let tombolKeranjang = isTersedia 
+                        ? `<button class="add-to-cart-btn" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>`
+                        : `<button class="add-to-cart-btn disabled-btn" disabled>Habis</button>`;
+                    let labelStatus = isTersedia ? '' : '<div class="status-badge-kosong">Tidak Tersedia</div>';
+
                     htmlMenu += `
-                        <div class="menu-item">
+                        <div class="menu-item ${cssKosong}">
+                            ${labelStatus}
                             <div class="dish-name">${makanan.nama_makanan}</div>
                             <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
                             <div class="menu-details">
                                 <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
-                                <button class="add-to-cart-btn" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>
+                                ${tombolKeranjang}
                             </div>
                         </div>
                     `;

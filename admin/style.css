@@ -91,6 +91,11 @@ img.preview {
     border-radius: 6px; 
 }
 
+/* MENU */
+.btn .btn-success, .btn .btn-secondary {
+    width: 100px;
+}
+
 /* FAQ */
 #jawaban_faq {
     min-height: 10%;
