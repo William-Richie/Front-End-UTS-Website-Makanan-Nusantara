@@ -684,3 +684,275 @@ $(document).ready(function () {
         }
     });
 });
+
+$(function () {
+    const rp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
+
+    const rpSingkat = v => v >= 1e6
+        ? 'Rp' + (v / 1e6).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + 'jt'
+        : v >= 1e3
+            ? 'Rp' + Math.round(v / 1e3) + 'K'
+            : 'Rp' + v;
+
+    const esc = s => $('<div>').text(s ?? '').html();
+
+    const tglPendek = iso =>
+        new Date(iso + 'T00:00:00').toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short'
+        });
+
+    const JUDUL = {
+        hari: 'Pendapatan Hari Ini (per Jam)',
+        7: 'Pendapatan 7 Hari Terakhir',
+        30: 'Pendapatan 30 Hari Terakhir',
+        bulan: 'Pendapatan Bulan Ini'
+    };
+
+    const MEDALI = [
+        '<i class="fa-solid fa-medal medal-gold"></i>',
+        '<i class="fa-solid fa-medal medal-silver"></i>',
+        '<i class="fa-solid fa-medal medal-bronze"></i>'
+    ];
+
+    let chart = null;
+    let rangeAktif = '7';
+
+    function hitung($el, target, format) {
+        const mulai = performance.now();
+
+        (function frame(t) {
+            const p = Math.min((t - mulai) / 800, 1);
+
+            $el.text(
+                format(
+                    Math.round(
+                        target * (1 - Math.pow(1 - p, 3))
+                    )
+                )
+            );
+
+            if (p < 1) requestAnimationFrame(frame);
+        })(mulai);
+    }
+
+    function renderGrafik(grafik, range) {
+        const ctx = document
+            .getElementById('chart-pendapatan')
+            .getContext('2d');
+
+        const grad = ctx.createLinearGradient(0, 0, 0, 320);
+
+        grad.addColorStop(0, 'rgba(139, 94, 52, .45)');
+        grad.addColorStop(1, 'rgba(139, 94, 52, 0)');
+
+        const labels = grafik.map(g =>
+            range === 'hari'
+                ? g.label
+                : tglPendek(g.label)
+        );
+
+        const values = grafik.map(g => g.total);
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+            type: 'line',
+
+            data: {
+                labels,
+
+                datasets: [{
+                    data: values,
+                    fill: true,
+                    backgroundColor: grad,
+                    borderColor: '#4a2c17',
+                    borderWidth: 3,
+                    tension: 0.35,
+
+                    pointRadius: values.length > 15 ? 0 : 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#4a2c17'
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                animation: {
+                    duration: 900,
+                    easing: 'easeOutQuart'
+                },
+
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: c => ' ' + rp(c.parsed.y)
+                        }
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: rpSingkat
+                        },
+
+                        grid: {
+                            color: 'rgba(216, 195, 171, .4)'
+                        }
+                    },
+
+                    x: {
+                        grid: {
+                            display: false
+                        },
+
+                        ticks: {
+                            maxTicksLimit: 10
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderTerlaris(list) {
+        if (!list.length) {
+            $('#top-menu').html(
+                '<p class="text-muted mb-0">' +
+                'Belum ada pesanan selesai pada periode ini.' +
+                '</p>'
+            );
+
+            return;
+        }
+
+        const maks = list[0].qty;
+
+        $('#top-menu').html(
+            list.map((m, i) => `
+                <div class="top-item" style="--d:${i * 0.08}s">
+
+                    <div class="top-rank">
+                        ${MEDALI[i] || `<span class="rank-number">${i + 1}</span>`}
+                    </div>
+
+                    <div class="flex-grow-1">
+
+                        <div class="d-flex justify-content-between gap-2">
+                            <strong>${esc(m.nama)}</strong>
+
+                            <span class="text-muted small">
+                                ${m.qty} order
+                                &middot;
+                                ${m.pendapatan ? rp(m.pendapatan) : '-'}
+                            </span>
+                        </div>
+
+                        <div class="top-bar">
+                            <span style="width:${(m.qty / maks) * 100}%"></span>
+                        </div>
+
+                    </div>
+                </div>
+            `).join('')
+        );
+    }
+
+    function renderLaporan(laporan, r) {
+        $('#tabel-laporan tbody').html(
+            laporan.map(l => `
+                <tr>
+                    <td>${tglPendek(l.tanggal)}</td>
+                    <td>${l.pesanan}</td>
+                    <td>${l.item}</td>
+                    <td class="fw-bold text-success">
+                        ${rp(l.pendapatan)}
+                    </td>
+                </tr>
+            `).join('')
+        );
+
+        $('#tabel-laporan tfoot').html(`
+            <tr class="fw-bold">
+                <td>Total</td>
+                <td>${r.pesanan}</td>
+                <td>${r.item}</td>
+                <td>${rp(r.total)}</td>
+            </tr>
+        `);
+    }
+
+    function muat(range) {
+        rangeAktif = range;
+
+        $('.range-btn')
+            .removeClass('active')
+            .filter(`[data-range="${range}"]`)
+            .addClass('active');
+
+        $('#judul-grafik').text(JUDUL[range]);
+
+        $.get('/api/pendapatan', { range })
+            .done(res => {
+                const r = res.ringkasan;
+
+                hitung($('#kpi-total'), r.total, rp);
+                hitung($('#kpi-pesanan'), r.pesanan, String);
+                hitung($('#kpi-item'), r.item, String);
+                hitung($('#kpi-rata'), r.rata, rp);
+
+                renderGrafik(res.grafik, range);
+                renderTerlaris(res.terlaris);
+                renderLaporan(res.laporan, r);
+            })
+            .fail(() => {
+                $('#top-menu').html(
+                    '<p class="text-danger mb-0">' +
+                    'Gagal memuat data pendapatan.' +
+                    '</p>'
+                );
+            });
+    }
+
+    $('.range-btn').on('click', function () {
+        muat($(this).data('range').toString());
+    });
+
+    $('#admin-nav a[data-target="tab-pendapatan"]')
+        .on('click', () => muat(rangeAktif));
+
+    $('#btn-full-report').on('click', function () {
+        const $btn = $(this);
+
+        $('#full-report').slideToggle(300, function () {
+            $btn.text(
+                $(this).is(':visible')
+                    ? 'Tutup Laporan ↑'
+                    : 'View Full Report →'
+            );
+
+            if ($(this).is(':visible')) {
+                $('main').animate({
+                    scrollTop:
+                        $('main').scrollTop() +
+                        $(this).position().top -
+                        20
+                }, 400);
+            }
+        });
+    });
+});

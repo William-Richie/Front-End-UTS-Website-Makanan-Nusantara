@@ -352,3 +352,141 @@ img.preview {
         transform: translateX(0); 
     }
 }
+
+/* Filter periode */
+.range-tabs { 
+    display: inline-flex; 
+    flex-wrap: wrap; 
+    background: #f0e1cf; 
+    border-radius: 50px; 
+    padding: 4px; 
+}
+
+.range-btn {
+    border: 0; 
+    background: transparent; 
+    padding: 7px 16px; 
+    border-radius: 50px;
+    font-weight: 700; 
+    color: #6b4226; 
+    transition: .25s;
+}
+
+.range-btn:hover { 
+    color: #3b2314; 
+}
+
+.range-btn.active { 
+    background: #4a2c17; 
+    color: #fff; 
+    box-shadow: 0 4px 10px rgba(74, 44, 23, .3); 
+}
+
+/* Kartu ringkasan */
+.card.kpi-card {
+    flex-direction: row; 
+    align-items: center; 
+    gap: 14px; 
+    padding: 18px; 
+    height: 100%;
+    animation: kpiUp .5s ease both; 
+    animation-delay: var(--d, 0s); 
+    transition: transform .2s;
+}
+
+.card.kpi-card:hover { 
+    transform: translateY(-4px); 
+}
+
+.kpi-icon {
+    width: 48px; 
+    height: 48px; 
+    flex-shrink: 0; 
+    border-radius: 14px; 
+    background: #f0e1cf;
+    color: #4a2c17; 
+    display: grid; 
+    place-items: center; 
+    font-size: 1.3rem;
+}
+
+.kpi-label { 
+    font-size: .8rem; 
+    color: #8a6d55; 
+    margin: 0; }
+
+.kpi-value { 
+    font-size: 1.35rem; 
+    font-weight: 700; 
+    color: #3b2314; 
+    margin: 0; 
+    line-height: 1.2; }
+
+/* Menu terlaris */
+.top-item {
+    display: flex; 
+    align-items: center; 
+    gap: 14px; 
+    padding: 12px 0; 
+    border-bottom: 1px solid #eee2d5;
+    animation: kpiUp .5s ease both; 
+    animation-delay: var(--d, 0s);
+}
+
+.top-item:last-child { 
+    border-bottom: 0; 
+}
+
+.top-rank {
+    width: 40px;
+    min-width: 40px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #8b5e34;
+}
+
+.top-rank .fa-medal {
+    font-size: 1.35rem;
+}
+
+.medal-gold {
+    color: #d4a017;
+}
+
+.medal-silver {
+    color: #9da3a8;
+}
+
+.medal-bronze {
+    color: #b87333;
+}
+
+.rank-number {
+    font-size: 1.15rem;
+    color: #8b5e34;
+}
+.top-bar { 
+    height: 8px; 
+    background: #f0e1cf; 
+    border-radius: 8px; 
+    margin-top: 6px; 
+    overflow: hidden; 
+}
+
+.top-bar span {
+    display: block; 
+    height: 100%; 
+    border-radius: 8px; 
+    transform-origin: left;
+    background: linear-gradient(90deg, #8b5e34, #4a2c17);
+    animation: barGrow .9s ease both; 
+    animation-delay: var(--d, 0s);
+}
+
+@keyframes kpiUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes barGrow { from { transform: scaleX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .card.kpi-card, .top-item, .top-bar span { animation: none; }
+}

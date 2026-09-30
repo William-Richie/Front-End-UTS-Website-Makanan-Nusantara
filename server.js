@@ -364,3 +364,79 @@ app.put('/api/pesanan/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+/* PENDAPATAN */
+const WIB = 'Asia/Jakarta';
+const tglWIB = (d) => new Date(d).toLocaleDateString('en-CA', { timeZone: WIB });
+const jamWIB = (d) => new Date(d).toLocaleString('en-GB', { timeZone: WIB, hour: '2-digit', hourCycle: 'h23' });
+
+function daftarTanggal(n) {
+    const hariIni = tglWIB(Date.now());
+    const out = [];
+    for (let i = n - 1; i >= 0; i--) {
+        const d = new Date(hariIni + 'T00:00:00Z');
+        d.setUTCDate(d.getUTCDate() - i);
+        out.push(d.toISOString().slice(0, 10));
+    }
+    return out;
+}
+
+app.get('/api/pendapatan', async (req, res) => {
+    try {
+        const range = req.query.range || '7'; // hari | 7 | 30 | bulan
+        const hariIni = tglWIB(Date.now());
+        const n = range === 'hari' ? 1 : range === '30' ? 30 : range === 'bulan' ? parseInt(hariIni.slice(8, 10)) : 7;
+        const tanggal = daftarTanggal(n);
+
+        const [{ data: rows, error }, { data: menu }] = await Promise.all([
+            supabase.from('pesanan').select('item, total, created_at')
+                .eq('status', 'selesai')
+                .gte('created_at', `${tanggal[0]}T00:00:00+07:00`),
+            supabase.from('menu').select('nama_makanan, harga')
+        ]);
+        if (error) throw error;
+
+        const harga = {};
+        (menu || []).forEach(m => { harga[m.nama_makanan.trim().toLowerCase()] = m.harga; });
+
+        const perHari = {};
+        tanggal.forEach(t => { perHari[t] = { tanggal: t, pesanan: 0, item: 0, pendapatan: 0 }; });
+        const perJam = Array.from({ length: 24 }, (_, i) => ({ label: String(i).padStart(2, '0') + ':00', total: 0 }));
+        const perMenu = {};
+        let total = 0, totalItem = 0, totalPesanan = 0;
+
+        (rows || []).forEach(r => {
+            const t = tglWIB(r.created_at);
+            if (!perHari[t]) return;
+
+            const nilai = Number(r.total) || 0;
+            const daftar = String(r.item || '').replace(/^\[[^\]]*\]\s*/, '').split(',').map(s => s.trim()).filter(Boolean);
+
+            perHari[t].pesanan++;
+            perHari[t].item += daftar.length;
+            perHari[t].pendapatan += nilai;
+            perJam[parseInt(jamWIB(r.created_at), 10)].total += nilai;
+
+            daftar.forEach(nama => {
+                const key = nama.toLowerCase();
+                if (!perMenu[key]) perMenu[key] = { nama, qty: 0, pendapatan: 0 };
+                perMenu[key].qty++;
+                perMenu[key].pendapatan += harga[key] || 0;
+            });
+
+            total += nilai;
+            totalItem += daftar.length;
+            totalPesanan++;
+        });
+
+        const hari = Object.values(perHari);
+        res.json({
+            ringkasan: { total, pesanan: totalPesanan, item: totalItem, rata: totalPesanan ? Math.round(total / totalPesanan) : 0 },
+            grafik: range === 'hari' ? perJam : hari.map(h => ({ label: h.tanggal, total: h.pendapatan })),
+            terlaris: Object.values(perMenu).sort((a, b) => b.qty - a.qty).slice(0, 5),
+            laporan: [...hari].reverse()
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
