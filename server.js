@@ -363,8 +363,7 @@ app.get('/api/maps', async (req, res) => {
         const { data, error } = await supabase
             .from('maps')
             .select('*')
-            .eq('id', 1)
-            .single();
+            .order('id', { ascending: true });
             
         if (error) throw error;
         res.json(data);
@@ -374,16 +373,18 @@ app.get('/api/maps', async (req, res) => {
 });
 
 /* Put */
-app.put('/api/maps', async (req, res) => {
+app.put('/api/maps/:id', async (req, res) => {
     try {
+        const branchId = req.params.id;
         const { latitude, longitude } = req.body;
+        
         const { error } = await supabase
             .from('maps')
             .update({ latitude, longitude })
-            .eq('id', 1);
+            .eq('id', branchId);
             
         if (error) throw error;
-        res.json({ pesan: 'Lokasi restoran berhasil diperbarui di database!' });
+        res.json({ pesan: 'Lokasi cabang berhasil diupdate!' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

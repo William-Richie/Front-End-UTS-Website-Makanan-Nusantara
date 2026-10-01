@@ -266,18 +266,76 @@
     </section>
 
     <!-- Location Section -->
-    <section id="location" class="page-section">
-        <div class="hero-banner reveal">
-            <h1>Let's See Our<br>Restaurant Location</h1>
+    <section id="location" class="page-section loc-section">
+        <div class="loc-motif" aria-hidden="true"></div>
+
+        <!-- Hero lokasi -->
+        <div class="loc-hero">
+            <span class="loc-rings" aria-hidden="true"></span>
+
+            <div class="container text-center position-relative" style="z-index:1">
+                <p class="hero-eyebrow reveal">Temukan Kami</p>
+                <h1 class="loc-title reveal" style="--d:.15s">Let's See Our<br>Restaurant Location</h1>
+                <ul class="loc-chips reveal" style="--d:.3s">
+                    <li><i class="fa-solid fa-store"></i>5 Cabang</li>
+                    <li><i class="fa-solid fa-route"></i>Jakarta hingga Papua</li>
+                </ul>
+            </div>
         </div>
-        <div class="content-container text-content">
-            <h2>Kunjungi Kami</h2>
-            <p><strong>Alamat:</strong> Jl. Cendrawasih No. 45, Jakarta</p>
-            <p><strong>Telepon:</strong> (021) 1234-5678</p>
-            <p><strong>Email:</strong> halo@papedarestaurant.com</p>
-            <br>
-            <p><em>*Tersedia area parkir yang luas untuk kendaraan roda dua maupun roda empat.</em></p>
-            <div id="map-user"></div>
+
+        <div class="loc-wrap">
+            <div class="loc-grid">
+                <article class="loc-intro reveal">
+                    <p class="loc-kicker">Rasakan Cita Rasa Kami</p>
+                    <h2>Hangatnya Sajian, Rasa Timur Nusantara</h2>
+                    <p class="loc-desc">Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.</p>
+                    <button type="button" id="btn-open-map" class="btn-map-open" aria-expanded="false" aria-controls="map-reveal">
+                        <i class="fa-solid fa-location-dot me-2"></i><span>Lihat Peta Cabang</span>
+                    </button>
+                </article>
+
+                <ul class="loc-cards">
+                    <li class="reveal" style="--d:.1s">
+                        <div class="loc-card">
+                            <span class="loc-icon"><i class="fa-solid fa-location-dot"></i></span>
+                            <div><h3>Cabang Utama</h3><p>Jl. Cendrawasih No. 45, Jakarta</p></div>
+                        </div>
+                    </li>
+                    <li class="reveal" style="--d:.2s">
+                        <a class="loc-card" href="tel:+622112345678">
+                            <span class="loc-icon"><i class="fa-solid fa-phone"></i></span>
+                            <div><h3>Telepon</h3><p>(021) 1234-5678</p></div>
+                        </a>
+                    </li>
+                    <li class="reveal" style="--d:.3s">
+                        <a class="loc-card" href="mailto:halo@papedarestaurant.com">
+                            <span class="loc-icon"><i class="fa-solid fa-envelope"></i></span>
+                            <div><h3>Email</h3><p>halo@papedarestaurant.com</p></div>
+                        </a>
+                    </li>
+                    <li class="reveal" style="--d:.4s">
+                        <div class="loc-card">
+                            <span class="loc-icon"><i class="fa-solid fa-square-parking"></i></span>
+                            <div><h3>Parkir</h3><p>Area luas untuk roda dua maupun roda empat</p></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="map-reveal" class="map-reveal" aria-hidden="true">
+                <div class="map-reveal-inner">
+                    <div class="map-panel">
+                        <div id="branch-list" class="branch-list" role="group" aria-label="Pilih cabang"></div>
+                        <div class="map-status">
+                            <span id="map-status" aria-live="polite"></span>
+                            <button type="button" id="btn-auto-tour" class="btn-auto" hidden>
+                                <i class="fa-solid fa-rotate me-1"></i>Jelajah otomatis
+                            </button>
+                        </div>
+                        <div id="map-user"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
