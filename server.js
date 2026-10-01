@@ -229,6 +229,7 @@ app.put('/api/me', auth, async (req, res) => {
 });
 
 /* RESERVASI */
+/* User */
 app.post('/api/reservasi', auth, async (req, res) => {
     try {
         const { gerai, nama, email, telepon, tanggal, jumlah, sesi, jam, ruangan, catatan } = req.body;
@@ -268,6 +269,91 @@ app.put('/api/reservasi/:id/batal', auth, async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server backend (Supabase) berjalan di http://localhost:${port}`);
+});
+
+/* admin */
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        const { data: users, error: userError } = await supabase
+            .from('users')
+            .select('id, nama, email, created_at')
+            .order('created_at', { ascending: true });
+
+        if (userError) throw userError;
+
+        const { data: reservasi, error: resError } = await supabase
+            .from('reservasi')
+            .select('user_id');
+
+        if (resError) throw resError;
+
+        const usersWithCount = (users || []).map(u => ({
+            ...u,
+            total_reserve: (reservasi || []).filter(r => r.user_id === u.id).length
+        }));
+
+        res.json({ data: usersWithCount });
+    } catch (err) {
+        console.error("Error /api/admin/users:", err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        const { data: users, error: userErr } = await supabase
+            .from('users')
+            .select('id, nama, email, created_at')
+            .order('created_at', { ascending: true });
+
+        if (userErr) throw userErr;
+
+        const { data: reservasi, error: resErr } = await supabase
+            .from('reservasi')
+            .select('user_id');
+
+        if (resErr) throw resErr;
+
+        const usersWithCount = users.map(user => {
+            const totalReserve = reservasi.filter(r => r.user_id === user.id).length;
+            return {
+                ...user,
+                total_reserve: totalReserve
+            };
+        });
+
+        res.json({ data: usersWithCount });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/admin/reservasi', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('reservasi')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json({ data });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/admin/reservasi/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        const { error } = await supabase
+            .from('reservasi')
+            .update({ status })
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+        res.json({ pesan: `Status berhasil diubah menjadi ${status}` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 /* MAPS */

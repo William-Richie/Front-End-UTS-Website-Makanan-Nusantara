@@ -34,7 +34,7 @@
                 <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
             </li>
             <li class="nav-item mb-2">
-                <a href="#" data-target="tab-reservasi" class="nav-link text-white">Kelola Reservasi</a>
+                <a href="#" data-target="tab-reservasi" class="nav-link text-white">User & Reservasi</a>
             </li>
             <li class="nav-item mb-2">
                 <a href="#" data-target="tab-pesanan" class="nav-link text-white"></i>Kelola Pesanan</a>
@@ -268,32 +268,77 @@
         </section>
 
         <!-- TAB 6: KELOLA RESERVASI -->
-         <section id="tab-reservasi" class="tab-section">
+        <section id="tab-reservasi" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
-                <h1 id="judul-form-faq" class="fs-4 fw-bold mb-4">Kelola Gerai</h1>
-
-                <div class="reservation-tabs">
-                    <button class="tab-btn active" data-status="pending">Pending <span class="badge" id="count-pending">0</span></button>
-                    <button class="tab-btn" data-status="approved">Approved <span class="badge" id="count-approved">0</span></button>
-                    <button class="tab-btn" data-status="complete">Complete <span class="badge" id="count-complete">0</span></button>
+                <h1 class="fs-4 fw-bold mb-4">Kelola User & Reservasi</h1>
+                <div class="reservation-tabs mb-4">
+                    <button class="tab-btn active" data-tab="tab-user">
+                        Users <span class="badge" id="count-user">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-reservasi" data-status="pending">
+                        Pending <span class="badge" id="count-pending">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-reservasi" data-status="approved">
+                        Approved <span class="badge" id="count-approved">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-reservasi" data-status="complete">
+                        Complete <span class="badge" id="count-complete">0</span>
+                    </button>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Gerai</th>
-                                <th>Nama Tamu</th>
-                                <th>Kontak</th>
-                                <th>Tanggal & Waktu</th>
-                                <th>Jumlah Tamu</th>
-                                <th>Ruangan</th>
-                                <th>Catatan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>      
-                        <tbody id="reservation-table-body"></tbody>
-                    </table>
+                <div id="panel-tab-user">
+                    <div id="user-action-bar" class="d-none d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
+                        <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <select id="user-action-select" class="form-select form-select-sm" style="width: auto;">
+                                <option value="" disabled selected>Pilih Aksi...</option>
+                                <option value="modifikasi">✏️ Modifikasi Akun</option>
+                                <option value="blokir">🚫 Blokir Akun</option>
+                                <option value="hapus">🗑️ Hapus Akun</option>
+                            </select>
+                            <button id="btn-eksekusi-user-aksi" class="btn btn-sm btn-dark fw-bold">Terapkan</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 40px; text-align: center;">
+                                        <input type="checkbox" id="check-all-users" class="form-check-input">
+                                    </th>
+                                    <th>User ID</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Tanggal Pembuatan</th>
+                                    <th>Jumlah Reserve</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-tab-reservasi" class="d-none">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Gerai</th>
+                                    <th>Nama Tamu</th>
+                                    <th>Kontak</th>
+                                    <th>Tanggal & Waktu</th>
+                                    <th>Jumlah Tamu</th>
+                                    <th>Ruangan</th>
+                                    <th>Catatan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>      
+                            <tbody id="reservation-table-body">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>

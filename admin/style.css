@@ -224,6 +224,16 @@ img.preview {
     color: white;
 }
 
+.admin-table th,
+.table th {
+    text-transform: none; 
+    font-size: 14px;
+    font-weight: 600; 
+    white-space: nowrap;
+    padding: 12px 14px;
+    letter-spacing: normal;
+}
+
 .reservation-tabs {
     display: flex;
     gap: 8px;
