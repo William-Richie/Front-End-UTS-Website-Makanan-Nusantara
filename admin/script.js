@@ -370,7 +370,6 @@ $(document).ready(function() {
 
     function fetchPesanan() {
         $.get('/api/pesanan', function(response) {
-            // Asumsi server.js mereturn JSON: { data: [...] }
             daftarPesanan = response.data || [];
             updateCountPesanan();
             renderTabelPesanan(tabPesananAktif);
@@ -577,112 +576,156 @@ $(document).ready(function() {
     });
 });
 
-$(document).ready(function () {
-    let reservasiList = [
-        {
-            id: 1,
-            gerai: "Gerai A (Jakarta)",
-            nama: "Budi Santoso",
-            telepon: "08123456789",
-            email: "budi@gmail.com",
-            tanggal: "2026-10-02",
-            jam: "12:56",
-            sesi: "Afternoon",
-            tamu: 4,
-            ruangan: "VIP Room 1 (1 Table)",
-            catatan: "Dekat jendela jika ada",
-            status: "pending"
-        },
-        {
-            id: 2,
-            gerai: "Gerai B (Bandung)",
-            nama: "Siti Rahma",
-            telepon: "08567890123",
-            email: "siti@gmail.com",
-            tanggal: "2026-10-02",
-            jam: "18:30",
-            sesi: "Evening",
-            tamu: 2,
-            ruangan: "Reguler Indoor",
-            catatan: "-",
-            status: "approved"
-        }
-    ];
+/* Reservasi */
+$(function () {
+    let semuaReservasi = [];
 
-    let currentTab = 'pending';
+    async function loadDataUsers() {
+        try {
+            const res = await fetch('/api/admin/users');
+            const result = await res.json();
+            const users = result.data || [];
 
-    function updateCounts() {
-        $('#count-pending').text(reservasiList.filter(item => item.status === 'pending').length);
-        $('#count-approved').text(reservasiList.filter(item => item.status === 'approved').length);
-        $('#count-complete').text(reservasiList.filter(item => item.status === 'complete').length);
-    }
+            $('#count-user').text(users.length);
 
-    function renderTabel(statusFilter) {
-        let filtered = reservasiList.filter(item => item.status === statusFilter);
-        let $tbody =$('#reservation-table-body');
-        $tbody.empty();
+            const $tbody =$('#user-table-body');
+            $tbody.empty();
 
-        if (filtered.length === 0) {
-            $tbody.html('<tr><td colspan="8" style="text-align: center; color: #888; padding: 20px;">Tidak ada reservasi pada status ini.</td></tr>');
-            return;
-        }
-
-        filtered.forEach(function (res) {
-            let actionBtn = '';
-        
-            if (res.status === 'pending') {
-                actionBtn = `<button class="btn-action btn-approve" data-id="${res.id}">✓ Konfirmasi</button>`;
-            } else if (res.status === 'approved') {
-                actionBtn = `<button class="btn-action btn-complete" data-id="${res.id}">✓ Konfirmasi</button>`;
-            } else if (res.status === 'complete') {
-                actionBtn = `<span class="status-badge-done">Selesai</span>`;
+            if (users.length === 0) {
+                $tbody.html('<tr><td colspan="6" class="text-center text-muted py-4">Belum ada user terdaftar.</td></tr>');
+                return;
             }
 
-            let rowHtml = `
-                <tr>
-                    <td><strong>${res.gerai}</strong></td>
-                    <td>${res.nama}</td>
-                    <td>${res.telepon}<br><small style="color: #777;">${res.email}</small></td>
-                    <td>${res.tanggal}<br><small>${res.jam} (${res.sesi})</small></td>
-                    <td>${res.tamu} Orang</td>
-                    <td>${res.ruangan}</td>
-                    <td>${res.catatan}</td>
-                    <td>${actionBtn}</td>
-                </tr>
-            `;
-            $tbody.append(rowHtml);
-        });
+            const rows = users.map((u, i) => {
+                const formattedId = String(i + 1).padStart(5, '0');
+                const tgl = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
+                
+                return `
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input user-row-check" value="${u.id}">
+                        </td>
+                        <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
+                        <td><strong>${u.nama || '-'}</strong></td>
+                        <td>${u.email || '-'}</td>
+                        <td>${tgl}</td>
+                        <td><span class="badge bg-secondary">${u.total_reserve ?? 0} Kali</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            $tbody.html(rows);
+            syncAction();
+        } catch (err) {
+            console.error('Gagal mengambil data user:', err);
+        }
     }
 
-    updateCounts();
-    renderTabel(currentTab);
+    async function loadDataReservasi(statusFilter = 'pending') {
+        try {
+            const res = await fetch('/api/admin/reservasi');
+            const result = await res.json();
+            semuaReservasi = result.data || [];
 
-    $('.tab-btn').on('click', function () {
-        $('.tab-btn').removeClass('active');$(this).addClass('active');
+            $('#count-pending').text(semuaReservasi.filter(r => r.status === 'pending').length);
+            $('#count-approved').text(semuaReservasi.filter(r => r.status === 'approved').length);
+            $('#count-complete').text(semuaReservasi.filter(r => r.status === 'complete').length);
 
-        currentTab = $(this).data('status');
-        renderTabel(currentTab);
-    });
+            const filtered = semuaReservasi.filter(r => r.status === statusFilter);
+            const $tbody =$('#reservation-table-body');
+            $tbody.empty();
 
-    $('#reservation-table-body').on('click', '.btn-approve', function () {
-        let id = $(this).data('id');
-        let item = reservasiList.find(r => r.id === id);
-        if (item) {
-            item.status = 'approved';
-            updateCounts();
-            renderTabel(currentTab);
+            if (filtered.length === 0) {
+                $tbody.html('<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada reservasi pada status ini.</td></tr>');
+                return;
+            }
+
+            const rows = filtered.map(r => `
+                <tr>
+                    <td><strong>${r.gerai || '-'}</strong></td>
+                    <td>${r.nama || '-'}</td>
+                    <td>${r.telepon || '-'}<br><small class="text-muted">${r.email || '-'}</small></td>
+                    <td>${r.tanggal || '-'}<br><small>${r.jam || ''} (${r.sesi || ''})</small></td>
+                    <td>${r.jumlah || 0} Orang</td>
+                    <td>${r.ruangan || '-'}</td>
+                    <td>${r.catatan || '-'}</td>
+                    <td>
+                        ${r.status === 'complete' 
+                            ? '<span class="badge bg-success">Selesai</span>'
+                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${r.id}" data-next="${r.status === 'pending' ? 'approved' : 'complete'}">✓ Konfirmasi</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+
+            $tbody.html(rows);
+        } catch (err) {
+            console.error('Gagal mengambil data reservasi:', err);
+        }
+    }
+
+    $('.reservation-tabs .tab-btn').on('click', function () {
+        $('.reservation-tabs .tab-btn').removeClass('active');$(this).addClass('active');
+
+        const isUserTab = $(this).data('tab') === 'tab-user';$('#panel-tab-user').toggleClass('d-none', !isUserTab);
+        $('#panel-tab-reservasi').toggleClass('d-none', isUserTab);
+
+        if (isUserTab) {
+            loadDataUsers();
+        } else {
+            loadDataReservasi($(this).data('status'));
         }
     });
 
-    $('#reservation-table-body').on('click', '.btn-complete', function () {
-        let id = $(this).data('id');
-        let item = reservasiList.find(r => r.id === id);
-        if (item) {
-            item.status = 'complete';
-            updateCounts();
-            renderTabel(currentTab);
+    $('#reservation-table-body').on('click', '.btn-confirm', async function () {
+        const id = $(this).data('id');
+        const nextStatus = $(this).data('next');
+
+        try {
+            const res = await fetch(`/api/admin/reservasi/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: nextStatus })
+            });
+
+            if (res.ok) {
+                const currentStatus = $('.reservation-tabs .tab-btn.active').data('status');
+                loadDataReservasi(currentStatus);
+            }
+        } catch (err) {
+            console.error('Gagal memperbarui status reservasi:', err);
         }
     });
+
+    const syncAction = () => {
+        const checked = $('.user-row-check:checked');$('#user-action-bar').toggleClass('d-none', checked.length === 0);
+        $('#selected-user-count').text(`${checked.length} akun dipilih`);
+        $('#check-all-users').prop('checked', checked.length > 0 && checked.length === $('.user-row-check').length);
+    };
+
+    $(document).on('change', '#check-all-users', function () {
+        $('.user-row-check').prop('checked', this.checked);
+        syncAction();
+    }).on('change', '.user-row-check', syncAction);
+
+    $('#btn-eksekusi-user-aksi').on('click', function () {
+        const aksi = $('#user-action-select').val();
+        const ids = $('.user-row-check:checked').map((_, el) => el.value).get();
+        
+        if (!aksi || !ids.length) return alert('Pilih aksi dan minimal 1 akun!');
+        
+        if (aksi === 'hapus' && confirm(`Hapus permanen ${ids.length} akun terpilih?`)) {
+            console.log('Hapus ID:', ids);
+        } else if (aksi === 'blokir') {
+            alert(`${ids.length} akun diblokir.`);
+        } else if (aksi === 'modifikasi') {
+            ids.length === 1 ? console.log('Edit ID:', ids[0]) : alert('Pilih 1 akun saja untuk diedit.');
+        }
+        $('#user-action-select').val('');
+    });
+
+    loadDataUsers();
+    loadDataReservasi('pending');
 });
 
 $(function () {
