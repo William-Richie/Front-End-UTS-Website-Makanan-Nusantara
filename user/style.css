@@ -379,8 +379,46 @@ main {
     padding: 24px;
 }
 
-.submit { background-color: #5b3e31; border: none; }
-.submit:hover { background-color: #4a2c17; color: #fff; }
+.submit { 
+    background-color: #5b3e31; border: none; 
+}
+
+.submit:hover { 
+    background-color: #4a2c17; color: #fff; 
+}
+
+/* Footer */
+footer {
+    background-color: #4a2c17; 
+    border-top: 1px solid #eaddcf;
+    color: #fdfaf6;
+}
+
+.custom-social-btn {
+    background-color: #5a3a22;
+    color: #ffffff !important;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 0 !important;
+    outline: none !important;
+    transition: all 0.3s ease-in-out;
+    box-shadow: none !important;
+}
+
+.custom-social-btn i {
+    pointer-events: none;
+}
+
+.custom-social-btn:hover {
+    background-color: #835532;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
 
 /* Floating Button */
 .fab-container { 

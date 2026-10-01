@@ -239,11 +239,20 @@ img.preview {
     font-weight: bold;
 }
 
-.tab-btn.active {
+.tab-btn span {
+    color: #3b2314;
+}
+
+.tab-btn.active  {
     background: #4a2c17;
     color: #ffffff;
     border-color: #4a2c17;
 }
+
+.tab-btn.active span.badge {
+    color: #ffffff !important;
+}
+
 
 /* Live Preview */
 .hero-papeda {
