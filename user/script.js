@@ -316,22 +316,161 @@ $(document).ready(function() {
     });
 
     /* Maps */
-    $.get('http://localhost:3000/api/maps', function(data) {
-        let latResto = (data && data.latitude) ? parseFloat(data.latitude) : -6.200000;
-        let lngResto = (data && data.longitude) ? parseFloat(data.longitude) : 106.816666;
+    const CABANG = [
+        { id: 'gerai-a', nama: 'Gerai A', kota: 'Jakarta', alamat: 'Jl. Cendrawasih No. 45, Jakarta', lat: -6.2000,  lng: 106.8166 },
+        { id: 'gerai-b', nama: 'Gerai B', kota: 'Bandung', alamat: 'Bandung, Jawa Barat',             lat: -6.9175,  lng: 107.6191 },
+        { id: 'gerai-c', nama: 'Gerai C', kota: 'Bogor',   alamat: 'Bogor, Jawa Barat',               lat: -6.5971,  lng: 106.8060 },
+        { id: 'gerai-d', nama: 'Gerai D', kota: 'Jawa',    alamat: 'Surabaya, Jawa Timur',            lat: -7.2575,  lng: 112.7521 },
+        { id: 'gerai-e', nama: 'Gerai E', kota: 'Papua',   alamat: 'Jayapura, Papua',                 lat: -2.5337,  lng: 140.7181 }
+    ];
+    const HOP_MIN = 3000, HOP_MAX = 5000;
 
-        let mapUser = L.map('map-user').setView([latResto, lngResto], 15);
+    let mapUser = null, pinMarker = null;
+    let hopTimer = null, hopIndex = 0;
+    let isLocked = false, arrived = true, targetBranch = CABANG[0];
+
+    $('#branch-list').html(CABANG.map(c => `
+        <button type="button" class="branch-card" data-id="${c.id}">
+            <i class="fa-solid fa-location-dot"></i>
+            <strong>${c.nama}</strong>
+            <small>${c.kota}</small>
+        </button>`).join(''));
+
+    $.get('http://localhost:3000/api/maps', function(data) {
+        if (data && Array.isArray(data) && data.length >= 5) {
+            for (let i = 0; i < 5; i++) {
+                let newLat = parseFloat(data[i].latitude);
+                let newLng = parseFloat(data[i].longitude);
+                
+                if (!isNaN(newLat) && !isNaN(newLng)) {
+                    CABANG[i].lat = newLat;
+                    CABANG[i].lng = newLng;
+                }
+            }
+            
+            if (mapUser && !isLocked && targetBranch.id === 'gerai-a') {
+                pinMarker.setLatLng([CABANG[0].lat, CABANG[0].lng]);
+                mapUser.setView([CABANG[0].lat, CABANG[0].lng], mapUser.getZoom());
+            }
+        }
+    }).fail(function() {
+        console.warn("Gagal terhubung ke database peta.");
+    });
+
+    const popupHtml = c => `<b>Papeda Restaurant - ${c.nama}</b><br>${c.alamat}`;
+
+    function updateUI(c) {
+        $('.branch-card').removeClass('active').filter(`[data-id="${c.id}"]`).addClass('active');
+        $('#branch-list').toggleClass('is-locked', isLocked);
+        $('#btn-auto-tour').prop('hidden', !isLocked);
+        $('#map-status').text(isLocked
+            ? `Lokasi dipilih: ${c.nama} - ${c.kota}`
+            : `Menjelajahi cabang... ${c.nama} - ${c.kota}`);
+    }
+
+    function dropPin() {
+        if (!pinMarker) return;
+        const pin = pinMarker.getElement().querySelector('.pin');
+        if (pin) {
+            pin.classList.remove('drop');
+            void pin.offsetWidth;
+            pin.classList.add('drop');
+        }
+    }
+
+    function onArrive() {
+        if (arrived) return;
+        arrived = true;
+        pinMarker.setLatLng([targetBranch.lat, targetBranch.lng])
+                 .setPopupContent(popupHtml(targetBranch))
+                 .setOpacity(1)
+                 .openPopup();
+        dropPin();
+    }
+
+    function goTo(c, zoom, duration) {
+        targetBranch = c;
+        arrived = false;
+        updateUI(c);
+        pinMarker.closePopup().setOpacity(0);
+
+        const dekat = mapUser.getCenter().distanceTo([c.lat, c.lng]) < 50;
+        if (dekat) mapUser.setView([c.lat, c.lng], zoom, { animate: true });
+        else       mapUser.flyTo([c.lat, c.lng], zoom, { duration: duration });
+    }
+
+    function scheduleHop() {
+        clearTimeout(hopTimer);
+        hopTimer = setTimeout(function() {
+            hopIndex = (hopIndex + 1) % CABANG.length;
+            goTo(CABANG[hopIndex], 15, 1.8);
+            scheduleHop();
+        }, HOP_MIN + Math.random() * (HOP_MAX - HOP_MIN));
+    }
+
+    function stopHop() {
+        clearTimeout(hopTimer);
+        hopTimer = null;
+    }
+
+    function initMap() {
+        if (mapUser) return;
+
+        const c = targetBranch;
+
+        mapUser = L.map('map-user', { scrollWheelZoom: false }).setView([c.lat, c.lng], 15);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapUser);
 
-        L.marker([latResto, lngResto]).addTo(mapUser)
-            .bindPopup('<b>Papeda Restaurant</b><br>Jl. Cendrawasih No. 45, Jakarta.')
-            .openPopup();
-            
-    }).fail(function() {
-        console.error("Gagal memuat data peta dari database.");
+        pinMarker = L.marker([c.lat, c.lng], {
+            icon: L.divIcon({
+                className: 'papeda-pin',
+                html: '<span class="pin"><i class="fa-solid fa-utensils"></i></span>',
+                iconSize: [38, 38],
+                iconAnchor: [19, 46],
+                popupAnchor: [0, -46]
+            })
+        }).addTo(mapUser)
+          .bindPopup(popupHtml(c), { autoPan: false })
+          .openPopup();
+
+        mapUser.on('moveend', onArrive);
+        updateUI(c);
+        setTimeout(dropPin, 100);
+    }
+
+    $('#btn-open-map').on('click', function() {
+        const opening = !$('#map-reveal').hasClass('open');
+
+        $('#map-reveal').toggleClass('open', opening).attr('aria-hidden', !opening);
+        $(this).attr('aria-expanded', opening).find('span').text(opening ? 'Tutup Peta' : 'Lihat Peta Cabang');
+
+        if (!opening) {
+            stopHop();
+            return;
+        }
+
+        initMap();
+        setTimeout(() => mapUser.invalidateSize(), 900);
+        if (!isLocked) scheduleHop();
+    });
+
+    $('#branch-list').on('click', '.branch-card', function() {
+        if (!mapUser) return;
+        const c = CABANG.find(x => x.id === $(this).data('id'));
+
+        isLocked = true;
+        stopHop();
+        hopIndex = CABANG.indexOf(c);
+        goTo(c, 16, 1.2);
+    });
+
+    $('#btn-auto-tour').on('click', function() {
+        isLocked = false;
+        updateUI(targetBranch);
+        scheduleHop();
     });
 
     // reservation
