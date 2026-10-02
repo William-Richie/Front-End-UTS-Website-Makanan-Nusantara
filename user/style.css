@@ -659,36 +659,35 @@ main {
     display: flex; 
     flex-wrap: nowrap; 
     gap: 10px;
-    overflow-x: auto; /* Ini akan memunculkan scrollbar otomatis jika isi melebihi layar */
-    padding: 4px 2px 12px; /* Padding bawah memberi ruang agar scrollbar tidak menabrak shadow */
+    overflow-x: auto; 
+    padding: 4px 2px 12px;
     scroll-snap-type: x proximity;
     scrollbar-width: thin;
     scrollbar-color: #8b5e34 #fffaf3;
 }
 
-/* Styling Scrollbar Chrome/Safari/Edge */
 .branch-list::-webkit-scrollbar {
-    height: 8px; /* Ketebalan scrollbar */
+    height: 8px; /
 }
 
 .branch-list::-webkit-scrollbar-track {
-    background: #fffaf3; /* Warna jalur background */
+    background: #fffaf3; 
     border-radius: 10px;
 }
 
 .branch-list::-webkit-scrollbar-thumb {
-    background: #8b5e34; /* Warna batang scrollbar (sesuai ikon) */
+    background: #8b5e34;
     border-radius: 10px;
-    border: 2px solid #fffaf3; /* Memberi jarak agar tidak terlalu menempel */
+    border: 2px solid #fffaf3;
 }
 
 .branch-list::-webkit-scrollbar-thumb:hover {
-    background: #5b3e31; /* Warna lebih gelap saat disentuh kursor */
+    background: #5b3e31; 
 }
 
 .branch-card {
-    flex: 0 0 auto; /* Ukuran fleksibel mengikuti isi teks, tapi tidak akan tergencet */
-    min-width: 176px; /* Lebar dasar agar bentuknya kembali persegi panjang */
+    flex: 0 0 auto; 
+    min-width: 176px;
     white-space: nowrap;
     scroll-snap-align: start;
     display: flex; flex-direction: column; align-items: center; gap: 2px;
