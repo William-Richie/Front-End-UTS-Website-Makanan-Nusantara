@@ -25,6 +25,9 @@
                 <a href="#" data-target="tab-menu" class="nav-link text-white">Kelola Menu</a>
             </li>
             <li class="nav-item mb-2">
+                <a href="#" data-target="tab-favorit" class="nav-link text-white">Kelola Menu Favorit</a>
+            </li>
+            <li class="nav-item mb-2">
                 <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
             </li>
             <li class="nav-item mb-2">
@@ -205,7 +208,151 @@
             </div>
         </section>
 
-        <!-- TAB 3: KELOLA KONTEN -->
+        <!-- TAB 3: KELOLA MENU FAVORIT -->
+        <section id="tab-favorit" class="tab-section">
+            <div class="card shadow-sm border-0 p-4 mb-4">
+                <h1 class="fs-4 fw-bold mb-2">Kelola Menu Favorit (Chef's Recommendation)</h1>
+                <p class="text-muted mb-4">Pilih 5 menu yang akan ditampilkan pada animasi orbit di halaman utama pengunjung.</p>
+                <div class="row g-4">
+                    <div class="col-md-7">
+                        <form id="form-favorit">
+                            <!-- SLOT 1 -->
+                            <div class="mb-3 custom-select-wrapper" id="wrapper-slot-1">
+                                <label class="form-label fw-semibold">Slot 1 (Tengah Bawah)</label>
+                                <div class="custom-select-box">
+                                    <div class="selected-display" tabindex="0">
+                                        <span class="selected-text">-- Pilih Menu --</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="dropdown-list-container shadow">
+                                        <div class="search-box p-2 border-bottom">
+                                            <input type="text" class="form-control form-control-sm search-input" placeholder="Cari menu...">
+                                        </div>
+                                        <ul class="options-list list-unstyled m-0" id="fav-list-1" data-slot="1">
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="fav-slot-1" name="fav_slot_1">
+                                </div>
+                            </div>
+
+                            <!-- SLOT 2 -->
+                            <div class="mb-3 custom-select-wrapper" id="wrapper-slot-2">
+                                <label class="form-label fw-semibold">Slot 2 (Kiri Bawah)</label>
+                                <div class="custom-select-box">
+                                    <div class="selected-display" tabindex="0">
+                                        <span class="selected-text">-- Pilih Menu --</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="dropdown-list-container shadow">
+                                        <div class="search-box p-2 border-bottom">
+                                            <input type="text" class="form-control form-control-sm search-input" placeholder="Cari menu...">
+                                        </div>
+                                        <ul class="options-list list-unstyled m-0" id="fav-list-2" data-slot="2"></ul>
+                                    </div>
+                                    <input type="hidden" id="fav-slot-2" name="fav_slot_2">
+                                </div>
+                            </div>
+
+                            <!-- SLOT 3 -->
+                            <div class="mb-3 custom-select-wrapper" id="wrapper-slot-3">
+                                <label class="form-label fw-semibold">Slot 3 (Kiri Atas)</label>
+                                <div class="custom-select-box">
+                                    <div class="selected-display" tabindex="0">
+                                        <span class="selected-text">-- Pilih Menu --</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="dropdown-list-container shadow">
+                                        <div class="search-box p-2 border-bottom">
+                                            <input type="text" class="form-control form-control-sm search-input" placeholder="Cari menu...">
+                                        </div>
+                                        <ul class="options-list list-unstyled m-0" id="fav-list-3" data-slot="3"></ul>
+                                    </div>
+                                    <input type="hidden" id="fav-slot-3" name="fav_slot_3">
+                                </div>
+                            </div>
+
+                            <!-- SLOT 4 -->
+                            <div class="mb-3 custom-select-wrapper" id="wrapper-slot-4">
+                                <label class="form-label fw-semibold">Slot 4 (Kanan Atas)</label>
+                                <div class="custom-select-box">
+                                    <div class="selected-display" tabindex="0">
+                                        <span class="selected-text">-- Pilih Menu --</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="dropdown-list-container shadow">
+                                        <div class="search-box p-2 border-bottom">
+                                            <input type="text" class="form-control form-control-sm search-input" placeholder="Cari menu...">
+                                        </div>
+                                        <ul class="options-list list-unstyled m-0" id="fav-list-4" data-slot="4"></ul>
+                                    </div>
+                                    <input type="hidden" id="fav-slot-4" name="fav_slot_4">
+                                </div>
+                            </div>
+
+                            <!-- SLOT 5 -->
+                            <div class="mb-3 custom-select-wrapper" id="wrapper-slot-5">
+                                <label class="form-label fw-semibold">Slot 5 (Kanan Bawah)</label>
+                                <div class="custom-select-box">
+                                    <div class="selected-display" tabindex="0">
+                                        <span class="selected-text">-- Pilih Menu --</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="dropdown-list-container shadow">
+                                        <div class="search-box p-2 border-bottom">
+                                            <input type="text" class="form-control form-control-sm search-input" placeholder="Cari menu...">
+                                        </div>
+                                        <ul class="options-list list-unstyled m-0" id="fav-list-5" data-slot="5"></ul>
+                                    </div>
+                                    <input type="hidden" id="fav-slot-5" name="fav_slot_5">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100 fw-bold mt-2" id="btn-simpan-favorit">
+                                <i class="fa-solid fa-save me-2"></i>Simpan
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="col-md-5">
+                        <div class="card bg-light border-0 p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+                            <h5 class="fw-bold mb-1 text-center"><i class="fa-solid fa-eye me-2"></i>Visual Preview</h5>
+                            <p class="small text-muted mb-4 text-center">Gambaran posisi menu favorit di halaman depan pengunjung.</p>
+                            
+                            <div class="orbit-preview-container mx-auto">
+                                <!-- Slot 1 -->
+                                <div class="preview-item prev-center" id="prev-slot-1" title="Slot 1 (Tengah Bawah)">
+                                    <div class="prev-img-wrap"><img src="../img/Web-Icon/Papeda-icon.png" alt="Empty"></div>
+                                    <span class="prev-label">Slot 1</span>
+                                </div>
+                                <!-- Slot 2 -->
+                                <div class="preview-item prev-bl" id="prev-slot-2" title="Slot 2 (Kiri Bawah)">
+                                    <div class="prev-img-wrap"><img src="../img/Web-Icon/Papeda-icon.png" alt="Empty"></div>
+                                    <span class="prev-label">Slot 2</span>
+                                </div>
+                                <!-- Slot 3 -->
+                                <div class="preview-item prev-tl" id="prev-slot-3" title="Slot 3 (Kiri Atas)">
+                                    <div class="prev-img-wrap"><img src="../img/Web-Icon/Papeda-icon.png" alt="Empty"></div>
+                                    <span class="prev-label">Slot 3</span>
+                                </div>
+                                <!-- Slot 4 -->
+                                <div class="preview-item prev-tr" id="prev-slot-4" title="Slot 4 (Kanan Atas)">
+                                    <div class="prev-img-wrap"><img src="../img/Web-Icon/Papeda-icon.png" alt="Empty"></div>
+                                    <span class="prev-label">Slot 4</span>
+                                </div>
+                                <!-- Slot 5 -->
+                                <div class="preview-item prev-br" id="prev-slot-5" title="Slot 5 (Kanan Bawah)">
+                                    <div class="prev-img-wrap"><img src="../img/Web-Icon/Papeda-icon.png" alt="Empty"></div>
+                                    <span class="prev-label">Slot 5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: KELOLA KONTEN -->
         <section id="tab-konten" class="tab-section">
             <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
             
@@ -266,7 +413,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: KELOLA FAQ -->
+        <!-- TAB 5: KELOLA FAQ -->
          <section id="tab-faq" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 id="judul-form-faq" class="fs-4 fw-bold mb-4">Input Pertanyaan Baru</h1>
@@ -307,7 +454,7 @@
             </div>
          </section>
 
-        <!-- TAB 5: KELOLA LOKASI -->
+        <!-- TAB 6: KELOLA LOKASI -->
         <section id="tab-lokasi" class="tab-section">
             <div class="card shadow-sm border-0 p-4">
                 <h1 class="fs-4 fw-bold mb-2">Kelola Titik Lokasi Restoran</h1>
@@ -335,7 +482,7 @@
             </div>
         </section>
 
-        <!-- TAB 6: KELOLA RESERVASI -->
+        <!-- TAB 7: KELOLA RESERVASI -->
         <section id="tab-reservasi" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola User & Reservasi</h1>
@@ -411,7 +558,7 @@
             </div>
         </section>
 
-        <!-- TAB 7: KELOLA PESANAN -->
+        <!-- TAB 8: KELOLA PESANAN -->
         <section id="tab-pesanan" class="tab-section" style="display: none;">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola Pesanan</h1>
@@ -445,7 +592,7 @@
             </div>
         </section>
 
-        <!-- TAB 8: PENDAPATAN -->
+        <!-- TAB 9: PENDAPATAN -->
         <section id="tab-pendapatan" class="tab-section">
             <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                 <div>

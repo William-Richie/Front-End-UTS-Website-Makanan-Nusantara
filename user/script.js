@@ -74,6 +74,68 @@ $(document).ready(function() {
         $('html, body').animate({ scrollTop: 0 }, 500);
     });
 
+    /* Favorite Menus */
+    function renderIconPedasUser(level) {
+        let l = Math.max(0, Math.min(5, Number(level) || 0));
+        if (l === 0) return '';
+        
+        let icons = '';
+        for (let i = 0; i < l; i++) {
+            icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
+        }
+        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
+    }
+
+    function muatMenuFavoritUser() {
+        $.get('http://localhost:3000/api/favorit', function(response) {
+            let orbitHtml = '';
+            let descHtml = '';
+            
+            let dataFav = response.data || [];
+            for(let i = 0; i < 5; i++) {
+                let item = dataFav[i];
+                
+                if(item && item.nama_makanan) {
+                    orbitHtml += `
+                        <div class="orbit-item">
+                            <img src="${item.gambar}" alt="${item.nama_makanan}">
+                        </div>
+                    `;
+                    descHtml += `
+                        <div class="menu-desc-item text-center">
+                            <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
+                                ${item.nama_makanan} 
+                                ${renderIconPedasUser(item.pedas)}
+                            </h4>
+                            <p class="small text-muted mb-0">${item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.'}</p>
+                        </div>
+                    `;
+                } else {
+                    orbitHtml += `
+                        <div class="orbit-item" style="border: 2px dashed #c9a17a;">
+                            <img src="../img/Web-Icon/Papeda-icon.png" alt="Coming Soon" style="object-fit: contain; padding: 20px;">
+                        </div>
+                    `;
+                    descHtml += `
+                        <div class="menu-desc-item text-center">
+                            <h4 class="fw-bold mb-1 text-muted">Menu Segera Hadir</h4>
+                            <p class="small text-muted mb-0">Nantikan rekomendasi masakan spesial dari Chef kami berikutnya.</p>
+                        </div>
+                    `;
+                }
+            }
+            $('#dynamic-orbit-path').html(orbitHtml);
+            $('#dynamic-desc-container').html(descHtml);
+        }).fail(function() {
+            console.error("Gagal memuat daftar menu favorit dari server.");
+            $('#dynamic-orbit-path').html('<p class="text-danger text-center w-100 mt-5">Gagal terhubung ke server.</p>');
+        });
+    }
+
+    $(document).ready(function() {
+        muatMenuFavoritUser();
+    });
+
     /* Menu */
     function muatMenuDariDatabase() {
         $.get('/api/menu', function(response) {

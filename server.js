@@ -43,7 +43,6 @@ app.post('/api/menu', async (req, res) => {
 });
 
 /* Update */
-/* Update */
 app.put('/api/menu/:id', async (req, res) => {
     try {
         const id = req.params.id;
@@ -97,6 +96,69 @@ app.delete('/api/menu/:id', async (req, res) => {
         
     if (error) return res.status(500).json({ error: error.message });
     res.json({ pesan: 'Menu berhasil dihapus!' });
+});
+
+/* Favorite Menus */
+/* Get */
+app.get('/api/favorit', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('favorit')
+            .select(`
+                slot,
+                menu_id,
+                menu (
+                    id,
+                    nama_makanan,
+                    deskripsi,
+                    gambar,
+                    pedas,
+                    status
+                )
+            `)
+            .order('slot', { ascending: true });
+
+        if (error) throw error;
+        const cleanedData = data.map(item => {
+            return {
+                slot: item.slot,
+                menu_id: item.menu_id,
+                nama_makanan: item.menu ? item.menu.nama_makanan : null,
+                deskripsi: item.menu ? item.menu.deskripsi : null,
+                gambar: item.menu ? item.menu.gambar : null,
+                pedas: item.menu ? item.menu.pedas : null,
+                status: item.menu ? item.menu.status : null
+            };
+        });
+
+        res.status(200).json({ data: cleanedData });
+    } catch (error) {
+        console.error("Error GET /api/favorit:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/* Put */
+app.put('/api/favorit', async (req, res) => {
+    try {
+        const payloadData = req.body.data; 
+        
+        if (!Array.isArray(payloadData)) {
+            return res.status(400).json({ error: 'Format data tidak valid.' });
+        }
+
+        const { data, error } = await supabase
+            .from('favorit')
+            .upsert(payloadData, { onConflict: 'slot' }) 
+            .select();
+
+        if (error) throw error;
+
+        res.status(200).json({ pesan: 'Menu favorit berhasil diperbarui!' });
+    } catch (error) {
+        console.error("Error PUT /api/favorit:", error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 /* FAQ */

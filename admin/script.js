@@ -670,6 +670,159 @@ $(document).ready(function() {
             }
         });
     });
+
+    /* Favorite Menus */
+    let seluruhMenuTersedia = [];
+    const formatRp = (angka) => 'Rp ' + Number(angka).toLocaleString('id-ID');
+    function muatOpsiMenuFavorit() {
+        $.get('http://localhost:3000/api/menu', function(response) {
+            seluruhMenuTersedia = response.data.filter(item => String(item.status) === 'true');
+            renderOptionsKeSemuaSlot(seluruhMenuTersedia);
+            muatDataFavoritTersimpan();
+        }).fail(function() {
+            tampilkanNotif('Gagal memuat daftar menu untuk favorit.', 'danger');
+        });
+    }
+
+    function renderOptionsKeSemuaSlot(dataArray) {
+        let htmlList = `<li class="option-item empty-option" data-id="" data-nama="-- Kosongkan Slot --" data-gambar="">
+                            <div class="option-name text-muted">-- Kosongkan Slot --</div>
+                        </li>`;
+        
+        dataArray.forEach(item => {
+            htmlList += `
+                <li class="option-item" data-id="${item.id}" data-nama="${item.nama_makanan}" data-gambar="${item.gambar}">
+                    <img src="${item.gambar}" alt="${item.nama_makanan}" loading="lazy">
+                    <div>
+                        <div class="option-name">${item.nama_makanan}</div>
+                        <span class="option-price">${formatRp(item.harga)}</span>
+                    </div>
+                </li>
+            `;
+        });
+
+        $('.options-list').html(htmlList);
+    }
+
+    function muatDataFavoritTersimpan() {
+        $.get('http://localhost:3000/api/favorit', function(response) {
+            if(response && response.data) {
+                response.data.forEach(function(fav, index) {
+                    let slotNumber = index + 1;
+                    if(fav.menu_id) {
+                        let targetLi = $(`#fav-list-${slotNumber} .option-item[data-id="${fav.menu_id}"]`);
+                        if(targetLi.length) {
+                            pilihOpsi(targetLi, slotNumber);
+                        }
+                    }
+                });
+            }
+        }).fail(function() {
+            console.log("Data menu favorit belum disetel atau endpoint tidak ditemukan.");
+        });
+    }
+
+    $(document).on('click', '.selected-display', function(e) {
+        e.stopPropagation(); 
+        let parentBox = $(this).closest('.custom-select-box');
+        
+        $('.custom-select-box').not(parentBox).removeClass('active');
+        
+        parentBox.toggleClass('active');
+        if(parentBox.hasClass('active')) {
+            parentBox.find('.search-input').focus();
+        }
+    });
+
+    $(document).on('click', function() {$('.custom-select-box').removeClass('active');
+    });
+
+    $(document).on('click', '.dropdown-list-container', function(e) {
+        e.stopPropagation();
+    });
+
+    $(document).on('click', '.option-item', function() {
+        let ul = $(this).closest('.options-list');
+        let slotId = ul.data('slot');
+        pilihOpsi($(this), slotId);
+        $(this).closest('.custom-select-box').removeClass('active');
+    });
+
+    function pilihOpsi(liElement, slotId) {
+        let id = liElement.data('id');
+        let nama = liElement.data('nama');
+        let gambar = liElement.data('gambar');
+        let wrapper = $(`#wrapper-slot-${slotId}`);
+
+        wrapper.find('.option-item').removeClass('selected');
+        liElement.addClass('selected');
+        
+        $(`#fav-slot-${slotId}`).val(id);
+        let displayHtml = '';
+        if(id && gambar) {
+            displayHtml = `<img src="${gambar}" alt="gambar"> <span>${nama}</span>`;
+        } else {
+            displayHtml = `<span>-- Pilih Menu --</span>`;
+        }
+        wrapper.find('.selected-text').html(displayHtml);
+
+        let $prevImgWrap =$(`#prev-slot-${slotId} .prev-img-wrap`);
+        if(id) {
+            $prevImgWrap.addClass('filled').html(`<img src="${gambar}" alt="${nama}" title="${nama}">`);
+        } else {
+            $prevImgWrap.removeClass('filled').html(`<img src="../img/Web-Icon/Papeda-icon.png" alt="Empty">`);
+        }
+    }
+
+    $('.search-input').on('keyup', function() {
+        let keyword = $(this).val().toLowerCase();
+        let listItems = $(this).closest('.dropdown-list-container').find('.option-item');
+        
+        listItems.each(function() {
+            let namaMakanan = String($(this).data('nama')).toLowerCase();
+            if(namaMakanan.indexOf(keyword) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+
+    $('#form-favorit').on('submit', function(e) {
+        e.preventDefault();
+        let $btn =$('#btn-simpan-favorit');
+        let originalText = $btn.html();$btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Menyimpan...');
+
+        let payload = [];
+        for(let i = 1; i <= 5; i++) {
+            payload.push({
+                slot: i,
+                menu_id: $(`#fav-slot-${i}`).val() || null
+            });
+        }
+
+        $.ajax({
+            url: 'http://localhost:3000/api/favorit',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ data: payload }),
+            success: function(response) {
+                tampilkanNotif(response.pesan || 'Menu favorit berhasil diperbarui!');
+            },
+            error: function() {
+                tampilkanNotif('Gagal menyimpan menu favorit.', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    $('#admin-nav a[data-target="tab-favorit"]').on('click', function() {
+        if (seluruhMenuTersedia.length === 0) {
+            muatOpsiMenuFavorit();
+        }
+    });
 });
 
 /* Reservasi */
