@@ -99,19 +99,27 @@ $(document).ready(function() {
                 menuDikelompokkan[kategori].forEach(function(makanan) {
                     let isTersedia = (makanan.status === true || makanan.status === 'true');
                     let cssKosong = isTersedia ? '' : 'menu-kosong';
-                    let tombolKeranjang = isTersedia 
-                        ? `<button class="add-to-cart-btn" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>`
+                    let tombolKeranjang = isTersedia
+                        ? `<button class="add-to-cart-btn" data-id="${makanan.id}" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>`
                         : `<button class="add-to-cart-btn disabled-btn" disabled>Habis</button>`;
                     let labelStatus = isTersedia ? '' : '<div class="status-badge-kosong">Tidak Tersedia</div>';
 
                     htmlMenu += `
-                        <div class="menu-item ${cssKosong}">
+                        <div class="menu-item menu-card ${cssKosong}" data-id="${makanan.id}">
                             ${labelStatus}
-                            <div class="dish-name">${makanan.nama_makanan}</div>
-                            <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
-                            <div class="menu-details">
-                                <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
-                                ${tombolKeranjang}
+                            <div class="mc-photo">
+                                <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
+                                ${makanan.pedas > 0 ? `<div class="mc-spicy spicy" title="${LABEL_PEDAS[makanan.pedas]}">${cabai(makanan.pedas)}</div>` : ''}
+                                <span class="card-open"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                                <span class="mc-detail"><i class="fa-regular fa-eye"></i> Lihat Detail</span>
+                            </div>
+                            <div class="mc-body">
+                                <div class="dish-name">${makanan.nama_makanan}</div>
+                                <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
+                                <div class="menu-details">
+                                    <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
+                                    ${tombolKeranjang}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -121,6 +129,7 @@ $(document).ready(function() {
             }
 
             $('#tempat-menu-dinamis').html(htmlMenu);
+            fiturMenuInteraktif(dataMenu);
 
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error("Gagal mengambil data:", errorThrown);
@@ -544,4 +553,55 @@ document.getElementById('btn-start').addEventListener('click', () => {
     intro.classList.add('hide');
     document.body.classList.remove('intro-active');
     setTimeout(() => intro.remove(), 1000);
+});
+
+const LABEL_PEDAS = ['Tidak Pedas', 'Mild', 'Mild', 'Medium', 'Hot', 'Extra Hot'];
+const cabai = n => [1, 2, 3, 4, 5].map(i => `<i class="fa-solid fa-pepper-hot ${i <= n ? 'on' : ''}" style="--i:${i}"></i>`).join('');
+
+function fiturMenuInteraktif(data) {
+    window.menuData = {};
+    data.forEach(m => { window.menuData[m.id] = m; });
+
+    const rec = data.find(m => m.rekomendasi && (m.status === true || m.status === 'true'));
+    if (!rec) return $('#chef-recommendation').addClass('d-none');
+
+    $('#chef-box').html(`
+        <div class="chef-card text-center">
+            <span class="chef-badge">★ CHEF'S CHOICE</span>
+            <p class="hero-eyebrow mb-1">Today's Recommendation</p>
+            <h2 class="chef-title">CHEF'S RECOMMENDATION</h2>
+            <img src="${rec.gambar}" alt="${rec.nama_makanan}" class="chef-img">
+            <h3 class="chef-name">${rec.nama_makanan}</h3>
+            ${rec.deskripsi ? `<p class="chef-desk">${rec.deskripsi}</p>` : ''}
+            ${rec.pedas > 0 ? `<div class="spicy justify-content-center mb-2">${cabai(rec.pedas)}</div>` : ''}
+            <div class="chef-price">Rp ${rec.harga.toLocaleString('id-ID')}</div>
+            <button type="button" class="btn btn-papeda btn-lg chef-order" data-id="${rec.id}">Order Now</button>
+        </div>`);
+    $('#chef-recommendation').removeClass('d-none');
+}
+
+$(function () {
+    const modal = new bootstrap.Modal('#menuModal');
+    let aktifId = null;
+    const pesan = id => $(`#tempat-menu-dinamis .add-to-cart-btn[data-id="${id}"]`).trigger('click');
+
+    $('#tempat-menu-dinamis').on('click', '.menu-card', function (e) {
+        if ($(e.target).closest('.add-to-cart-btn').length) return;
+        const m = (window.menuData || {})[$(this).data('id')];
+        if (!m) return;
+        const ada = m.status === true || m.status === 'true';
+        aktifId = m.id;
+        $('#mm-img').attr('src', m.gambar);
+        $('#mm-kategori').text(m.nama_kategori);
+        $('#mm-nama').text(m.nama_makanan);
+        $('#mm-desk').text(m.deskripsi || 'Deskripsi belum tersedia.');
+        $('#mm-pedas').html(cabai(m.pedas || 0));
+        $('#mm-pedas-label').text(LABEL_PEDAS[m.pedas || 0]);
+        $('#mm-harga').text('Rp ' + m.harga.toLocaleString('id-ID'));
+        $('#mm-order').prop('disabled', !ada).html(ada ? '<i class="fa-solid fa-bag-shopping me-2"></i>Tambah ke Keranjang' : 'Habis');
+        modal.show();
+    });
+
+    $('#mm-order').on('click', () => { pesan(aktifId); modal.hide(); });
+    $(document).on('click', '.chef-order', function () { pesan($(this).data('id')); });
 });
