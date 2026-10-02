@@ -1392,3 +1392,291 @@ body.intro-active { overflow: hidden; }
         grid-template-columns: repeat(4, 1fr); 
     }
 }
+
+/* ===== KARTU MENU ===== */
+.menu-grid { gap: 18px; }
+
+.menu-item.menu-card {
+    position: relative; 
+    padding: 0; 
+    gap: 0; 
+    overflow: hidden; 
+    cursor: pointer;
+    background: #fffaf3; 
+    border: 1px solid #e6d3bb; 
+    border-radius: 18px;
+    box-shadow: 0 4px 12px #3b231414;
+    transition: transform .35s cubic-bezier(.2, .8, .3, 1), box-shadow .35s, border-color .35s, opacity .6s;
+}
+.menu-item.menu-card:hover {
+    transform: translateY(-6px); 
+    border-color: #c9a063;
+    box-shadow: 0 20px 34px #3b23143d;
+}
+
+/* segitiga batik */
+.menu-card::before, .mm-card::before {
+    content: ""; 
+    display: block; 
+    height: 10px; 
+    background-color: #f2c879; 
+    flex-shrink: 0;
+    background-image: conic-gradient(from -45deg at bottom, #6b4226 90deg, transparent 0);
+    background-size: 20px 100%; 
+    background-position: 50%;
+}
+
+.mc-photo { 
+    position: relative; 
+    overflow: hidden; 
+    background: #eee2d5; 
+}
+
+.menu-card .menu-img {
+    width: 100%; 
+    height: 130px; 
+    border-radius: 0; 
+    object-fit: cover;
+    transition: transform .7s cubic-bezier(.2, .8, .3, 1);
+}
+.menu-card:hover .menu-img { 
+    transform: scale(1.1); 
+}
+
+.mc-photo::after {
+    content: ""; 
+    position: absolute; 
+    inset: auto 0 0 0; 
+    height: 60%; 
+    pointer-events: none;
+    background: linear-gradient(transparent, #3b231499); 
+    opacity: 0; 
+    transition: opacity .35s;
+}
+
+.menu-card:hover .mc-photo::after { 
+    opacity: 1; 
+}
+
+.card-open {
+    position: absolute; 
+    top: 8px; 
+    right: 8px; 
+    z-index: 2; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%;
+    background: #fffaf3; 
+    color: #4a2c17; 
+    display: grid; 
+    place-items: center; 
+    font-size: 11px;
+    box-shadow: 0 3px 8px #00000033; 
+    opacity: 0; 
+    transform: translate(-6px, 6px) scale(.8); transition: .35s;
+}
+
+.menu-card:hover .card-open { 
+    opacity: 1; 
+    transform: none; 
+}
+
+.mc-detail {
+    position: absolute; 
+    left: 50%; 
+    bottom: 10px; 
+    z-index: 2; 
+    white-space: nowrap;
+    transform: translate(-50%, 16px); 
+    opacity: 0; transition: .35s;
+    background: #fffaf3f5; 
+    color: #4a2c17; 
+    font-size: 11px; 
+    font-weight: 700;
+    padding: 5px 14px; 
+    border-radius: 50px;
+}
+
+.menu-card:hover .mc-detail { 
+    opacity: 1; 
+    transform: translate(-50%, 0); 
+}
+
+.mc-spicy {
+    position: absolute; 
+    top: 8px; left: 8px; 
+    z-index: 2; gap: 2px; 
+    padding: 4px 8px;
+    background: #fffaf3f0; 
+    border-radius: 50px; 
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .18);
+}
+
+.mc-spicy i { 
+    font-size: 10px; 
+}
+
+.mc-body { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; flex: 1; 
+    padding: 12px 14px 14px; 
+}
+
+.menu-card .dish-name {
+    background: none; 
+    color: #3b2314; 
+    padding: 0; 
+    text-align: center; 
+    min-height: 2.5em;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-family: 'Playfair Display', serif; 
+    font-size: 15px; 
+    font-weight: 700; 
+    line-height: 1.25;
+}
+
+.mc-orn { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    color: #b5651d; 
+    font-size: 10px; 
+}
+
+.mc-orn span { 
+    flex: 1; 
+    height: 1px; 
+    background: linear-gradient(90deg, transparent, #d8c3ab, transparent); }
+
+.menu-card .menu-details { 
+    margin-top: auto; 
+    padding-top: 4px; 
+    gap: 8px; 
+}
+
+.menu-card .menu-price { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 15px; 
+    font-weight: 700; 
+    color: #6b4226; 
+}
+
+.menu-card .add-to-cart-btn {
+    background: linear-gradient(135deg, #8b5e34, #4a2c17); 
+    border-radius: 50px; padding: 7px 16px;
+    font-size: 11px; 
+    letter-spacing: .3px; 
+    box-shadow: 0 4px 10px #4a2c1740;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.menu-card:hover .add-to-cart-btn:not(:disabled) { 
+    transform: translateY(-2px) scale(1.05); 
+    box-shadow: 0 8px 16px #4a2c1759; 
+}
+
+.menu-card .add-to-cart-btn.disabled-btn { 
+    background: #ccc; 
+    box-shadow: none; 
+}
+
+.menu-card .status-badge-kosong { 
+    top: 38px; 
+    right: 8px; 
+    z-index: 3; 
+    border-radius: 50px; 
+}
+
+@media (max-width: 767px) {
+    .menu-card .menu-img { height: 110px; }
+    .menu-card .menu-details { 
+        flex-direction: column; 
+        align-items: stretch; 
+        text-align: center; }
+}
+@media (hover: none) {
+    .card-open { opacity: 1; transform: none; }
+}
+
+/* SPICY LEVEL*/
+.spicy { display: flex; gap: 4px; justify-content: center; }
+.spicy i { color: #d9c7b2; font-size: .95rem; transition: transform .25s calc(var(--i) * 50ms), color .25s; }
+.spicy i.on { color: #c0392b; }
+.menu-card:hover .spicy i.on { transform: scale(1.25) rotate(-12deg); }
+
+/* MODAL DETAIL */
+#menuModal.fade .modal-dialog { transform: scale(.9) translateY(30px); transition: transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+#menuModal.show .modal-dialog { transform: none; }
+.mm-card { border-radius: 24px; overflow: hidden; background: #fffaf3; box-shadow: 0 30px 60px rgba(0, 0, 0, .35); }
+.mm-close {
+    position: absolute; top: 20px; right: 16px; z-index: 5; opacity: 1; padding: 10px;
+    background-color: rgba(255, 250, 243, .92); border-radius: 50%; transition: transform .25s;
+}
+.mm-close:hover { transform: rotate(90deg); }
+
+.mm-visual {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    min-height: 320px; padding: 40px 20px 56px; overflow: hidden;
+    background: linear-gradient(rgba(74, 44, 23, .93), rgba(74, 44, 23, .93)), url("../img/batik.png") center / cover;
+}
+.mm-plate {
+    position: relative; width: 210px; height: 210px; padding: 8px; border-radius: 50%; background: #f7ede1;
+    box-shadow: 0 0 0 6px rgba(242, 200, 121, .35), 0 18px 30px rgba(0, 0, 0, .45);
+    animation: mmBob 4s ease-in-out infinite;
+}
+.mm-plate::before {
+    content: ""; position: absolute; inset: -18px; border-radius: 50%;
+    border: 2px dashed rgba(242, 200, 121, .6); animation: mmSpin 40s linear infinite;
+}
+.mm-plate img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.mm-cat {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+    background: #f2c879; color: #3b2314; font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 6px 18px; border-radius: 50px; box-shadow: 0 6px 14px rgba(0, 0, 0, .3);
+}
+.mm-float { position: absolute; color: rgba(242, 200, 121, .3); font-size: 1.5rem; animation: mmBob 5s ease-in-out infinite; }
+.mm-float.f1 { top: 10%; left: 10%; }
+.mm-float.f2 { top: 18%; right: 12%; animation-delay: 1s; }
+.mm-float.f3 { bottom: 24%; left: 12%; animation-delay: 2s; }
+
+.mm-info { padding: 38px 32px 30px; }
+.mm-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #b5651d; margin-bottom: 4px; }
+.mm-info h3 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.9rem; color: #3b2314; margin: 0 0 10px; }
+.mm-desk { color: #6a5340; line-height: 1.75; font-style: italic; margin: 14px 0 18px; }
+
+.mm-spicy-box { background: #f0e1cf; border-radius: 14px; padding: 12px 16px; }
+.mm-spicy-box small { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: #6b4226; }
+.mm-spicy-box .spicy { justify-content: flex-start; gap: 8px; margin-top: 6px; }
+.mm-spicy-box .spicy i { font-size: 1.3rem; color: #cdb79c; }
+.mm-spicy-box .spicy i.on { color: #c0392b; transform: scale(1.2) rotate(-12deg); }
+#menuModal.show .mm-spicy-box .spicy i.on { animation: chiliPop .55s both; animation-delay: calc(var(--i) * 90ms + 350ms); }
+
+.mm-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.mm-foot small { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #8a6d55; }
+#mm-harga { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #4a2c17; line-height: 1; }
+.mm-order-btn {
+    background: linear-gradient(135deg, #8b5e34, #4a2c17); color: #fff; font-weight: 700; border: 0;
+    border-radius: 50px; padding: 12px 26px; box-shadow: 0 8px 18px rgba(74, 44, 23, .35); transition: .25s;
+}
+.mm-order-btn:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 12px 24px rgba(74, 44, 23, .45); }
+.mm-order-btn:disabled { background: #ccc; color: #666; box-shadow: none; }
+
+@media (max-width: 767px) {
+    .mm-visual { min-height: 260px; padding: 32px 20px 52px; }
+    .mm-plate { width: 170px; height: 170px; }
+    .mm-info { padding: 26px 22px 24px; }
+}
+
+@keyframes mmBob { 50% { transform: translateY(-10px); } }
+@keyframes mmSpin { to { transform: rotate(360deg); } }
+@keyframes chiliPop {
+    0% { transform: scale(0) rotate(-40deg); }
+    70% { transform: scale(1.5) rotate(10deg); }
+    100% { transform: scale(1.2) rotate(-12deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mm-plate, .mm-plate::before, .mm-float { animation: none; }
+}
