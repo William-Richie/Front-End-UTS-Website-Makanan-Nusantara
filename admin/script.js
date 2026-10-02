@@ -104,7 +104,7 @@ $(document).ready(function() {
         $.get(`http://localhost:3000/api/${endpoint}`, function(response) {
             let rows = '';
             let jumlahData = 0;
-            response.data.forEach(function(item) {
+            response.data.forEach(function(item, index) {
                 jumlahData++;
                 rows += templateHTML(item);
             });
@@ -130,10 +130,11 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 console.log('ERROR:', xhr);
-                tampilkanNotif('Gagal menyimpan data. Cek Console.');
+                tampilkanNotif('Gagal menyimpan data. Cek Console.', 'danger');
+                $btnElemen.text(textAsli);
             },
             complete: function() {
-                $btnElemen.prop('disabled', false).text(textAsli);
+                $btnElemen.prop('disabled', false);
             }
         });
     }
@@ -193,7 +194,12 @@ $(document).ready(function() {
         $(`#${judulId}`).text(textJudul);
         $(`#${btnSubmitId}`).text('Update Data').css('background-color', '#f39c12');
         $(`#${btnCancelId}`).show();
-        $('html, body').animate({ scrollTop:$(tabSelector).offset().top - 20 }, 'fast');
+
+        const $main = $('main');
+            
+        $main.animate({
+            scrollTop: $main.scrollTop() + $(tabSelector).position().top
+        }, 500);
     }
 
     function fiturPencarian(inputId, targetBarisTabel) {
@@ -208,57 +214,108 @@ $(document).ready(function() {
     const urlMenu = 'http://localhost:3000/api/menu';
 
     function muatDataMenu() {
-        muatData('menu', '#tabel-menu tbody', '#angka-menu', function(item) {
-            let nilaiHarga = Number(item.harga);
-
-            if (isNaN(nilaiHarga)) {
-                nilaiHarga = 0;
-            }
-
-            window.menuCache = window.menuCache || {};
-            window.menuCache[item.id] = item;
-
-            let badgeStatus = item.status 
-                ? `<button class="btn btn-success btn-sm fw-bold btn-toggle-status" 
-                    data-id="${item.id}" data-status="true" 
-                    data-kategori="${item.nama_kategori}" 
-                    data-nama="${item.nama_makanan}" 
-                    data-harga="${item.harga}" 
-                    data-gambar="${item.gambar}" 
-                    data-status="${item.status}">
+        $.get('http://localhost:3000/api/menu', function(response) {
+            let mainRows = '';
+            let appetizerRows = '';
+            let dessertRows = '';
+            let noMain = 1;
+            let noApp = 1;
+            let noDessert = 1;
+            $('#angka-menu').text(response.data.length);
+            response.data.sort((a, b) => Number(a.id) - Number(b.id)).forEach(function(item) {
+                let nilaiHarga = Number(item.harga);
+                window.menuCache = window.menuCache || {};
+                window.menuCache[item.id] = item;
+                let badgeStatus = item.status
+                    ? `<button class="status-badge tersedia btn-toggle-status"
+                        data-id="${item.id}"
+                        data-status="true"
+                        data-kategori="${item.nama_kategori}"
+                        data-nama="${item.nama_makanan}"
+                        data-harga="${item.harga}"
+                        data-gambar="${item.gambar}">
                         Tersedia
-                    </button>` 
-
-                : `<button class="btn btn-secondary btn-sm fw-bold btn-toggle-status" 
-                    data-id="${item.id}" data-status="false" 
-                    data-kategori="${item.nama_kategori}" 
-                    data-nama="${item.nama_makanan}" 
-                    data-harga="${item.harga}" 
-                    data-gambar="${item.gambar}" 
-                    data-status="${item.status}">
+                    </button>`
+                    : `<button class="status-badge habis btn-toggle-status"
+                        data-id="${item.id}"
+                        data-status="false"
+                        data-kategori="${item.nama_kategori}"
+                        data-nama="${item.nama_makanan}"
+                        data-harga="${item.harga}"
+                        data-gambar="${item.gambar}">
                         Habis
                     </button>`;
+                const buatRow = (nomor) => `
+                    <tr>
+                        <td>
+                            <div class="menu-no">
+                                ${nomor}
+                            </div>
+                        </td>
+                        <td>
+                            <img src="${item.gambar}" 
+                                class="preview" 
+                                alt="foto">
+                        </td>
+                        <td>
+                            <div class="nama-menu-wrapper">
+                                <span class="nama-menu-text">
+                                    ${item.nama_makanan}
+                                </span>
 
-            return `
-                <tr>
-                    <td>${item.id}</td>
-                    <td><img src="${item.gambar}" class="preview" alt="foto"></td>
-                    <td>${item.nama_kategori}</td>
-                    <td>${item.nama_makanan}</td>
-                    <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
-                    <td>${badgeStatus}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm text-dark fw-bold btn-edit-menu btn-edit" data-id="${item.id}" data-kategori="${item.nama_kategori}" data-nama="${item.nama_makanan}" data-harga="${item.harga}" data-gambar="${item.gambar}">Edit</button>
-                        <button class="btn btn-danger btn-sm fw-bold btn-hapus-menu btn-hapus" data-id="${item.id}">Hapus</button>
-                    </td>
-                </tr>
-            `;
+                                ${tampilkanPedas(item.pedas)}
+                            </div>
+                        </td>
+                        <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
+                        <td>${badgeStatus}</td>
+                        <td>
+                            <button
+                                class="btn btn-warning btn-sm fw-bold btn-edit-menu"
+                                data-id="${item.id}"
+                                data-kategori="${item.nama_kategori}"
+                                data-nama="${item.nama_makanan}"
+                                data-harga="${item.harga}"
+                                data-gambar="${item.gambar}"
+                                data-status="${item.status}">
+                                Edit
+                            </button>
+
+                            <button
+                                class="btn btn-danger btn-sm fw-bold btn-hapus-menu"
+                                data-id="${item.id}">
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                if (item.nama_kategori === 'MAIN COURSE') {
+                    mainRows += buatRow(noMain++);
+                }
+
+                else if (item.nama_kategori === 'APPETIZER') {
+                    appetizerRows += buatRow(noApp++);
+                }
+
+                else if (item.nama_kategori === 'DESSERT') {
+                    dessertRows += buatRow(noDessert++);
+                }
+            });
+
+            $('#tabel-main-course tbody').html(mainRows);
+            $('#tabel-appetizer tbody').html(appetizerRows);
+            $('#tabel-dessert tbody').html(dessertRows);
         });
     }
 
     function resetFormMenu() {
-        resetForm('form-tambah-menu', 'edit_id', 'judul-form', 'Input Menu Baru', 'btn-menu-submit', 'btn-menu-cancel');
-        $('#status_menu').val('false');
+        $('#form-tambah-menu')[0].reset();
+        $('#edit_id').val('');
+        $('#judul-form-menu').text('Input Menu Baru');
+        $('#btn-menu-submit')
+            .text('Tambah')
+            .css('background-color', '#27ae60');
+        $('#btn-menu-cancel').hide();
+        setPedas(0);
     }
 
     $('#form-tambah-menu').on('submit', function(e) {
@@ -270,7 +327,7 @@ $(document).ready(function() {
             gambar: $('#gambar').val(),
             deskripsi: $('#deskripsi').val(),
             pedas: parseInt($('#pedas').val()),
-            status: $('#status_menu').val() === 'true'
+            status: true,
         };
         simpanData(urlMenu, $('#edit_id').val(), payload, $('#btn-menu-submit'), function() {
             resetFormMenu(); 
@@ -278,22 +335,47 @@ $(document).ready(function() {
         });
     });
 
+    let targetStatusChange = null;
     $(document).on('click', '.btn-toggle-status', function() {
         let $btn =$(this);
         let id = $btn.data('id');
         let isTersedia = String($btn.data('status')) === 'true';
         let newStatus = !isTersedia;
-        let payload = {
-            nama_kategori: $btn.data('kategori'),
-            nama_makanan: $btn.data('nama'),
-            harga: $btn.data('harga'),
-            gambar: $btn.data('gambar'),
-            status: newStatus
+        let labelStatus = newStatus ? 'Tersedia' : 'Habis';
+        let namaMakanan = $btn.data('nama');
+        let m = (window.menuCache || {})[id] || {};
+
+        targetStatusChange = {
+            id: id,
+            payload: {
+                nama_kategori: $btn.data('kategori'),
+                nama_makanan: namaMakanan,
+                harga: $btn.data('harga'),
+                gambar: $btn.data('gambar'),
+                deskripsi: m.deskripsi || '',
+                pedas: m.pedas || 0,
+                status: newStatus
+            }
         };
 
-        simpanData(urlMenu, id, payload, $btn, function() {
-            muatDataMenu(); 
-        });
+        $('#teks-konfirmasi-status').html(`Apakah Anda yakin ingin mengubah <strong>${namaMakanan}</strong> menjadi <strong>${labelStatus}</strong>?`);
+        $('#btn-modal-status').prop('disabled', false).text('Ya, Ubah!');
+        let modalEl = document.getElementById('modalKonfirmasiStatus');
+        let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    });
+
+    $('#btn-modal-status').on('click', function() {
+        if (targetStatusChange) {
+            let $btnModal =$(this);
+            simpanData(urlMenu, targetStatusChange.id, targetStatusChange.payload, $btnModal, function() {
+                muatDataMenu(); 
+                let modalEl = document.getElementById('modalKonfirmasiStatus');
+                let modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                targetStatusChange = null;
+            });
+        }
     });
 
     $(document).on('click', '.btn-edit-menu', function() {
@@ -305,11 +387,7 @@ $(document).ready(function() {
         let m = (window.menuCache || {})[$(this).data('id')] || {};
         $('#deskripsi').val(m.deskripsi || '');
         setPedas(m.pedas || 0);
-
-        let statusEdit = $(this).data('status') === true ? 'true' : 'false';
-        $('#status_menu').val(statusEdit);
-
-        setFormEdit('judul-form', 'Edit Data Menu', 'btn-menu-submit', 'btn-menu-cancel', '#tab-menu');
+        setFormEdit('judul-form-menu', 'Edit Data Menu', 'btn-menu-submit', 'btn-menu-cancel', '#tab-menu');
     });
 
     $('#btn-menu-cancel').on('click', resetFormMenu);
@@ -318,7 +396,17 @@ $(document).ready(function() {
         hapusData(urlMenu, $(this).data('id'), muatDataMenu);
     });
 
-    fiturPencarian('search-menu', '#tabel-menu tbody tr');
+    $('#search-menu').on('keyup', function() {
+        let keyword = $(this).val().toLowerCase();
+        $('#tabel-main-course tbody tr, \
+        #tabel-appetizer tbody tr, \
+        #tabel-dessert tbody tr')
+        .filter(function() {
+            $(this).toggle(
+                $(this).text().toLowerCase().indexOf(keyword) > -1
+            );
+        });
+    });
     muatDataMenu();
 
     /* Data FAQ */
@@ -332,8 +420,8 @@ $(document).ready(function() {
                     <td>${item.pertanyaan}</td>
                     <td>${item.jawaban}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${item.id}" data-pertanyaan="${item.pertanyaan}" data-jawaban="${item.jawaban}">Edit</button>
-                        <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${item.id}">Hapus</button>
+                        <button class="btn btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${item.id}" data-pertanyaan="${item.pertanyaan}" data-jawaban="${item.jawaban}">Edit</button>
+                        <button class="btn btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${item.id}">Hapus</button>
                     </td>
                 </tr>
             `;
@@ -1011,9 +1099,6 @@ $(function () {
     const rp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
     const STATUS = { pending: ['Menunggu', 'secondary'], diproses: ['Diproses', 'warning'], selesai: ['Selesai', 'success'] };
 
-    $('#pedas').on('input', function () { $('#pedas-label').text(this.value); });
-    $('#form-tambah-menu').on('reset', () => setTimeout(() => $('#pedas-label').text($('#pedas').val()), 0));
-
     function muatDashboard() {
     $.get('/api/pesanan', res => {
         const d = (res.data || []).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
@@ -1063,3 +1148,26 @@ function setPedas(value) {
 $('#pedas-picker').on('click', '.pedas-btn', function () {
     setPedas($(this).data('value'));
 });
+
+function tampilkanPedas(level) {
+    level = Math.max(0, Math.min(5, Number(level) || 0));
+    if (level === 0) {
+        return `
+            <span class="pedas-menu" title="Tidak Pedas">
+                <i class="fa-solid fa-ban"></i>
+                <span class="pedas-label">Tidak Pedas</span>
+            </span>
+        `;
+    }
+    let ikonCabai = "";
+    for (let i = 0; i < level; i++) {
+        ikonCabai += `
+            <i class="fa-solid fa-pepper-hot"></i>
+        `;
+    }
+    return `
+        <span class="pedas-menu" title="Tingkat Kepedasan ${level}/5">
+            ${ikonCabai}
+        </span>
+    `;
+}
