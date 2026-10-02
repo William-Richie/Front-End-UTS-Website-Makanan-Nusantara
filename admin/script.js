@@ -131,10 +131,9 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.log('ERROR:', xhr);
                 tampilkanNotif('Gagal menyimpan data. Cek Console.', 'danger');
-                $btnElemen.text(textAsli);
             },
             complete: function() {
-                $btnElemen.prop('disabled', false);
+                $btnElemen.prop('disabled', false).text(textAsli);
             }
         });
     }
@@ -583,93 +582,192 @@ $(document).ready(function() {
         $('main').animate({ scrollTop: 0 }, 'fast'); 
     });
 
-    /* Maps */
-    let mapAdmin = null;
-    let markerAdmin;
-    let latTersimpan = -6.200000;
-    let lngTersimpan = 106.816666;
+    /* Kelola Lokasi */
+    const urlCabang = 'http://localhost:3000/api/maps';
+    const VIEW_DEFAULT = [-2.5, 118];
+    const ZOOM_CABANG = 15;
 
-    $.get('http://localhost:3000/api/maps', function(data) {
-        if (data && !isNaN(parseFloat(data.latitude)) && !isNaN(parseFloat(data.longitude))) {
-            latTersimpan = parseFloat(data.latitude);
-            lngTersimpan = parseFloat(data.longitude);
+    let mapAdmin = null, markerAdmin = null, layerCabang = null;
+    let daftarCabang = [];
+    let cabangTerpilih = null;
+    let dataLokasiAsli = {};
+
+    const escHtml = s => $('<div>').text(s ?? '').html();
+    const koordinatValid = (lat, lng) => Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+    const bacaKoordinat = () => [parseFloat($('#lok-lat').val()), parseFloat($('#lok-lng').val())];
+    const cariCabang = id => daftarCabang.find(c => String(c.id) === String(id));
+
+    function cekPerubahanLokasi() {
+        const isChanged = 
+            $('#lok-nama').val().trim() !== dataLokasiAsli.nama ||
+            $('#lok-alamat').val().trim() !== dataLokasiAsli.alamat ||
+            $('#lok-lat').val() !== dataLokasiAsli.lat ||
+            $('#lok-lng').val() !== dataLokasiAsli.lng;
+        
+        $('#btn-lokasi-simpan').prop('disabled', !isChanged);
+    }
+
+    function isiKoordinat(lat, lng) {
+        $('#lok-lat').val(Number(lat).toFixed(6));
+        $('#lok-lng').val(Number(lng).toFixed(6)).trigger('change');
+    }
+
+    function tampilkanPin(terbang) {
+        if (!mapAdmin) return;
+        const [lat, lng] = bacaKoordinat();
+        if (!koordinatValid(lat, lng)) { markerAdmin.remove(); return; }
+
+        markerAdmin.setLatLng([lat, lng]).addTo(mapAdmin);
+        
+        if (terbang) {
+            mapAdmin.removeLayer(layerCabang); 
+            
+            mapAdmin.flyTo([lat, lng], ZOOM_CABANG, { duration: 1.2 });
+            
+            mapAdmin.once('moveend', function() {
+                mapAdmin.addLayer(layerCabang);
+            });
         }
-        $('#input-lat').val(latTersimpan);
-        $('#input-lng').val(lngTersimpan);
-    }).fail(function() {
-        $('#input-lat').val(latTersimpan);
-        $('#input-lng').val(lngTersimpan);
-        console.warn("Gagal mengambil kordinat dari database, menggunakan lokasi default.");
-    });
+    }
 
-    $('#admin-nav a[data-target="tab-lokasi"]').on('click', function() {
-        setTimeout(function() {
-            if (!mapAdmin) {
-                mapAdmin = L.map('map-admin').setView([latTersimpan, lngTersimpan], 15);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(mapAdmin);
-
-                markerAdmin = L.marker([latTersimpan, lngTersimpan], {draggable: true}).addTo(mapAdmin);
-                
-                markerAdmin.on('dragend', function(e) {
-                    let posisi = markerAdmin.getLatLng();
-                    $('#input-lat').val(posisi.lat.toFixed(6));
-                    $('#input-lng').val(posisi.lng.toFixed(6));
-                    $('#btn-reset-lokasi').fadeIn();
-                });
-
-                mapAdmin.on('click', function(e) {
-                    markerAdmin.setLatLng(e.latlng);
-                    $('#input-lat').val(e.latlng.lat.toFixed(6));
-                    $('#input-lng').val(e.latlng.lng.toFixed(6));
-                    $('#btn-reset-lokasi').fadeIn();
-                });
-            } else {
-                mapAdmin.invalidateSize();
-            }
-        }, 350);
-    });
-
-    $('#btn-reset-lokasi').on('click', function() {
-        let posisiAwal = new L.LatLng(latTersimpan, lngTersimpan);
+    function lihatSemua() {
+        if (!mapAdmin) return;
+        const titik = daftarCabang.map(c => [c.latitude, c.longitude]);
         
-        markerAdmin.setLatLng(posisiAwal);
-        mapAdmin.setView(posisiAwal, 15);
-        
-        $('#input-lat').val(posisiAwal.lat.toFixed(6));
-        $('#input-lng').val(posisiAwal.lng.toFixed(6));
-        $(this).fadeOut();
-    });
+        mapAdmin.removeLayer(layerCabang);
 
-    $('#form-lokasi .btn-simpan').on('click', function(e) {
-        e.preventDefault();
-        
-        let newLat = parseFloat($('#input-lat').val());
-        let newLng = parseFloat($('#input-lng').val());
-        let $btn = $(this);
-        let originalText = $btn.text();
-        
-        $btn.text('Menyimpan...').prop('disabled', true);
+        if (titik.length) {
+            mapAdmin.flyToBounds(titik, { padding: [40, 40], maxZoom: 12, duration: 1.5 });
+        } else {
+            mapAdmin.flyTo(VIEW_DEFAULT, 5, { duration: 1.5 });
+        }
 
-        $.ajax({
-            url: 'http://localhost:3000/api/maps',
-            type: 'PUT',
-            data: { latitude: newLat, longitude: newLng },
-            success: function(response) {
-                tampilkanNotif(response.pesan);
-                latTersimpan = newLat;
-                lngTersimpan = newLng;
-                $('#btn-reset-lokasi').fadeOut();
-            },
-            error: function() {
-                tampilkanNotif('Gagal update lokasi ke database.');
-            },
-            complete: function() {
-                $btn.text(originalText).prop('disabled', false);
-            }
+        mapAdmin.once('moveend', function() {
+            mapAdmin.addLayer(layerCabang);
         });
+    }
+
+    function renderPeta() {
+        if (!mapAdmin) return;
+        layerCabang.clearLayers();
+        daftarCabang
+            .filter(c => String(c.id) !== String(cabangTerpilih))
+            .forEach(c => {
+                L.circleMarker([c.latitude, c.longitude], {
+                    radius: 9, color: '#4a2c17', weight: 2, fillColor: '#b5532d', fillOpacity: .9
+                })
+                    .bindTooltip(escHtml(c.nama))
+                    .on('click', () => pilihCabang(c.id))
+                    .addTo(layerCabang);
+            });
+    }
+
+    function renderDaftar() {
+        $('#lok-daftar').html(daftarCabang.map((c, i) => `
+            <button type="button" class="lok-item" data-id="${c.id}">
+                <span class="lok-no">${i + 1}</span>
+                <span class="lok-info"><strong>${escHtml(c.nama)}</strong><small>${escHtml(c.alamat)}</small></span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>`).join('') || '<p class="text-muted text-center py-4 mb-0">Belum ada cabang.</p>');
+
+        $('.jumlah-cabang').text(daftarCabang.length);
+    }
+
+    function pilihCabang(id, preventFly = false) {
+        const c = cariCabang(id);
+        cabangTerpilih = c ? c.id : null;
+
+        $('#lok-id').val(c ? c.id : '');
+        $('#lok-nama').val(c ? c.nama : '');
+        $('#lok-alamat').val(c ? c.alamat : '');
+        if (c) isiKoordinat(c.latitude, c.longitude);
+        else $('#lok-lat, #lok-lng').val('');
+
+        $('#judul-form-lokasi').text(c ? 'Edit Cabang' : 'Tambah Cabang Baru');
+        $('#lok-dipilih').text(c ? c.nama : '-');
+        $('#btn-lokasi-hapus').toggle(!!c);
+        $('.lok-item').removeClass('active').filter(`[data-id="${cabangTerpilih}"]`).addClass('active');
+
+        dataLokasiAsli = {
+            nama: $('#lok-nama').val().trim(),
+            alamat: $('#lok-alamat').val().trim(),
+            lat: $('#lok-lat').val(),
+            lng: $('#lok-lng').val()
+        };
+        cekPerubahanLokasi();
+
+        renderPeta();
+        tampilkanPin(!!c);
+    }
+
+    function muatCabang(pilihId = cabangTerpilih) {
+        $.get(urlCabang, function(res) {
+            daftarCabang = (Array.isArray(res) ? res : []).map(c => ({ ...c, latitude: +c.latitude, longitude: +c.longitude }));
+            if (pilihId === 'terbaru') pilihId = Math.max(0, ...daftarCabang.map(c => c.id));
+
+            $('#search-lokasi').val('');
+            renderDaftar();
+            pilihCabang(pilihId);
+        }).fail(function() {
+            tampilkanNotif('Gagal memuat data cabang.', 'danger');
+        });
+    }
+
+    function initMapAdmin() {
+        if (mapAdmin) { mapAdmin.invalidateSize(); return; }
+
+        mapAdmin = L.map('map-admin').setView(VIEW_DEFAULT, 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapAdmin);
+
+        layerCabang = L.layerGroup().addTo(mapAdmin);
+        markerAdmin = L.marker(VIEW_DEFAULT, { draggable: true });
+
+        markerAdmin.on('dragend', function() {
+            const p = markerAdmin.getLatLng();
+            isiKoordinat(p.lat, p.lng);
+        });
+        mapAdmin.on('click', function(e) {
+            isiKoordinat(e.latlng.lat, e.latlng.lng);
+            tampilkanPin(false);
+        });
+
+        renderPeta();
+        if (cabangTerpilih === null) lihatSemua(); else tampilkanPin(true);
+    }
+
+    $('#admin-nav a[data-target="tab-lokasi"]').on('click', () => setTimeout(initMapAdmin, 350));
+    $('#lok-daftar').on('click', '.lok-item', function() { pilihCabang($(this).data('id')); });
+    $('#btn-lokasi-baru').on('click', () => pilihCabang(null));
+    $('#btn-lokasi-batal').on('click', () => pilihCabang(cabangTerpilih));
+    $('#btn-lokasi-semua').on('click', lihatSemua);
+    $('#lok-lat, #lok-lng').on('change', () => tampilkanPin(true));
+    $('#lok-nama, #lok-alamat, #lok-lat, #lok-lng').on('input change', cekPerubahanLokasi);
+    fiturPencarian('search-lokasi', '#lok-daftar .lok-item');
+
+    $('#form-lokasi').on('submit', function(e) {
+        e.preventDefault();
+        const [latitude, longitude] = bacaKoordinat();
+        if (!koordinatValid(latitude, longitude)) {
+            tampilkanNotif('Koordinat tidak valid. Klik peta atau isi latitude/longitude.', 'danger');
+            return;
+        }
+
+        const id = $('#lok-id').val();
+        const payload = {
+            nama: $('#lok-nama').val().trim(),
+            alamat: $('#lok-alamat').val().trim(),
+            latitude, longitude
+        };
+        simpanData(urlCabang, id, payload, $('#btn-lokasi-simpan'), () => muatCabang(id || 'terbaru', true));
     });
+
+    $('#btn-lokasi-hapus').on('click', function() {
+        if (cabangTerpilih !== null) hapusData(urlCabang, cabangTerpilih, () => muatCabang(null));
+    });
+
+    muatCabang(null);
 
     /* Favorite Menus */
     let seluruhMenuTersedia = [];

@@ -456,29 +456,88 @@
 
         <!-- TAB 6: KELOLA LOKASI -->
         <section id="tab-lokasi" class="tab-section">
-            <div class="card shadow-sm border-0 p-4">
-                <h1 class="fs-4 fw-bold mb-2">Kelola Titik Lokasi Restoran</h1>
-                <p class="text-muted mb-4">Geser peta atau klik area peta untuk memperbarui koordinat restoran.</p>
-
-                <div id="map-admin" class="mb-4 shadow-sm"></div>
-    
-                <form id="form-lokasi">
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Latitude</label>
-                            <input type="text" id="input-lat" class="form-control bg-light" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Longitude</label>
-                            <input type="text" id="input-lng" class="form-control bg-light" readonly>
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button type="button" id="btn-reset-lokasi" class="btn btn-danger fw-bold px-4">Batal Geser</button>
-                            <button type="button" class="btn btn-success fw-bold flex-grow-1" style="flex: 1;">Update Lokasi Maps</button>
-                        </div>
+            <div class="lok-stats">
+                <div class="card lok-stat">
+                    <div class="kpi-icon"><i class="fa-solid fa-store"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">Total Cabang</p>
+                        <p class="kpi-value jumlah-cabang" id="lok-total">0</p>
                     </div>
-                </form>
+                </div>
+                <div class="card lok-stat" style="--d:.08s">
+                    <div class="kpi-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">Cabang Dipilih</p>
+                        <p class="kpi-value text-truncate" id="lok-dipilih">-</p>
+                    </div>
+                </div>
+                <div class="card lok-stat lok-stat-wide" style="--d:.16s">
+                    <div class="kpi-icon"><i class="fa-solid fa-eye"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">Pratinjau Banner Web User</p>
+                        <span class="lok-chip"><i class="fa-solid fa-store"></i><span class="jumlah-cabang">0</span> Cabang</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="fs-5 fw-bold m-0">Daftar Cabang</h2>
+                            <button type="button" id="btn-lokasi-baru" class="btn btn-success btn-sm fw-bold">
+                                <i class="fa-solid fa-plus me-1"></i>Tambah
+                            </button>
+                        </div>
+                        <input type="text" id="search-lokasi" class="form-control mb-3" placeholder="Cari cabang...">
+                        <div id="lok-daftar" class="lok-daftar"></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <h2 class="fs-5 fw-bold m-0">Peta Cabang</h2>
+                            <button type="button" id="btn-lokasi-semua" class="btn btn-secondary btn-sm fw-bold">
+                                <i class="fa-solid fa-expand me-1"></i>Lihat semua cabang
+                            </button>
+                        </div>
+                        <p class="lok-hint mb-3">Klik peta atau geser pin untuk menentukan titik cabang. Titik cokelat adalah cabang lain, klik untuk memilihnya.</p>
+                        <div id="map-admin" class="shadow-sm"></div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 p-4">
+                        <h2 id="judul-form-lokasi" class="fs-5 fw-bold mb-3">Tambah Cabang Baru</h2>
+                        <form id="form-lokasi">
+                            <input type="hidden" id="lok-id">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold" for="lok-nama">Nama Cabang</label>
+                                    <input type="text" id="lok-nama" class="form-control" maxlength="80" placeholder="mis. Gerai F - Makassar" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold" for="lok-alamat">Alamat Lengkap</label>
+                                    <input type="text" id="lok-alamat" class="form-control" maxlength="200" placeholder="Jl. ..., Kota" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold" for="lok-lat">Latitude</label>
+                                    <input type="number" id="lok-lat" class="form-control" step="any" min="-90" max="90" placeholder="-6.200000" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold" for="lok-lng">Longitude</label>
+                                    <input type="number" id="lok-lng" class="form-control" step="any" min="-180" max="180" placeholder="106.816666" required>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap mt-4">
+                                <button type="submit" id="btn-lokasi-simpan" class="btn btn-success fw-bold flex-grow-1">Simpan ke Database</button>
+                                <button type="button" id="btn-lokasi-batal" class="btn btn-secondary fw-bold">Batal</button>
+                                <button type="button" id="btn-lokasi-hapus" class="btn btn-danger fw-bold" style="display:none">
+                                    <i class="fa-solid fa-trash me-1"></i>Hapus Cabang
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </section>
 
