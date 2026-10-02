@@ -656,15 +656,43 @@ main {
 }
 
 .branch-list {
-    display: flex; gap: 10px;
-    overflow-x: auto; padding: 4px 2px 12px;
+    display: flex; 
+    flex-wrap: nowrap; 
+    gap: 10px;
+    overflow-x: auto; /* Ini akan memunculkan scrollbar otomatis jika isi melebihi layar */
+    padding: 4px 2px 12px; /* Padding bawah memberi ruang agar scrollbar tidak menabrak shadow */
     scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: #8b5e34 #fffaf3;
+}
+
+/* Styling Scrollbar Chrome/Safari/Edge */
+.branch-list::-webkit-scrollbar {
+    height: 8px; /* Ketebalan scrollbar */
+}
+
+.branch-list::-webkit-scrollbar-track {
+    background: #fffaf3; /* Warna jalur background */
+    border-radius: 10px;
+}
+
+.branch-list::-webkit-scrollbar-thumb {
+    background: #8b5e34; /* Warna batang scrollbar (sesuai ikon) */
+    border-radius: 10px;
+    border: 2px solid #fffaf3; /* Memberi jarak agar tidak terlalu menempel */
+}
+
+.branch-list::-webkit-scrollbar-thumb:hover {
+    background: #5b3e31; /* Warna lebih gelap saat disentuh kursor */
 }
 
 .branch-card {
-    flex: 1 0 118px; scroll-snap-align: start;
+    flex: 0 0 auto; /* Ukuran fleksibel mengikuti isi teks, tapi tidak akan tergencet */
+    min-width: 176px; /* Lebar dasar agar bentuknya kembali persegi panjang */
+    white-space: nowrap;
+    scroll-snap-align: start;
     display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 12px 10px;
+    padding: 12px 16px;
     background: #fffaf3; color: #4a2c17;
     border: 1.5px solid #e2cdb4; border-radius: 14px;
     cursor: pointer;
