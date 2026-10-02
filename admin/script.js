@@ -215,6 +215,9 @@ $(document).ready(function() {
                 nilaiHarga = 0;
             }
 
+            window.menuCache = window.menuCache || {};
+            window.menuCache[item.id] = item;
+
             let badgeStatus = item.status 
                 ? `<button class="btn btn-success btn-sm fw-bold btn-toggle-status" 
                     data-id="${item.id}" data-status="true" 
@@ -265,6 +268,8 @@ $(document).ready(function() {
             nama_makanan: $('#nama_makanan').val(),
             harga: $('#harga').val(),
             gambar: $('#gambar').val(),
+            deskripsi: $('#deskripsi').val(),
+            pedas: parseInt($('#pedas').val()),
             status: $('#status_menu').val() === 'true'
         };
         simpanData(urlMenu, $('#edit_id').val(), payload, $('#btn-menu-submit'), function() {
@@ -297,6 +302,9 @@ $(document).ready(function() {
         $('#nama_makanan').val($(this).data('nama'));
         $('#harga').val($(this).data('harga'));
         $('#gambar').val($(this).data('gambar'));
+        let m = (window.menuCache || {})[$(this).data('id')] || {};
+        $('#deskripsi').val(m.deskripsi || '');
+        setPedas(m.pedas || 0);
 
         let statusEdit = $(this).data('status') === true ? 'true' : 'false';
         $('#status_menu').val(statusEdit);
@@ -749,7 +757,6 @@ $(function () {
         hari: 'Pendapatan Hari Ini (per Jam)',
         7: 'Pendapatan 7 Hari Terakhir',
         30: 'Pendapatan 30 Hari Terakhir',
-        bulan: 'Pendapatan Bulan Ini'
     };
 
     const MEDALI = [
@@ -998,4 +1005,61 @@ $(function () {
             }
         });
     });
+});
+
+$(function () {
+    const rp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
+    const STATUS = { pending: ['Menunggu', 'secondary'], diproses: ['Diproses', 'warning'], selesai: ['Selesai', 'success'] };
+
+    $('#pedas').on('input', function () { $('#pedas-label').text(this.value); });
+    $('#form-tambah-menu').on('reset', () => setTimeout(() => $('#pedas-label').text($('#pedas').val()), 0));
+
+    function muatDashboard() {
+    $.get('/api/pesanan', res => {
+        const d = (res.data || []).slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        $('#dash-pesanan').text(d.length);
+        $('#recent-orders').html(d.length ? d.slice(0, 5).map(o => {
+                const s = STATUS[o.status] || [o.status, 'secondary'];
+                const item = String(o.item || '').replace(/^\[[^\]]*\]\s*/, '');
+                return `<div class="recent-row"><strong>#${String(o.id).slice(0, 6)}</strong>
+                    <span class="flex-grow-1 text-truncate">${$('<div>').text(item).html()}</span>
+                    <span class="fw-bold">${rp(o.total)}</span><span class="badge text-bg-${s[1]}">${s[0]}</span></div>`;
+            }).join('') : '<p class="text-muted mb-0">Belum ada pesanan masuk.</p>');
+        });
+    $.get('/api/pendapatan', { range: 'bulan' }, res => {
+        const total = res.ringkasan?.total || 0;
+        $('#dash-revenue').text(rp(total));
+    });
+    }
+    muatDashboard();
+    $('#admin-nav a[data-target="tab-statistik"]').on('click', muatDashboard);
+});
+const LABEL_PEDAS = [
+    'Tidak Pedas',
+    'Sedikit Pedas',
+    'Ringan',
+    'Sedang',
+    'Pedas',
+    'Sangat Pedas'
+];
+
+function setPedas(value) {
+    value = Math.max(0, Math.min(5, Number(value) || 0));
+
+    $('#pedas').val(value);
+    $('#pedas-value').text(value);
+    $('#pedas-label').text(LABEL_PEDAS[value]);
+
+    $('.pedas-btn').each(function () {
+        const btnValue = Number($(this).data('value'));
+
+        $(this).toggleClass(
+            'active',
+            value > 0 && btnValue > 0 && btnValue <= value
+        );
+    });
+}
+
+$('#pedas-picker').on('click', '.pedas-btn', function () {
+    setPedas($(this).data('value'));
 });

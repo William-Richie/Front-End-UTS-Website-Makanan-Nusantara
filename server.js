@@ -30,12 +30,12 @@ app.get('/api/menu', async (req, res) => {
 
 /* Create */
 app.post('/api/menu', async (req, res) => {
-    const { nama_kategori, nama_makanan, harga, gambar, status } = req.body;
+    const { nama_kategori, nama_makanan, harga, gambar, status, deskripsi, pedas} = req.body;
     const statusBool = (status === 'true' || status === true);
     
     const { data, error } = await supabase
         .from('menu')
-        .insert([{ nama_kategori, nama_makanan, harga, gambar, status: statusBool }])
+        .insert([{ nama_kategori, nama_makanan, harga, gambar, status: statusBool, deskripsi, pedas}])
         .select();
         
     if (error) return res.status(400).json({ error: error.message });
@@ -50,7 +50,7 @@ app.put('/api/menu/:id', async (req, res) => {
     
     const { error } = await supabase
         .from('menu')
-        .update({ nama_kategori, nama_makanan, harga, gambar, status: statusBool })
+        .update({ nama_kategori, nama_makanan, harga, gambar, status: statusBool, deskripsi, pedas})
         .eq('id', id);
         
     if (error) return res.status(500).json({ error: error.message });

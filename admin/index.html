@@ -55,20 +55,21 @@
 
         <!-- TAB 1: STATISTIK -->
         <section id="tab-statistik" class="tab-section active">
-            <h1 class="mb-4 text-dark fw-bold fs-3">Statistik Website</h1>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 text-center p-4">
-                        <h3 class="fs-6 text-muted mb-2">Total Pengunjung</h3>
-                        <div id="angka-pengunjung" class="fs-1 fw-bold text-dark">0</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 text-center p-4">
-                        <h3 class="fs-6 text-muted mb-2">Total Menu Aktif</h3>
-                        <div id="angka-menu" class="fs-1 fw-bold text-dark">0</div>
-                    </div>
-                </div>
+            <p class="text-muted mb-0 stat-anim" style="--i:0">WELCOME BACK,</p>
+            <h1 class="mb-4 text-dark fw-bold fs-3 stat-anim" style="--i:1">Admin Papeda</h1>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:2">
+                    <i class="fa-solid fa-utensils stat-ico"></i><div id="angka-menu" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">MENU AKTIF</h3></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:3">
+                    <i class="fa-solid fa-receipt stat-ico"></i><div id="dash-pesanan" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">PESANAN MASUK</h3></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:4">
+                    <i class="fa-solid fa-sack-dollar stat-ico"></i><div id="dash-revenue" class="fs-2 fw-bold">Rp 0</div><h3 class="fs-6 text-muted m-0">REVENUE HARI INI</h3></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:5">
+                    <i class="fa-solid fa-users stat-ico"></i><div id="angka-pengunjung" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">PENGUNJUNG</h3></div></div>
+            </div>
+            <div class="card shadow-sm border-0 p-4 stat-anim" style="--i:6">
+                <h2 class="fs-5 fw-bold mb-3">Recent Orders</h2>
+                <div id="recent-orders"></div>
             </div>
         </section>
 
@@ -99,6 +100,39 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama/Link Gambar</label>
                         <input type="text" id="gambar" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Deskripsi Makanan</label>
+                        <textarea id="deskripsi" class="form-control" rows="3" placeholder="Ceritakan tentang hidangan ini..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tingkat Kepedasan</label>
+                        <div class="pedas-picker" id="pedas-picker">
+                            <button type="button" class="pedas-btn" data-value="0">
+                                <i class="fa-solid fa-ban"></i>
+                            </button>
+                            <button type="button" class="pedas-btn" data-value="1">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </button>
+                            <button type="button" class="pedas-btn" data-value="2">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </button>
+                            <button type="button" class="pedas-btn" data-value="3">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </button>
+                            <button type="button" class="pedas-btn" data-value="4">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </button>
+                            <button type="button" class="pedas-btn" data-value="5">
+                                <i class="fa-solid fa-pepper-hot"></i>
+                            </button>
+                        </div>
+                        <div class="pedas-info">
+                            <span id="pedas-label">Tidak Pedas</span>
+                            <span><b id="pedas-value">0</b>/5</span>
+                        </div>
+                        <input type="hidden" id="pedas" value="0">
+                    </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Status Ketersediaan</label>
@@ -388,7 +422,6 @@
                     <button type="button" class="range-btn" data-range="hari">Hari Ini</button>
                     <button type="button" class="range-btn active" data-range="7">7 Hari</button>
                     <button type="button" class="range-btn" data-range="30">30 Hari</button>
-                    <button type="button" class="range-btn" data-range="bulan">Bulan Ini</button>
                 </div>
             </div>
 
