@@ -43,18 +43,47 @@ app.post('/api/menu', async (req, res) => {
 });
 
 /* Update */
+/* Update */
 app.put('/api/menu/:id', async (req, res) => {
-    const id = req.params.id;
-    const { nama_kategori, nama_makanan, harga, gambar, status } = req.body;
-    const statusBool = (status === 'true' || status === true);
-    
-    const { error } = await supabase
-        .from('menu')
-        .update({ nama_kategori, nama_makanan, harga, gambar, status: statusBool, deskripsi, pedas})
-        .eq('id', id);
-        
-    if (error) return res.status(500).json({ error: error.message });
-    res.json({ pesan: 'Data menu berhasil diperbarui!' });
+    try {
+        const id = req.params.id;
+        const {
+            nama_kategori,
+            nama_makanan,
+            harga,
+            gambar,
+            status,
+            deskripsi,
+            pedas
+        } = req.body;
+        const statusBool = status === 'true' || status === true;
+        const { error } = await supabase
+            .from('menu')
+            .update({
+                nama_kategori,
+                nama_makanan,
+                harga,
+                gambar,
+                status: statusBool,
+                deskripsi,
+                pedas
+            })
+            .eq('id', id);
+        if (error) {
+            console.error('Error PUT /api/menu/:id:', error.message);
+            return res.status(500).json({
+                error: error.message
+            });
+        }
+        res.json({
+            pesan: 'Data menu berhasil diperbarui!'
+        });
+    } catch (err) {
+        console.error('Error PUT /api/menu/:id:', err);
+        res.status(500).json({
+            error: err.message
+        });
+    }
 });
 
 /* Delete */
