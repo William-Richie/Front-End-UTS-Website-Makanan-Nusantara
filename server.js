@@ -448,6 +448,16 @@ app.put('/api/admin/reservasi/:id/status', async (req, res) => {
 });
 
 /* MAPS */
+const bacaCabang = (b = {}) => ({
+    nama: String(b.nama ?? '').trim(),
+    alamat: String(b.alamat ?? '').trim(),
+    latitude: Number(b.latitude),
+    longitude: Number(b.longitude)
+});
+
+const cabangValid = (c) =>
+    c.nama && c.alamat && Math.abs(c.latitude) <= 90 && Math.abs(c.longitude) <= 180;
+
 /* Get */
 app.get('/api/maps', async (req, res) => {
     try {
@@ -463,22 +473,45 @@ app.get('/api/maps', async (req, res) => {
     }
 });
 
+/* Post */
+app.post('/api/maps', async (req, res) => {
+    const cabang = bacaCabang(req.body);
+    if (!cabangValid(cabang)) return res.status(400).json({ error: 'Data cabang tidak valid.' });
+
+    cabang.id = Date.now();
+
+    const { data, error } = await supabase
+        .from('maps')
+        .insert([cabang])
+        .select();
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ pesan: 'Cabang berhasil ditambahkan!', id_baru: data[0].id });
+});
+
 /* Put */
 app.put('/api/maps/:id', async (req, res) => {
-    try {
-        const branchId = req.params.id;
-        const { latitude, longitude } = req.body;
-        
-        const { error } = await supabase
-            .from('maps')
-            .update({ latitude, longitude })
-            .eq('id', branchId);
-            
-        if (error) throw error;
-        res.json({ pesan: 'Lokasi cabang berhasil diupdate!' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    const cabang = bacaCabang(req.body);
+    if (!cabangValid(cabang)) return res.status(400).json({ error: 'Data cabang tidak valid.' });
+
+    const { error } = await supabase
+        .from('maps')
+        .update(cabang)
+        .eq('id', req.params.id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Cabang berhasil diperbarui!' });
+});
+
+/* Delete */
+app.delete('/api/maps/:id', async (req, res) => {
+    const { error } = await supabase
+        .from('maps')
+        .delete()
+        .eq('id', req.params.id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Cabang berhasil dihapus!' });
 });
 
 /* PESANAN */

@@ -397,66 +397,57 @@ $(document).ready(function() {
     });
 
     /* Maps */
-    const CABANG = [
-        { id: 'gerai-a', nama: 'Gerai A', kota: 'Jakarta', alamat: 'Jl. Cendrawasih No. 45, Jakarta', lat: -6.2000,  lng: 106.8166 },
-        { id: 'gerai-b', nama: 'Gerai B', kota: 'Bandung', alamat: 'Bandung, Jawa Barat',             lat: -6.9175,  lng: 107.6191 },
-        { id: 'gerai-c', nama: 'Gerai C', kota: 'Bogor',   alamat: 'Bogor, Jawa Barat',               lat: -6.5971,  lng: 106.8060 },
-        { id: 'gerai-d', nama: 'Gerai D', kota: 'Jawa',    alamat: 'Surabaya, Jawa Timur',            lat: -7.2575,  lng: 112.7521 },
-        { id: 'gerai-e', nama: 'Gerai E', kota: 'Papua',   alamat: 'Jayapura, Papua',                 lat: -2.5337,  lng: 140.7181 }
-    ];
+    let CABANG = [];
     const HOP_MIN = 3000, HOP_MAX = 5000;
 
     let mapUser = null, pinMarker = null;
     let hopTimer = null, hopIndex = 0;
-    let isLocked = false, arrived = true, targetBranch = CABANG[0];
+    let isLocked = false, arrived = true, targetBranch = null;
 
-    $('#branch-list').html(CABANG.map(c => `
-        <button type="button" class="branch-card" data-id="${c.id}">
-            <i class="fa-solid fa-location-dot"></i>
-            <strong>${c.nama}</strong>
-            <small>${c.kota}</small>
-        </button>`).join(''));
+    const esc = s => $('<div>').text(s ?? '').html();
 
-    $.get('http://localhost:3000/api/maps', function(data) {
-        if (data && Array.isArray(data) && data.length >= 5) {
-            for (let i = 0; i < 5; i++) {
-                let newLat = parseFloat(data[i].latitude);
-                let newLng = parseFloat(data[i].longitude);
-                
-                if (!isNaN(newLat) && !isNaN(newLng)) {
-                    CABANG[i].lat = newLat;
-                    CABANG[i].lng = newLng;
-                }
-            }
-            
-            if (mapUser && !isLocked && targetBranch.id === 'gerai-a') {
-                pinMarker.setLatLng([CABANG[0].lat, CABANG[0].lng]);
-                mapUser.setView([CABANG[0].lat, CABANG[0].lng], mapUser.getZoom());
-            }
-        }
-    }).fail(function() {
-        console.warn("Gagal terhubung ke database peta.");
+    $.get('/api/maps', function(res) {
+        CABANG = (Array.isArray(res) ? res : []).map(c => ({
+            id: 'c' + c.id, nama: c.nama, alamat: c.alamat, lat: +c.latitude, lng: +c.longitude
+        }));
+        targetBranch = CABANG[0] || null;
+
+        $('.jumlah-cabang').text(CABANG.length);
+        $('#banner-total-cabang').text(CABANG.length + ' Cabang');
+        $('#branch-list').html(CABANG.map(c => `
+            <button type="button" class="branch-card" data-id="${c.id}">
+                <i class="fa-solid fa-location-dot"></i>
+                <strong>${esc(c.nama)}</strong>
+            </button>`).join(''));
     });
 
-    const popupHtml = c => `<b>Papeda Restaurant - ${c.nama}</b><br>${c.alamat}`;
+    const popupHtml = c => `<b>${esc(c.nama)}</b><br>${esc(c.alamat)}`;
 
-    function updateUI(c) {
+    function updateUI(c, scroll = true) {
         $('.branch-card').removeClass('active').filter(`[data-id="${c.id}"]`).addClass('active');
         $('#branch-list').toggleClass('is-locked', isLocked);
         $('#btn-auto-tour').prop('hidden', !isLocked);
         $('#map-status').text(isLocked
-            ? `Lokasi dipilih: ${c.nama} - ${c.kota}`
-            : `Menjelajahi cabang... ${c.nama} - ${c.kota}`);
+            ? `Lokasi dipilih: ${c.nama}`
+            : `Menjelajahi cabang... ${c.nama}`);
+        if (scroll) {
+            const container = document.getElementById('branch-list');
+            const tombolAktif = document.querySelector('.branch-card.active');
+            if (container && tombolAktif) {
+                const scrollLeft = tombolAktif.offsetLeft - container.offsetWidth / 2 + tombolAktif.offsetWidth / 2;
+                container.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }
     }
 
     function dropPin() {
-        if (!pinMarker) return;
         const pin = pinMarker.getElement().querySelector('.pin');
-        if (pin) {
-            pin.classList.remove('drop');
-            void pin.offsetWidth;
-            pin.classList.add('drop');
-        }
+        pin.classList.remove('drop');
+        void pin.offsetWidth;
+        pin.classList.add('drop');
     }
 
     function onArrive() {
@@ -496,8 +487,7 @@ $(document).ready(function() {
 
     function initMap() {
         if (mapUser) return;
-
-        const c = targetBranch;
+        const c = CABANG[0];
 
         mapUser = L.map('map-user', { scrollWheelZoom: false }).setView([c.lat, c.lng], 15);
 
@@ -518,11 +508,12 @@ $(document).ready(function() {
           .openPopup();
 
         mapUser.on('moveend', onArrive);
-        updateUI(c);
-        setTimeout(dropPin, 100);
+        updateUI(c, false);
+        dropPin();
     }
 
     $('#btn-open-map').on('click', function() {
+        if (!CABANG.length) return;
         const opening = !$('#map-reveal').hasClass('open');
 
         $('#map-reveal').toggleClass('open', opening).attr('aria-hidden', !opening);
@@ -535,7 +526,8 @@ $(document).ready(function() {
 
         initMap();
         setTimeout(() => mapUser.invalidateSize(), 900);
-        if (!isLocked) scheduleHop();
+        setTimeout(() => $('#map-reveal')[0].scrollIntoView({ behavior: 'smooth', block: 'center' }), 350);
+        if (!isLocked && CABANG.length > 1) scheduleHop();
     });
 
     $('#branch-list').on('click', '.branch-card', function() {
@@ -553,6 +545,34 @@ $(document).ready(function() {
         updateUI(targetBranch);
         scheduleHop();
     });
+
+    (function () {
+        const section = document.getElementById('location');
+        if (!section || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const orns = section.querySelectorAll('.loc-orn[data-speed]');
+        let visible = false, ticking = false;
+
+        function update() {
+            const r = section.getBoundingClientRect();
+            const offset = r.top + r.height / 2 - window.innerHeight / 2;
+            orns.forEach(el => el.style.setProperty('--py', (offset * el.dataset.speed).toFixed(1) + 'px'));
+            ticking = false;
+        }
+
+        new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) update(); }).observe(section);
+        window.addEventListener('scroll', () => {
+            if (visible && !ticking) { ticking = true; requestAnimationFrame(update); }
+        }, { passive: true });
+
+        section.querySelectorAll('.loc-card').forEach(card => {
+            card.addEventListener('pointermove', e => {
+                const b = card.getBoundingClientRect();
+                card.style.setProperty('--mx', (e.clientX - b.left) + 'px');
+                card.style.setProperty('--my', (e.clientY - b.top) + 'px');
+            });
+        });
+    })();
 
     // reservation
     let $reservationForm = $('#reservation-form-group');
