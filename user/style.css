@@ -1555,7 +1555,7 @@ footer {
 }
 
 .fab:hover {
-    background-color: #6b4226;
+    background-color: #8b5e34;
     transform: translateY(-2px); 
 }
 
@@ -1563,7 +1563,7 @@ footer {
     display: none;
     align-items: center;
     justify-content: center;
-    background-color: #4a2c17;
+    background-color: #5b3e31;
     color: white;
     width: 45px;
     height: 45px;
@@ -1576,7 +1576,7 @@ footer {
 .fab-action {
     position: relative; 
     cursor: pointer;
-    background-color: #4a2c17; 
+    background-color: #5b3e31; 
 }
 
 .cart-icon {

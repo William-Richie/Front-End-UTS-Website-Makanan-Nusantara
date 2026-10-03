@@ -1,12 +1,22 @@
+function esc(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 $(document).ready(function() {
     let dataKontenAsli = { hero: '', about: '' };
     /* Notification */
     function tampilkanNotif(pesan, tipe = 'success') {
         let $toastEl =$('#liveToast');
         
-        $toastEl.removeClass('text-bg-success text-bg-danger').addClass(`text-bg-${tipe}`);
+        $toastEl.removeClass('text-bg-success text-bg-danger').addClass(`text-bg-${esc(tipe)}`);
         
-        $('#pesan-notif').text(pesan);
+        $('#pesan-notif').text(esc(pesan));
         
         let toast = new bootstrap.Toast($toastEl[0], { delay: 3000 });
         toast.show();
@@ -29,8 +39,8 @@ $(document).ready(function() {
         e.preventDefault();
          
         if (typeof dataKontenAsli !== 'undefined') {
-            $('#teks_hero').val(dataKontenAsli.hero);
-            $('#teks_about').val(dataKontenAsli.about);
+            $('#teks_hero').val(esc(dataKontenAsli.hero));
+            $('#teks_about').val(esc(dataKontenAsli.about));
             updateLivePreview(); 
         }
 
@@ -53,8 +63,8 @@ $(document).ready(function() {
         let heroText = $('#teks_hero').val() || '';
         let aboutText = $('#teks_about').val() || '';
 
-        $('#preview-hero').html(heroText.replace(/\n/g, '<br>'));
-        $('#preview-about').text(aboutText);
+        $('#preview-hero').html(esc(heroText).replace(/\n/g, '<br>'));
+        $('#preview-about').text(esc(aboutText));
     }
 
     function muatStatistikDanKonten() {
@@ -233,21 +243,21 @@ $(document).ready(function() {
                 window.menuCache[item.id] = item;
                 let badgeStatus = item.status
                     ? `<button class="status-badge tersedia btn-toggle-status"
-                        data-id="${item.id}"
+                        data-id="${esc(item.id)}"
                         data-status="true"
-                        data-kategori="${item.nama_kategori}"
-                        data-nama="${item.nama_makanan}"
-                        data-harga="${item.harga}"
-                        data-gambar="${item.gambar}">
+                        data-kategori="${esc(item.nama_kategori)}"
+                        data-nama="${esc(item.nama_makanan)}"
+                        data-harga="${esc(item.harga)}"
+                        data-gambar="${esc(item.gambar)}">
                         Tersedia
                     </button>`
                     : `<button class="status-badge habis btn-toggle-status"
-                        data-id="${item.id}"
+                        data-id="${esc(item.id)}"
                         data-status="false"
-                        data-kategori="${item.nama_kategori}"
-                        data-nama="${item.nama_makanan}"
-                        data-harga="${item.harga}"
-                        data-gambar="${item.gambar}">
+                        data-kategori="${esc(item.nama_kategori)}"
+                        data-nama="${esc(item.nama_makanan)}"
+                        data-harga="${esc(item.harga)}"
+                        data-gambar="${esc(item.gambar)}">
                         Habis
                     </button>`;
                 const buatRow = (nomor) => `
@@ -258,17 +268,17 @@ $(document).ready(function() {
                             </div>
                         </td>
                         <td>
-                            <img src="${item.gambar}" 
+                            <img src="${esc(item.gambar)}" 
                                 class="preview" 
                                 alt="foto">
                         </td>
                         <td>
                             <div class="nama-menu-wrapper">
                                 <span class="nama-menu-text">
-                                    ${item.nama_makanan}
+                                    ${esc(item.nama_makanan)}
                                 </span>
 
-                                ${tampilkanPedas(item.pedas)}
+                                ${tampilkanPedas(esc(item.pedas))}
                             </div>
                         </td>
                         <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
@@ -276,18 +286,18 @@ $(document).ready(function() {
                         <td>
                             <button
                                 class="btn btn-warning btn-sm fw-bold btn-edit-menu"
-                                data-id="${item.id}"
-                                data-kategori="${item.nama_kategori}"
-                                data-nama="${item.nama_makanan}"
-                                data-harga="${item.harga}"
-                                data-gambar="${item.gambar}"
-                                data-status="${item.status}">
+                                data-id="${esc(item.id)}"
+                                data-kategori="${esc(item.nama_kategori)}"
+                                data-nama="${esc(item.nama_makanan)}"
+                                data-harga="${esc(item.harga)}"
+                                data-gambar="${esc(item.gambar)}"
+                                data-status="${esc(item.status)}">
                                 Edit
                             </button>
 
                             <button
                                 class="btn btn-danger btn-sm fw-bold btn-hapus-menu"
-                                data-id="${item.id}">
+                                data-id="${esc(item.id)}">
                                 Hapus
                             </button>
                         </td>
@@ -363,7 +373,7 @@ $(document).ready(function() {
             }
         };
 
-        $('#teks-konfirmasi-status').html(`Apakah Anda yakin ingin mengubah <strong>${namaMakanan}</strong> menjadi <strong>${labelStatus}</strong>?`);
+        $('#teks-konfirmasi-status').html(`Apakah Anda yakin ingin mengubah <strong>${esc(namaMakanan)}</strong> menjadi <strong>${esc(labelStatus)}</strong>?`);
         $('#btn-modal-status').prop('disabled', false).text('Ya, Ubah!');
         let modalEl = document.getElementById('modalKonfirmasiStatus');
         let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
@@ -421,12 +431,12 @@ $(document).ready(function() {
         muatData('faq', '#tabel-faq tbody', null, function(item) {
             return `
                 <tr>
-                    <td>${item.id}</td>
-                    <td>${item.pertanyaan}</td>
-                    <td>${item.jawaban}</td>
+                    <td>${esc(item.id)}</td>
+                    <td>${esc(item.pertanyaan)}</td>
+                    <td>${esc(item.jawaban)}</td>
                     <td>
-                        <button class="btn btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${item.id}" data-pertanyaan="${item.pertanyaan}" data-jawaban="${item.jawaban}">Edit</button>
-                        <button class="btn btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${item.id}">Hapus</button>
+                        <button class="btn btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
+                        <button class="btn btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${esc(item.id)}">Hapus</button>
                     </td>
                 </tr>
             `;
@@ -520,11 +530,11 @@ $(document).ready(function() {
             let rowHtml = `
                 <tr>
                     <td><strong>ORD-${shortId}</strong></td>
-                    <td><strong>${$('<div>').text(namaPemesan).html()}</strong></td>
-                    <td><small>${$('<div>').text(pesanan.item || '-').html()}</small></td>
-                    <td class="fw-bold text-success">Rp ${Number(pesanan.total).toLocaleString('id-ID')}</td>
-                    <td>${statusBadge}</td>
-                    <td>${actionBtn}</td>
+                    <td><strong>${$('<div>').text(esc(namaPemesan)).html()}</strong></td>
+                    <td><small>${$('<div>').text(esc(pesanan.item || '-')).html()}</small></td>
+                    <td class="fw-bold text-success">Rp ${esc(Number(pesanan.total)).toLocaleString('id-ID')}</td>
+                    <td>${esc(statusBadge)}</td>
+                    <td>${esc(actionBtn)}</td>
                 </tr>
             `;
             $tbody.append(rowHtml);
@@ -804,11 +814,11 @@ $(document).ready(function() {
         
         dataArray.forEach(item => {
             htmlList += `
-                <li class="option-item" data-id="${item.id}" data-nama="${item.nama_makanan}" data-gambar="${item.gambar}">
-                    <img src="${item.gambar}" alt="${item.nama_makanan}" loading="lazy">
+                <li class="option-item" data-id="${esc(item.id)}" data-nama="${esc(item.nama_makanan)}" data-gambar="${esc(item.gambar)}">
+                    <img src="${esc(item.gambar)}" alt="${esc(item.nama_makanan)}" loading="lazy">
                     <div>
-                        <div class="option-name">${item.nama_makanan}</div>
-                        <span class="option-price">${formatRp(item.harga)}</span>
+                        <div class="option-name">${esc(item.nama_makanan)}</div>
+                        <span class="option-price">${formatRp(esc(item.harga))}</span>
                     </div>
                 </li>
             `;
@@ -823,7 +833,7 @@ $(document).ready(function() {
                 response.data.forEach(function(fav, index) {
                     let slotNumber = index + 1;
                     if(fav.menu_id) {
-                        let targetLi = $(`#fav-list-${slotNumber} .option-item[data-id="${fav.menu_id}"]`);
+                        let targetLi = $(`#fav-list-${slotNumber} .option-item[data-id="${esc(fav.menu_id)}"]`);
                         if(targetLi.length) {
                             pilihOpsi(targetLi, slotNumber);
                         }
@@ -873,7 +883,7 @@ $(document).ready(function() {
         $(`#fav-slot-${slotId}`).val(id);
         let displayHtml = '';
         if(id && gambar) {
-            displayHtml = `<img src="${gambar}" alt="gambar"> <span>${nama}</span>`;
+            displayHtml = `<img src="${esc(gambar)}" alt="gambar"> <span>${esc(nama)}</span>`;
         } else {
             displayHtml = `<span>-- Pilih Menu --</span>`;
         }
@@ -965,13 +975,13 @@ $(function () {
                 return `
                     <tr>
                         <td class="text-center">
-                            <input type="checkbox" class="form-check-input user-row-check" value="${u.id}">
+                            <input type="checkbox" class="form-check-input user-row-check" value="${esc(u.id)}">
                         </td>
                         <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
-                        <td><strong>${u.nama || '-'}</strong></td>
-                        <td>${u.email || '-'}</td>
-                        <td>${tgl}</td>
-                        <td><span class="badge bg-secondary">${u.total_reserve ?? 0} Kali</span></td>
+                        <td><strong>${esc(u.nama || '-')}</strong></td>
+                        <td>${esc(u.email || '-')}</td>
+                        <td>${esc(tgl)}</td>
+                        <td><span class="badge bg-secondary">${esc(u.total_reserve ?? 0)} Kali</span></td>
                     </tr>
                 `;
             }).join('');
@@ -1010,21 +1020,21 @@ $(function () {
 
             const rows = filtered.map(r => `
                 <tr>
-                    <td><strong>${r.gerai || '-'}</strong></td>
-                    <td>${r.nama || '-'}</td>
-                    <td>${r.telepon || '-'}<br><small class="text-muted">${r.email || '-'}</small></td>
-                    <td>${r.tanggal || '-'}<br><small>${r.jam || ''} (${r.sesi || ''})</small></td>
-                    <td>${r.jumlah || 0} Orang</td>
-                    <td>${r.ruangan || '-'}</td>
-                    <td>${r.catatan || '-'}</td>
+                    <td><strong>${esc(r.gerai || '-')}</strong></td>
+                    <td>${esc(r.nama || '-')}</td>
+                    <td>${esc(r.telepon || '-')}<br><small class="text-muted">${esc(r.email || '-')}</small></td>
+                    <td>${esc(r.tanggal || '-')}<br><small>${esc(r.jam || '')} (${esc(r.sesi || '')})</small></td>
+                    <td>${esc(r.jumlah || 0)} Orang</td>
+                    <td>${esc(r.ruangan || '-')}</td>
+                    <td>${esc(r.catatan || '-')}</td>
                     <td>
                         ${(r.status === 'complete' || r.status === 'selesai')
                             ? '<span class="badge bg-success">Selesai</span>'
                             : (r.status === 'dibatalkan' || r.status === 'cancelled')
                             ? '<span class="badge bg-danger">Dibatalkan</span>'
                             : (r.status === 'approved' || r.status === 'dikonfirmasi')
-                            ? `<button class="btn btn-sm btn-success btn-confirm" data-id="${r.id}" data-next="complete">✓ Selesaikan</button>`
-                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${r.id}" data-next="approved">✓ Konfirmasi</button>`
+                            ? `<button class="btn btn-sm btn-success btn-confirm" data-id="${esc(r.id)}" data-next="complete">✓ Selesaikan</button>`
+                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${esc(r.id)}" data-next="approved">✓ Konfirmasi</button>`
                         }
                     </td>
                 </tr>
