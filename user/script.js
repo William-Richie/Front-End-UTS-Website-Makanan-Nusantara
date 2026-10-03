@@ -240,14 +240,28 @@ $(document).ready(function() {
         cartTotal += itemPrice;
         cartItems.push(itemName);
 
-        let cartItemHtml = `
-            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                ${itemName}
-                <span>Rp ${itemPrice.toLocaleString('id-ID')}</span>
-            </li>
-        `;
+        let existingItem = $(`#cart-items-list .cart-item-row[data-nama="${itemName}"]`);
+        if (existingItem.length > 0) {
+            let qtySpan = existingItem.find('.item-qty');
+            let currentQty = parseInt(qtySpan.text());
+            qtySpan.text(currentQty + 1);
+        } else {
+            let cartItemHtml = `
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom cart-item-row" data-nama="${itemName}" data-harga="${itemPrice}">
+                    <div class="d-flex flex-column" style="max-width: 55%;">
+                        <span class="fw-bold" style="color: #4a2c17; font-size: 14px; line-height: 1.2;">${itemName}</span>
+                        <span style="font-size: 12px; color: #8b5e34;">Rp ${itemPrice.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-qty btn-decrease" style="padding: 0 8px; border: 1px solid #d8c3ab; background: #fffaf3;">-</button>
+                        <span class="fw-bold item-qty" style="font-size: 14px; width: 24px; text-align: center;">1</span>
+                        <button type="button" class="btn btn-qty btn-increase" style="padding: 0 8px; border: 1px solid #d8c3ab; background: #fffaf3;">+</button>
+                    </div>
+                </li>
+            `;
         
-        $('#cart-items-list').append(cartItemHtml);
+            $('#cart-items-list').append(cartItemHtml);
+        }
 
         updateCartBadge(); 
         
@@ -306,6 +320,45 @@ $(document).ready(function() {
             
             updateModalTotal();
         }
+    });
+
+    $('#cart-items-list').on('click', '.btn-increase', function() {
+        let $row = $(this).closest('.cart-item-row');
+        let itemName = $row.data('nama');
+        let itemPrice = parseInt($row.data('harga'));
+        let $qtySpan = $row.find('.item-qty');
+
+        cartItemCount++;
+        cartTotal += itemPrice;
+        cartItems.push(itemName);
+
+        $qtySpan.text(parseInt($qtySpan.text()) + 1);
+        updateCartBadge();
+
+        if ($('#checkoutModal').hasClass('show')) updateModalTotal(); 
+    });
+
+    $('#cart-items-list').on('click', '.btn-decrease', function() {
+        let $row = $(this).closest('.cart-item-row');
+        let itemName = $row.data('nama');
+        let itemPrice = parseInt($row.data('harga'));
+        let $qtySpan = $row.find('.item-qty');
+        let currentQty = parseInt($qtySpan.text());
+
+        cartItemCount--;
+        cartTotal -= itemPrice;  
+        
+        let index = cartItems.indexOf(itemName);
+        if (index !== -1) cartItems.splice(index, 1);
+
+        if (currentQty > 1) {
+            $qtySpan.text(currentQty - 1);
+        } else {
+            $row.remove(); 
+        }
+
+        updateCartBadge();
+        if ($('#checkoutModal').hasClass('show')) updateModalTotal();
     });
 
     function updateModalTotal() {
