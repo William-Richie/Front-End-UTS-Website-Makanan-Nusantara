@@ -189,7 +189,18 @@ main {
     margin-bottom: 12px;
 }
 
+/* Hero */
+.hero-content-wrap,
+.section-content-wrap {
+    z-index: 1;
+}
+
 /* About */
+#deskripsi-about,
+.about-desc {
+    max-width: 600px;
+}
+
 .feature-card {
     background: #fffaf3;
     border: 1px solid #eee2d5;
@@ -1446,6 +1457,10 @@ main {
 }
 
 /* Reservation */
+#reservation-form-group {
+    display: none;
+}
+
 .content-containers {
     max-width: 550px;
     margin: 0 auto;
@@ -1461,6 +1476,15 @@ main {
 }
 
 /* Footer */
+.footer-contact-list {
+    line-height: 2;
+}
+
+.footer-logo {
+    width: 120px;
+    opacity: 0.9;
+}
+
 .custom-footer {
     background-color: #4a2c17 !important; /* Warna cokelat utama */
     color: white;
@@ -1933,6 +1957,36 @@ main {
     cursor: not-allowed;
 }
 
+
+/* Checkout Modal */
+#checkoutModal {
+    z-index: 999999;
+}
+
+.gate-icon {
+    font-size: 20px;
+    color: #8b5e34;
+}
+
+.checkout-order-type-title {
+    color: #4a2c17;
+}
+
+#dineInForm,
+#onlineForm,
+#ongkirRow {
+    display: none;
+}
+
+.checkout-form-label {
+    color: #6b4226;
+    letter-spacing: 1px;
+}
+
+#btn-confirm-pay {
+    background-color: #5b3e31;
+}
+
 /* HERO PAPEDA */
 .hero-papeda {
     background:
@@ -2130,6 +2184,43 @@ html.has-entered #intro { display: none !important; }
     animation: slideIn 1.1s cubic-bezier(.22,1,.36,1) calc(.9s + var(--i) * .3s) both;
 }
 
+.intro-item.intro-item-0,
+.intro-item:nth-child(1) {
+    --i: 0;
+    --r: -200deg;
+    --float: swing;
+}
+
+.intro-item.intro-item-1,
+.intro-item:nth-child(2) {
+    --i: 1;
+    --r: -160deg;
+}
+
+.intro-item.intro-item-2,
+.intro-item:nth-child(3) {
+    --i: 2;
+    --r: -220deg;
+}
+
+.intro-item.intro-item-3,
+.intro-item:nth-child(4) {
+    --i: 3;
+    --r: -200deg;
+}
+
+.intro-item.intro-item-4,
+.intro-item:nth-child(5) {
+    --i: 4;
+    --r: -180deg;
+}
+
+.intro-item.intro-item-5,
+.intro-item:nth-child(6) {
+    --i: 5;
+    --r: -240deg;
+}
+
 .intro-item img {
     display: block;
     width: 100%;
@@ -2166,6 +2257,12 @@ html.has-entered #intro { display: none !important; }
 }
 .reveal.show { opacity: 1; transform: none; }
 
+.reveal-d1 { transition-delay: .15s; }
+.reveal-d2 { transition-delay: .3s; }
+.reveal-d3 { transition-delay: .45s; }
+.reveal-d2p5 { transition-delay: .25s; }
+.reveal-d4 { transition-delay: .4s; }
+
 /* Keyframes */
 @keyframes float {
   50% { transform: translateY(10px); }
@@ -2184,6 +2281,45 @@ html.has-entered #intro { display: none !important; }
 @keyframes bob       { 50% { transform: translateY(-9px) rotate(3deg); } }
 @keyframes swing     { 0%,100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
 @keyframes bump      { 40% { transform: scale(1.4); } }
+
+/* Others */
+#judul-hero.reveal,
+.faq-title.reveal,
+.loc-title.reveal {
+    transition-delay: .15s;
+}
+
+#home .hero-sub.reveal,
+#faq .loc-chips.reveal,
+#lokasi-kami .loc-chips.reveal {
+    transition-delay: .3s;
+}
+
+#home .d-flex.reveal {
+    transition-delay: .45s;
+}
+
+#about .row > div:nth-child(1).reveal,
+.loc-cards li:nth-child(1).reveal {
+    transition-delay: .1s;
+}
+
+.loc-cards li:nth-child(2).reveal {
+    transition-delay: .2s;
+}
+
+#about .row > div:nth-child(2).reveal {
+    transition-delay: .25s;
+}
+
+.loc-cards li:nth-child(3).reveal {
+    transition-delay: .3s;
+}
+
+#about .row > div:nth-child(3).reveal,
+.loc-cards li:nth-child(4).reveal {
+    transition-delay: .4s;
+}
 
 @media (prefers-reduced-motion: reduce) {
     .intro-item, .intro-item img { animation: none; opacity: 1; }

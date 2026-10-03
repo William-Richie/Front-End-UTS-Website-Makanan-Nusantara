@@ -37,7 +37,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <input type="password" id="al-pass" class="form-control" placeholder="Password" autocomplete="current-password" required>
-                <span class="input-group-text" id="al-eye" style="cursor:pointer"><i class="fa-solid fa-eye"></i></span>
+                <span class="input-group-text" id="al-eye"><i class="fa-solid fa-eye"></i></span>
             </div>
 
             <div id="al-error" class="al-error d-none"></div>
@@ -132,19 +132,19 @@
 
         <!-- TAB 1: STATISTIK -->
         <section id="tab-statistik" class="tab-section active">
-            <p class="text-muted mb-0 stat-anim" style="--i:0">WELCOME BACK,</p>
-            <h1 class="mb-4 text-dark fw-bold fs-3 stat-anim" style="--i:1">Admin Papeda</h1>
+            <p class="text-muted mb-0 stat-anim">WELCOME BACK,</p>
+            <h1 class="mb-4 text-dark fw-bold fs-3 stat-anim">Admin Papeda</h1>
             <div class="row g-3 mb-4">
-                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:2">
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim">
                     <i class="fa-solid fa-utensils stat-ico"></i><div id="angka-menu" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">MENU AKTIF</h3></div></div>
-                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:3">
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim">
                     <i class="fa-solid fa-receipt stat-ico"></i><div id="dash-pesanan" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">PESANAN MASUK</h3></div></div>
-                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:4">
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim">
                     <i class="fa-solid fa-sack-dollar stat-ico"></i><div id="dash-revenue" class="fs-2 fw-bold">Rp 0</div><h3 class="fs-6 text-muted m-0">REVENUE HARI INI</h3></div></div>
-                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim" style="--i:5">
+                <div class="col-6 col-lg-3"><div class="card shadow-sm border-0 text-center p-4 stat-anim">
                     <i class="fa-solid fa-users stat-ico"></i><div id="angka-pengunjung" class="fs-2 fw-bold">0</div><h3 class="fs-6 text-muted m-0">PENGUNJUNG</h3></div></div>
             </div>
-            <div class="card shadow-sm border-0 p-4 stat-anim" style="--i:6">
+            <div class="card shadow-sm border-0 p-4 stat-anim">
                 <h2 class="fs-5 fw-bold mb-3">Recent Orders</h2>
                 <div id="recent-orders"></div>
             </div>
@@ -217,7 +217,7 @@
             <div class="card shadow-sm border-0 p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="fs-5 fw-bold m-0">Daftar Menu</h2>
-                    <input type="text" id="search-menu" class="form-control" placeholder="Cari menu..." style="max-width: 250px;">
+                    <input type="text" id="search-menu" class="form-control" placeholder="Cari menu...">
                 </div>
 
                 <!-- APPETIZER -->
@@ -449,21 +449,21 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="card shadow-sm border-0 h-100 overflow-hidden" style="background-color: #f7ede1;">
+                    <div class="card shadow-sm border-0 h-100 overflow-hidden preview-card">
                         <div class="card-header bg-dark text-white">
                             <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
                         </div>
                         
-                        <div class="card-body p-0 d-flex flex-column" style="overflow-y: auto;">
+                        <div class="card-body p-0 d-flex flex-column preview-card-body">
                             
-                            <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3" style="overflow: hidden;">
+                            <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3">
                                 
-                                <div class="text-center text-lg-start" style="flex: 1;">
-                                    <h1 id="preview-hero" style="font-family: 'Lora', serif; font-size: 22px; color: #3b2314; margin-bottom: 10px;">Memuat...</h1>
-                                    <p class="hero-sub" style="color: #4a2c17; font-size: 13px;">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
+                                <div class="text-center text-lg-start preview-hero-info">
+                                    <h1 id="preview-hero">Memuat...</h1>
+                                    <p class="hero-sub preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
                                 </div>
 
-                                <div class="papeda-area position-relative" style="transform: scale(0.65); transform-origin: center;">
+                                <div class="papeda-area position-relative">
                                     <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
                                     <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
                                     <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
@@ -477,8 +477,8 @@
                             </div>
 
                             <div class="content-container text-content p-4">
-                                <h2 style="font-family: 'Lora', serif; font-size: 16px; margin-bottom: 10px; color: #4a2c17;">Tentang Kami</h2>
-                                <p id="preview-about" style="font-size: 14px; line-height: 1.5; margin-bottom: 10px; color: #5c4433;">Memuat...</p>
+                                <h2 class="preview-about-title">Tentang Kami</h2>
+                                <p id="preview-about">Memuat...</p>
                             </div>
                             
                         </div>
@@ -509,7 +509,7 @@
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="fs-5 fw-bold m-0">Daftar FAQ</h2>
-                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan..." style="max-width: 250px;">
+                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan...">
                 </div>
 
                 <div class="table-responsive">
@@ -538,14 +538,14 @@
                         <p class="kpi-value jumlah-cabang" id="lok-total">0</p>
                     </div>
                 </div>
-                <div class="card lok-stat" style="--d:.08s">
+                <div class="card lok-stat">
                     <div class="kpi-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Cabang Dipilih</p>
                         <p class="kpi-value text-truncate" id="lok-dipilih">-</p>
                     </div>
                 </div>
-                <div class="card lok-stat lok-stat-wide" style="--d:.16s">
+                <div class="card lok-stat lok-stat-wide">
                     <div class="kpi-icon"><i class="fa-solid fa-eye"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Pratinjau Banner Web User</p>
@@ -605,7 +605,7 @@
                             <div class="d-flex gap-2 flex-wrap mt-4">
                                 <button type="submit" id="btn-lokasi-simpan" class="btn btn-success fw-bold flex-grow-1">Simpan ke Database</button>
                                 <button type="button" id="btn-lokasi-batal" class="btn btn-secondary fw-bold">Batal</button>
-                                <button type="button" id="btn-lokasi-hapus" class="btn btn-danger fw-bold" style="display:none">
+                                <button type="button" id="btn-lokasi-hapus" class="btn btn-danger fw-bold">
                                     <i class="fa-solid fa-trash me-1"></i>Hapus Cabang
                                 </button>
                             </div>
@@ -641,7 +641,7 @@
                     <div id="user-action-bar" class="d-none d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
                         <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
                         <div class="d-flex align-items-center gap-2">
-                            <select id="user-action-select" class="form-select form-select-sm" style="width: auto;">
+                            <select id="user-action-select" class="form-select form-select-sm">
                                 <option value="" disabled selected>Pilih Aksi...</option>
                                 <option value="modifikasi">✏️ Modifikasi Akun</option>
                                 <option value="blokir">🚫 Blokir Akun</option>
@@ -655,7 +655,7 @@
                         <table class="table table-striped align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th style="width: 40px; text-align: center;">
+                                    <th class="th-checkbox">
                                         <input type="checkbox" id="check-all-users" class="form-check-input">
                                     </th>
                                     <th>User ID</th>
@@ -695,7 +695,7 @@
         </section>
 
         <!-- TAB 8: KELOLA PESANAN -->
-        <section id="tab-pesanan" class="tab-section" style="display: none;">
+        <section id="tab-pesanan" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola Pesanan</h1>
 
@@ -744,25 +744,25 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-6 col-lg-3">
-                    <div class="card kpi-card" style="--d:0s">
+                    <div class="card kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
                         <div><p class="kpi-label">Total Pendapatan</p><p class="kpi-value" id="kpi-total">Rp 0</p></div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
-                    <div class="card kpi-card" style="--d:.08s">
+                    <div class="card kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-receipt"></i></div>
                         <div><p class="kpi-label">Total Pesanan</p><p class="kpi-value" id="kpi-pesanan">0</p></div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
-                    <div class="card kpi-card" style="--d:.16s">
+                    <div class="card kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-bowl-food"></i></div>
                         <div><p class="kpi-label">Item Terjual</p><p class="kpi-value" id="kpi-item">0</p></div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
-                    <div class="card kpi-card" style="--d:.24s">
+                    <div class="card kpi-card">
                         <div class="kpi-icon"><i class="fa-solid fa-chart-line"></i></div>
                         <div><p class="kpi-label">Rata-rata Order</p><p class="kpi-value" id="kpi-rata">Rp 0</p></div>
                     </div>
@@ -771,7 +771,7 @@
 
             <div class="card p-4 mb-4">
                 <h2 class="fs-5 fw-bold mb-3" id="judul-grafik">Pendapatan 7 Hari Terakhir</h2>
-                <div style="position: relative; height: 320px;">
+                <div class="chart-container">
                     <canvas id="chart-pendapatan"></canvas>
                 </div>
             </div>
@@ -782,7 +782,7 @@
                 <button type="button" id="btn-full-report" class="btn btn-success fw-bold mt-3 align-self-start">View Full Report →</button>
             </div>
 
-            <div class="card p-4" id="full-report" style="display: none;">
+            <div class="card p-4" id="full-report">
                 <h2 class="fs-5 fw-bold mb-3">Laporan Lengkap</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle" id="tabel-laporan">
@@ -842,7 +842,7 @@
     </div>
 
     <!-- NOTIFICATION -->
-    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1100;">
+    <div class="toast-container position-fixed top-0 end-0 p-4">
         <div id="liveToast" class="toast align-items-center border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body fs-6 fw-semibold" id="pesan-notif"></div>

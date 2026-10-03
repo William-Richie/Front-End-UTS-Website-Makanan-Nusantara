@@ -147,6 +147,48 @@ main.p-4 {
     border-radius: 16px 16px 0 0 !important;
 }
 
+/* Preview Card */
+.preview-card {
+    background-color: #f7ede1;
+}
+
+.preview-card-body {
+    overflow-y: auto;
+}
+
+
+.preview-hero-info {
+    flex: 1;
+}
+
+#preview-hero {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    color: #3b2314;
+    margin-bottom: 10px;
+}
+
+.preview-hero-sub {
+    color: #4a2c17;
+    font-size: 13px;
+}
+
+
+.preview-about-title {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #4a2c17;
+}
+
+#preview-about {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    color: #5c4433;
+}
+
+
 /* GAMBAR */
 img.preview{
     width: 70px;
@@ -499,10 +541,6 @@ img.preview:hover{
     color: #3b2314;
 }
 
-#btn-menu-cancel,
-#btn-faq-cancel {
-    display: none;
-}
 
 #btn-modal-status {
     background-color: #d49341; 
@@ -533,6 +571,16 @@ img.preview:hover{
 #modalKonfirmasiStatus .modal-header.bg-warning {
     background-color: #d49341 !important;
     color: white !important;
+}
+
+#btn-menu-cancel,
+#btn-faq-cancel {
+    display: none;
+}
+
+#search-menu,
+#search-faq {
+    max-width: 250px;
 }
 
 .btn-edit-menu,
@@ -1072,12 +1120,14 @@ img.preview:hover{
 /* Live Preview */
 .hero-papeda {
     background: linear-gradient(135deg, #e8d5c4, #c9a17a);
+    overflow: hidden;
 }
 
 .papeda-area {
     width: 250px;
     height: 250px;
-    transform: scale(0.7);
+    transform: scale(0.65);
+    transform-origin: center;
 }
 
 .papeda-img {
@@ -1387,6 +1437,22 @@ img.preview:hover{
     min-width: 52rem;
 }
 
+#tab-statistik > p.stat-anim { animation-delay: 0s; }
+#tab-statistik > h1.stat-anim { animation-delay: .12s; }
+#tab-statistik .row > div:nth-child(1) .stat-anim { animation-delay: .24s; }
+#tab-statistik .row > div:nth-child(2) .stat-anim { animation-delay: .36s; }
+#tab-statistik .row > div:nth-child(3) .stat-anim { animation-delay: .48s; }
+#tab-statistik .row > div:nth-child(4) .stat-anim { animation-delay: .60s; }
+#tab-statistik > .card.stat-anim { animation-delay: .72s; }
+
+.lok-stats .lok-stat:nth-child(2) { animation-delay: .08s; }
+.lok-stats .lok-stat:nth-child(3) { animation-delay: .16s; }
+
+#tab-pendapatan .row > div:nth-child(1) .kpi-card { animation-delay: 0s; }
+#tab-pendapatan .row > div:nth-child(2) .kpi-card { animation-delay: .08s; }
+#tab-pendapatan .row > div:nth-child(3) .kpi-card { animation-delay: .16s; }
+#tab-pendapatan .row > div:nth-child(4) .kpi-card { animation-delay: .24s; }
+
 #tab-statistik .stat-anim .fs-2 {
     font-size: clamp(1.15rem, .9rem + 1.3vw, 2rem) !important;
     overflow-wrap: anywhere;
@@ -1402,6 +1468,10 @@ img.preview:hover{
 #search-faq {
     flex: 1 1 100%;
     max-width: none !important;
+}
+
+#user-action-select {
+    width: auto;
 }
 
 #user-action-bar {
@@ -1426,6 +1496,10 @@ img.preview:hover{
     flex-direction: column;
 }
 
+#btn-lokasi-hapus {
+    display: none;
+}
+
 #tab-pendapatan div[style*="height: 320px"] {
     height: 240px !important;
 }
@@ -1435,12 +1509,35 @@ img.preview:hover{
     min-width: 0;
 }
 
+.toast-container {
+    z-index: 1100;
+}
+
 .toast-container.p-4 {
     padding: .75rem !important;
 }
 
 .pedas-info {
     width: 100%;
+}
+
+/* Others */
+#al-eye {
+    cursor: pointer;
+}
+
+.th-checkbox {
+    width: 40px;
+    text-align: center;
+}
+
+#full-report {
+    display: none;
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
 }
 
 /* >= 576px */
