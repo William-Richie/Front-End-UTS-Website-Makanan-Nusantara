@@ -905,7 +905,7 @@ main {
     text-align: center;
     padding: 32px 24px 26px;
     color: #fff;
-    background: #4a2c17ed;
+    background: linear-gradient(135deg, #8b5e34, #4a2c17);
 }
 
 .faq-modal-icon {
@@ -2810,3 +2810,54 @@ html.has-entered #intro { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
     .mm-plate, .mm-plate::before, .mm-float { animation: none; }
 }
+
+/* TAB KATEGORI MENU */
+.menu-tabs {
+    display: flex; 
+    gap: 10px; 
+    overflow-x: auto; 
+    padding: 6px 4px 16px; 
+    margin-bottom: 8px;
+    scrollbar-width: none; 
+    -webkit-overflow-scrolling: touch;
+}
+.menu-tabs::-webkit-scrollbar { display: none; }
+.menu-tab {
+    flex-shrink: 0; 
+    cursor: pointer; 
+    padding: 9px 22px; 
+    border-radius: 50px;
+    border: 2px solid #d8c3ab; 
+    background: #fffaf3; 
+    color: #6b4226;
+    font-size: 13px; 
+    font-weight: 700; 
+    letter-spacing: 1px; 
+    text-transform: uppercase;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+.menu-tab:hover { 
+    border-color: #8b5e34; 
+    color: #4a2c17; 
+    transform: translateY(-2px); 
+}
+
+.menu-tab.active {
+    background: linear-gradient(135deg, #8b5e34, #4a2c17); 
+    border-color: #4a2c17; 
+    color: #fff;
+    box-shadow: 0 6px 14px #4a2c174d;
+}
+
+.menu-group { display: none; }
+
+.menu-group.active { 
+    display: block; 
+    animation: tabFade .45s ease; 
+}
+.menu-tabs ~ .menu-group .category-header { display: none; }
+
+@media (min-width: 768px) {
+    .menu-tabs { justify-content: center; }
+}
+@keyframes tabFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }

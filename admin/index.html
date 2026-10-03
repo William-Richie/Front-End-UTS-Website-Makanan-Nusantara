@@ -84,7 +84,7 @@
                             <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
                         </li>
                         <li class="nav-item mb-2">
-                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ</a>
+                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ <span class="nav-badge" id="badge-pertanyaan-nav" style="display:none">0</span></a>
                         </li>
                         <li  class="nav-item mb-2">
                             <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
@@ -163,6 +163,8 @@
                             <option value="APPETIZER">APPETIZER</option>
                             <option value="MAIN COURSE">MAIN COURSE</option>
                             <option value="DESSERT">DESSERT</option>
+                            <option value="DRINK">DRINK</option>
+                            <option value="ADDITIONAL">ADDITIONAL</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -265,6 +267,46 @@
                     <div class="menu-section-title">Dessert</div>
                     <div class="table-responsive">
                         <table id="tabel-dessert" class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Gambar</th>
+                                    <th>Nama Makanan</th>
+                                    <th>Harga</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DRINK -->
+                <div class="card shadow-sm border-0 p-4 mb-4">
+                    <div class="menu-section-title">Drink</div>
+                    <div class="table-responsive">
+                        <table id="tabel-drink" class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Gambar</th>
+                                    <th>Nama Makanan</th>
+                                    <th>Harga</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADDITIONAL -->
+                <div class="card shadow-sm border-0 p-4 mb-4">
+                    <div class="menu-section-title">Additional</div>
+                    <div class="table-responsive">
+                        <table id="tabel-additional" class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
                                     <th>No</th>
@@ -587,28 +629,98 @@
         </section>
 
         <!-- TAB 5: KELOLA FAQ -->
-         <section id="tab-faq" class="tab-section">
-            <div class="card shadow-sm border-0 p-4 mb-4">
-                <h1 id="judul-form-faq" class="fs-4 fw-bold mb-4">Input Pertanyaan Baru</h1>
-                <form id="form-faq">
-                    <input type="hidden" id="edit_id_faq">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Judul Pertanyaan</label>
-                        <input type="text" id="judul_faq" class="form-control" required>
+        <section id="tab-faq" class="tab-section">
+            <div class="lok-stats">
+                <div class="card lok-stat">
+                    <div class="kpi-icon"><i class="fa-solid fa-circle-question"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">FAQ Tampil di Web</p>
+                        <p class="kpi-value" id="faq-total">0</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Jawaban FAQ</label>
-                        <textarea id="jawaban_faq" class="form-control" rows="6" required></textarea>
+                </div>
+                <div class="card lok-stat" style="--d:.08s">
+                    <div class="kpi-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">Belum Dibaca</p>
+                        <p class="kpi-value" id="faq-belum-dibaca">0</p>
                     </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold" id="btn-faq-submit">Simpan ke Database</button>
-                    <button type="button" class="btn btn-secondary w-100 fw-bold mt-2" id="btn-faq-cancel">Batal Edit</button>
-                </form>
+                </div>
+                <div class="card lok-stat lok-stat-wide" style="--d:.16s">
+                    <div class="kpi-icon"><i class="fa-solid fa-inbox"></i></div>
+                    <div class="lok-stat-body">
+                        <p class="kpi-label">Total Pertanyaan Masuk</p>
+                        <p class="kpi-value" id="faq-total-masuk">0</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="card shadow-sm border-0 p-4 mb-4">
+            <div class="row g-4">
+                <!-- Pertanyaan masuk -->
+                <div class="col-lg-5">
+                    <div class="card shadow-sm border-0 p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <h2 class="fs-5 fw-bold m-0">Pertanyaan Masuk</h2>
+                            <button type="button" id="btn-baca-semua" class="btn btn-secondary btn-sm fw-bold" disabled>
+                                <i class="fa-solid fa-check-double me-1"></i>Tandai semua dibaca
+                            </button>
+                        </div>
+                        <p class="lok-hint mb-3">List pertanyaan yang masuk dari pengunjung</p>
+
+                        <input type="text" id="search-pertanyaan" class="form-control mb-3" placeholder="Cari pertanyaan, nama, atau email...">
+
+                        <div class="faq-filter mb-3" id="faq-filter">
+                            <button type="button" class="faq-filter-btn active" data-filter="belum">Belum dibaca <span class="badge" id="faq-count-belum">0</span></button>
+                            <button type="button" class="faq-filter-btn" data-filter="sudah">Sudah dibaca <span class="badge" id="faq-count-sudah">0</span></button>
+                            <button type="button" class="faq-filter-btn" data-filter="semua">Semua <span class="badge" id="faq-count-semua">0</span></button>
+                        </div>
+
+                        <div id="faq-in-list" class="faq-in-list">
+                            <p class="faq-kosong">Memuat...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form FAQ -->
+                <div class="col-lg-7">
+                    <div class="card shadow-sm border-0 p-4 h-100" id="card-form-faq">
+                        <h2 id="judul-form-faq" class="fs-5 fw-bold mb-3">Tambah FAQ Baru</h2>
+
+                        <div id="faq-sumber" class="faq-sumber d-none">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div class="min-w-0">
+                                    <small class="faq-sumber-label"><i class="fa-solid fa-quote-left me-1"></i>Dari pertanyaan pengunjung<span id="faq-sumber-nama"></span></small>
+                                    <p id="faq-sumber-teks" class="mb-0"></p>
+                                </div>
+                                <button type="button" id="btn-lepas-sumber" class="btn-close" aria-label="Lepas pertanyaan sumber"></button>
+                            </div>
+                            <small class="lok-hint d-block mt-2">Edit ulang dengan bahasa sendiri di bawah. Pertanyaan akan otomatis ditandai sudah dibaca setelah FAQ disimpan.</small>
+                        </div>
+
+                        <form id="form-faq">
+                            <input type="hidden" id="edit_id_faq">
+                            <input type="hidden" id="sumber_id_faq">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" for="judul_faq">Judul Pertanyaan</label>
+                                <input type="text" id="judul_faq" class="form-control" maxlength="300" placeholder="Tulis pertanyaan yang akan tampil di web pengunjung" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" for="jawaban_faq">Jawaban FAQ</label>
+                                <textarea id="jawaban_faq" class="form-control" rows="6" placeholder="Tulis jawaban yang akan tampil di web pengunjung" required></textarea>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap mt-4">
+                                <button type="submit" class="btn btn-success fw-bold flex-grow-1" id="btn-faq-submit">Simpan ke Database</button>
+                                <button type="button" class="btn btn-secondary fw-bold" id="btn-faq-cancel">Batal Edit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daftar FAQ -->
+            <div class="card shadow-sm border-0 p-4 mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="fs-5 fw-bold m-0">Daftar FAQ</h2>
-                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan...">
+                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan..." style="max-width: 250px;">
                 </div>
 
                 <div class="table-responsive">
@@ -625,7 +737,7 @@
                     </table>
                 </div>
             </div>
-         </section>
+        </section>
 
         <!-- TAB 6: KELOLA LOKASI -->
         <section id="tab-lokasi" class="tab-section">

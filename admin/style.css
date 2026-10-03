@@ -739,10 +739,208 @@ img.preview:hover{
     font-size: .85rem;
 }
 
-/* FAQ */
-#jawaban_faq {
-    min-height: 10%;
-    resize: vertical;
+/* Kelola FAQ */
+.nav-badge {
+    display: inline-block;
+    min-width: 20px;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: #b5532d;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.faq-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.faq-filter-btn {
+    padding: 5px 12px;
+    border: 1px solid #d8c3ab;
+    background: #f7ede1;
+    color: #3b2314;
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .25s, color .25s, border-color .25s;
+}
+
+.faq-filter-btn .badge {
+    margin-left: 4px;
+    background: #d8c3ab;
+    color: #3b2314;
+}
+
+.faq-filter-btn.active {
+    background: #4a2c17;
+    border-color: #4a2c17;
+    color: #fff;
+}
+
+.faq-filter-btn.active .badge {
+    background: #b5532d;
+    color: #fff;
+}
+
+.faq-in-list {
+    display: grid;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+    align-content: start;
+}
+
+.faq-in-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #fffaf3;
+    border: 1px solid #eee2d5;
+    border-left: 4px solid #b5532d;
+    border-radius: 12px;
+    transition: background .25s;
+}
+
+.faq-in-item.is-read {
+    background: #f7efe5;
+    border-left-color: transparent;
+}
+
+.faq-in-dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: #b5532d;
+}
+
+.faq-in-item.is-read .faq-in-dot {
+    background: #d8c3ab;
+}
+
+.faq-in-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.faq-in-q {
+    margin: 0 0 4px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.faq-in-item.is-read .faq-in-q {
+    font-weight: 400;
+    color: #6b5443;
+}
+
+.faq-in-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    color: #8a6d55;
+    font-size: .8rem;
+}
+
+.faq-in-meta span {
+    overflow-wrap: anywhere;
+}
+
+.faq-in-meta i {
+    margin-right: 4px;
+}
+
+.faq-in-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.btn-faq-in {
+    padding: 4px 10px;
+    border: 1px solid #d8c3ab;
+    background: #fff;
+    color: #4a2c17;
+    border-radius: 10px;
+    font-size: .8rem;
+    font-weight: 700;
+    transition: background .25s, transform .2s;
+}
+
+.btn-faq-in:hover {
+    background: #f0e4d6;
+    transform: translateY(-2px);
+}
+
+.btn-faq-in.utama {
+    background: #4a2c17;
+    border-color: #4a2c17;
+    color: #fff;
+}
+
+.btn-faq-in.utama:hover {
+    background: #5b3e31;
+}
+
+.btn-faq-in.bahaya {
+    border-color: #e7bcbc;
+    color: #c95252;
+}
+
+.btn-faq-in.bahaya:hover {
+    background: #c95252;
+    border-color: #c95252;
+    color: #fff;
+}
+
+.faq-kosong {
+    margin: 0;
+    padding: 24px 0;
+    text-align: center;
+    color: #8a6d55;
+}
+
+.faq-sumber {
+    margin-bottom: 1rem;
+    padding: 10px 12px;
+    background: #fffaf3;
+    border: 1px dashed #b98459;
+    border-left: 4px solid #b5532d;
+    border-radius: 12px;
+    font-size: .9rem;
+}
+
+.faq-sumber-label {
+    display: block;
+    margin-bottom: 2px;
+    color: #8a6d55;
+    font-weight: 700;
+}
+
+.faq-sumber p {
+    overflow-wrap: anywhere;
+}
+
+.faq-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .faq-filter-btn, .faq-in-item, .btn-faq-in { transition: none; }
 }
 
 /* BUTTON */
@@ -965,8 +1163,9 @@ img.preview:hover{
 
 @media (prefers-reduced-motion: reduce) { .lok-item { transition: none; } }
 
-#tab-lokasi { 
-    container: lokasi / inline-size; 
+#tab-lokasi,
+#tab-faq {
+    container: lokasi / inline-size;
 }
 
 .lok-stats {
@@ -1663,6 +1862,10 @@ img.preview:hover{
 
     #map-admin {
         height: 400px;
+    }
+
+    .faq-in-list {
+        max-height: 640px;
     }
 
     #btn-back-to-top {
