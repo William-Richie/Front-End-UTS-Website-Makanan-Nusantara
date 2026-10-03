@@ -243,13 +243,13 @@ app.delete('/api/faq/:id', async (req, res) => {
 
 /* PERTANYAAN PENGUNJUNG */
 const riwayatTanya = new Map();
+const batasWaktu = 24 * 60 * 60 * 1000;
 function batasTanya(req, res, next) {
     const sekarang = Date.now();
-    const waktu = (riwayatTanya.get(req.ip) || []).filter(t => sekarang - t < 10 * 60 * 1000);
-    if (waktu.length >= 3)
-        return res.status(429).json({ error: 'Terlalu banyak pertanyaan. Coba lagi beberapa menit lagi.' });
-    waktu.push(sekarang);
-    riwayatTanya.set(req.ip, waktu);
+    const waktu = (riwayatTanya.get(req.ip) || []).filter(t => sekarang - t < batasWaktu);
+    if (waktu.length >= 3) {
+        return res.status(429).json({ error: 'Batas harian tercapai. Maksimal 3 pertanyaan per hari.' });
+    }
     next();
 }
 
@@ -271,10 +271,16 @@ app.post('/api/faq/pertanyaan', batasTanya, async (req, res) => {
         .insert([{ pertanyaan, nama: nama || null, email: email || null }]);
 
     if (error) return res.status(500).json({ error: error.message });
+    
+    const sekarang = Date.now();
+    const waktu = (riwayatTanya.get(req.ip) || []).filter(t => sekarang - t < batasWaktu);
+    waktu.push(sekarang);
+    riwayatTanya.set(req.ip, waktu);
+
     res.status(201).json({ pesan: 'Pertanyaan berhasil dikirim!' });
 });
 
-/* Get */
+/* Get (admin) */
 app.get('/api/admin/pertanyaan', async (req, res) => {
     let query = supabase.from('faq_pertanyaan').select('*').order('created_at', { ascending: false });
     if (req.query.dibaca === 'true' || req.query.dibaca === 'false')
@@ -285,7 +291,19 @@ app.get('/api/admin/pertanyaan', async (req, res) => {
     res.json({ data: data });
 });
 
-/* Put (admin) */
+/* Put (admin tandai semua dibaca) */
+app.put('/api/admin/pertanyaan', async (req, res) => {
+    const { data, error } = await supabase
+        .from('faq_pertanyaan')
+        .update({ dibaca: true })
+        .eq('dibaca', false)
+        .select('id');
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: `${data.length} pertanyaan ditandai sudah dibaca.` });
+});
+
+/* Put (admin tandai sudah/belum dibaca) */
 app.put('/api/admin/pertanyaan/:id', async (req, res) => {
     const dibaca = (req.body.dibaca === 'true' || req.body.dibaca === true);
 

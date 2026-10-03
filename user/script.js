@@ -128,12 +128,13 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify({ nama: nama, email: email, pertanyaan: pertanyaan }),
                 success: function() {
+                    $('.faq-modal-head').hide();
                     $form.prop('hidden', true);
                     $('#faq-ask-success').prop('hidden', false);
                 },
                 error: function(xhr) {
                     console.error('Gagal kirim pertanyaan FAQ:', xhr.responseText);
-                    var pesan = (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal mengirim pertanyaan. Coba lagi sebentar lagi.';
+                    var pesan = (xhr.responseJSON && (xhr.responseJSON.error || xhr.responseJSON.message)) || 'Gagal mengirim pertanyaan. Coba lagi sebentar lagi.';
                     tampilError(pesan);
                 },
                 complete: function() {
@@ -147,6 +148,7 @@ $(document).ready(function() {
             $('#faq-ask-count').text('0/300');
             $error.prop('hidden', true);
             $form.prop('hidden', false);
+            $('.faq-modal-head').show();
             $('#faq-ask-success').prop('hidden', true);
         });
     })();
@@ -173,7 +175,7 @@ $(document).ready(function() {
         for (let i = 0; i < l; i++) {
             icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
         }
-        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
+        return `<span class="ms-2 d-inline-flex align-items-center">${esc(icons)}</span>`;
     }
 
     function muatMenuFavoritUser() {
@@ -195,7 +197,7 @@ $(document).ready(function() {
                         <div class="menu-desc-item text-center">
                             <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
                                 ${esc(item.nama_makanan)} 
-                                ${renderIconPedasUser(item.pedas)}
+                                ${esc(renderIconPedasUser(item.pedas))}
                             </h4>
                             <p class="small text-muted mb-0">${esc(item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.')}</p>
                         </div>

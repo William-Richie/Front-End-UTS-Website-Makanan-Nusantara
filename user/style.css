@@ -905,7 +905,7 @@ main {
     text-align: center;
     padding: 32px 24px 26px;
     color: #fff;
-    background: #4a2c17ed;
+    background: linear-gradient(135deg, #8b5e34, #4a2c17);
 }
 
 .faq-modal-icon {
