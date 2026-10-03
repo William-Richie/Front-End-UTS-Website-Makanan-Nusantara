@@ -1123,7 +1123,10 @@ footer {
     align-items: center;
     border: 2px solid #f7ede1; 
 }
-.cart-badge.bump { animation: bump .35s ease; }
+
+.cart-badge.bump { 
+    animation: bump .35s ease; 
+}
 
 #cartSidebar {
     background-color: #fffaf3;
@@ -1151,17 +1154,29 @@ footer {
     padding: 16px 24px;
 }
 
-#cart-items-list .cart-item-row {
-    background-color: transparent;
+#cart-items-list .list-group-item {
+    border: none;
     border-bottom: 1px dashed #d8c3ab !important; 
-    padding: 16px 0 !important;
 }
 
-#cart-items-list .cart-item-row:last-child {
+#cart-items-list .list-group-item:last-child {
     border-bottom: none !important;
 }
 
-.btn-qty {
+.cart-item-title {
+    font-weight: 600;
+    color: #3b2314;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.cart-item-price {
+    color: #6b4226;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.btn-qty-custom {
     width: 28px;
     height: 28px;
     display: flex;
@@ -1177,30 +1192,56 @@ footer {
     box-shadow: 0 2px 4px rgba(59,35,20, 0.05);
 }
 
-.btn-qty:hover {
+.btn-qty-custom:hover {
     background-color: #f4e8d8;
     border-color: #8b5e34;
     color: #3b2314;
     transform: translateY(-1px);
 }
 
-.btn-qty:active {
+.btn-qty-custom:active {
     transform: translateY(1px);
 }
 
-.item-qty {
+.qty-number {
     min-width: 24px;
     text-align: center;
     font-size: 14px;
     font-weight: 700;
     color: #3b2314;
+    margin: 0 8px;
+}
+
+.btn-delete-custom {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(59,35,20, 0.05);
+}
+
+.btn-delete-custom:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-delete-custom i {
+    font-size: 0.85rem;
 }
 
 #cartSidebar .mt-4.pt-3.border-top {
     border-top: 2px dashed #d8c3ab !important;
     background-color: #f7ede1;
     padding: 20px 24px 24px !important;
-    margin-top: auto !important; /* Mendorong footer ke bagian paling bawah */
+    margin-top: auto !important;
     box-shadow: 0 -4px 12px rgba(59,35,20, 0.03);
 }
 
@@ -1216,7 +1257,7 @@ footer {
 }
 
 #btn-checkout-cart {
-    background: linear-gradient(135deg, #8b5e34, #4a2c17) !important; /* Gradasi konsisten dengan tombol menu utama */
+    background: linear-gradient(135deg, #8b5e34, #4a2c17) !important;
     border: none !important;
     border-radius: 50px;
     padding: 12px;

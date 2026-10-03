@@ -1,3 +1,13 @@
+function esc(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 $(document).ready(function() {
     /* Navigation */
     $('#hamburger-menu').on('click', function() {
@@ -249,25 +259,24 @@ $(document).ready(function() {
         }
 
         $('#cart-total-price').text('Rp ' + total.toLocaleString('id-ID'));
-
-        // Clear existing cart items
         $('#cart-items-list').find('li:not(#empty-cart-msg)').remove();
 
-        // Render each item with +/- and delete button
         cartItems.forEach(item => {
             let itemHtml = `
-                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom" data-id="${item.id}">
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 bg-transparent" data-id="${item.id}">
                     <div class="me-2" style="max-width: 50%;">
-                        <div class="fw-semibold text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
-                        <small class="text-muted">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</small>
+                        <div class="cart-item-title text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
+                        <div class="cart-item-price">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-minus" data-id="${item.id}" title="Kurangi">-</button>
-                            <span class="btn btn-outline-secondary px-2 py-0 disabled text-dark fw-bold border-secondary" style="min-width: 28px; opacity: 1;">${item.qty}</span>
-                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-plus" data-id="${item.id}" title="Tambah">+</button>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-qty-custom btn-qty-minus" data-id="${item.id}">-</button>
+                            <span class="qty-number">${item.qty}</span>
+                            <button type="button" class="btn btn-qty-custom btn-qty-plus" data-id="${item.id}">+</button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger px-2 py-0 btn-cart-delete" data-id="${item.id}" title="Hapus menu">
+                        
+                        <button type="button" class="btn btn-delete-custom btn-cart-delete" data-id="${item.id}" title="Hapus menu">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -371,6 +380,7 @@ $(document).ready(function() {
         if (this.value === 'dine-in') {
             $('#dineInForm').slideDown(300);
             $('#onlineForm').slideUp(300);
+            $('#ongkirRow').slideUp(300);
             
             currentOngkir = 0;
             updateModalTotal();
@@ -378,51 +388,13 @@ $(document).ready(function() {
         } else if (this.value === 'online') {
             $('#dineInForm').slideUp(300);
             $('#onlineForm').slideDown(300);
+            $('#ongkirRow').slideDown(300);
             
             currentOngkir = Math.floor(Math.random() * 26 + 10) * 1000;
             $('#modalOngkir').text('+ Rp ' + currentOngkir.toLocaleString('id-ID'));
             
             updateModalTotal();
         }
-    });
-
-    $('#cart-items-list').on('click', '.btn-increase', function() {
-        let $row = $(this).closest('.cart-item-row');
-        let itemName = $row.data('nama');
-        let itemPrice = parseInt($row.data('harga'));
-        let $qtySpan = $row.find('.item-qty');
-
-        cartItemCount++;
-        cartTotal += itemPrice;
-        cartItems.push(itemName);
-
-        $qtySpan.text(parseInt($qtySpan.text()) + 1);
-        updateCartBadge();
-
-        if ($('#checkoutModal').hasClass('show')) updateModalTotal(); 
-    });
-
-    $('#cart-items-list').on('click', '.btn-decrease', function() {
-        let $row = $(this).closest('.cart-item-row');
-        let itemName = $row.data('nama');
-        let itemPrice = parseInt($row.data('harga'));
-        let $qtySpan = $row.find('.item-qty');
-        let currentQty = parseInt($qtySpan.text());
-
-        cartItemCount--;
-        cartTotal -= itemPrice;  
-        
-        let index = cartItems.indexOf(itemName);
-        if (index !== -1) cartItems.splice(index, 1);
-
-        if (currentQty > 1) {
-            $qtySpan.text(currentQty - 1);
-        } else {
-            $row.remove(); 
-        }
-
-        updateCartBadge();
-        if ($('#checkoutModal').hasClass('show')) updateModalTotal();
     });
 
     function updateModalTotal() {
@@ -445,14 +417,14 @@ $(document).ready(function() {
                 alert('Silakan pilih lokasi gerai restoran terlebih dahulu!');
                 return;
             }
-            detailPesananStr = `[${namaPelanggan} - Dine-in: ${store}] `;
+            detailPesananStr = `[Dine-in: ${store}] [Pelanggan: ${namaPelanggan}] `;
         } else if (orderType === 'online') {
             let address = $('#deliveryAddress').val();
             if (!address || !address.trim()) {
                 alert('Silakan masukkan alamat pengiriman Anda secara lengkap!');
                 return;
             }
-            detailPesananStr = `[${namaPelanggan} - Online: ${address}] `;
+            detailPesananStr = `[Online: ${address.trim()}] [Pelanggan: ${namaPelanggan}] `;
         } else {
              alert('Silakan pilih metode pesanan!');
              return;
@@ -514,8 +486,6 @@ $(document).ready(function() {
     let mapUser = null, pinMarker = null;
     let hopTimer = null, hopIndex = 0;
     let isLocked = false, arrived = true, targetBranch = null;
-
-    const esc = s => $('<div>').text(s ?? '').html();
 
     $.get('/api/maps', function(res) {
         CABANG = (Array.isArray(res) ? res : []).map(c => ({
