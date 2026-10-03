@@ -323,92 +323,60 @@ $(document).ready(function() {
             let mainRows = '';
             let appetizerRows = '';
             let dessertRows = '';
-            let noMain = 1;
-            let noApp = 1;
-            let noDessert = 1;
+            let drinkRows = '';
+            let additionalRows = '';
+            let noMain = 1, noApp = 1, noDessert = 1, noDrink = 1, noAdd = 1;
+
             $('#angka-menu').text(response.data.length);
             response.data.sort((a, b) => Number(a.id) - Number(b.id)).forEach(function(item) {
                 let nilaiHarga = Number(item.harga);
                 window.menuCache = window.menuCache || {};
                 window.menuCache[item.id] = item;
-                let badgeStatus = item.status
-                    ? `<button class="status-badge tersedia btn-toggle-status"
-                        data-id="${esc(item.id)}"
-                        data-status="true"
-                        data-kategori="${esc(item.nama_kategori)}"
-                        data-nama="${esc(item.nama_makanan)}"
-                        data-harga="${esc(item.harga)}"
-                        data-gambar="${esc(item.gambar)}">
-                        Tersedia
-                    </button>`
-                    : `<button class="status-badge habis btn-toggle-status"
-                        data-id="${esc(item.id)}"
-                        data-status="false"
-                        data-kategori="${esc(item.nama_kategori)}"
-                        data-nama="${esc(item.nama_makanan)}"
-                        data-harga="${esc(item.harga)}"
-                        data-gambar="${esc(item.gambar)}">
-                        Habis
-                    </button>`;
+
                 const buatRow = (nomor) => `
                     <tr>
-                        <td>
-                            <div class="menu-no">
-                                ${nomor}
-                            </div>
-                        </td>
-                        <td>
-                            <img src="${esc(item.gambar)}" 
-                                class="preview" 
-                                alt="foto">
-                        </td>
+                        <td><div class="menu-no">${nomor}</div></td>
+                        <td><img src="${esc(item.gambar)}" class="preview" alt="foto"></td>
                         <td>
                             <div class="nama-menu-wrapper">
-                                <span class="nama-menu-text">
-                                    ${esc(item.nama_makanan)}
-                                </span>
-
+                                <span class="nama-menu-text">${esc(item.nama_makanan)}</span>
                                 ${tampilkanPedas(esc(item.pedas))}
                             </div>
                         </td>
                         <td>Rp ${nilaiHarga.toLocaleString('id-ID')}</td>
-                        <td>${badgeStatus}</td>
+                        <td>${item.status ? 'Tersedia' : 'Habis'}</td>
                         <td>
-                            <button
-                                class="btn btn-warning btn-sm fw-bold btn-edit-menu"
+                            <button class="btn btn-warning btn-sm fw-bold btn-edit-menu"
                                 data-id="${esc(item.id)}"
                                 data-kategori="${esc(item.nama_kategori)}"
                                 data-nama="${esc(item.nama_makanan)}"
                                 data-harga="${esc(item.harga)}"
                                 data-gambar="${esc(item.gambar)}"
-                                data-status="${esc(item.status)}">
-                                Edit
-                            </button>
-
-                            <button
-                                class="btn btn-danger btn-sm fw-bold btn-hapus-menu"
-                                data-id="${esc(item.id)}">
-                                Hapus
-                            </button>
+                                data-status="${esc(item.status)}">Edit</button>
+                            <button class="btn btn-danger btn-sm fw-bold btn-hapus-menu"
+                                data-id="${esc(item.id)}">Hapus</button>
                         </td>
                     </tr>
                 `;
+
                 if (item.nama_kategori === 'MAIN COURSE') {
                     mainRows += buatRow(noMain++);
-                }
-
-                else if (item.nama_kategori === 'APPETIZER') {
+                } else if (item.nama_kategori === 'APPETIZER') {
                     appetizerRows += buatRow(noApp++);
-                }
-
-                else if (item.nama_kategori === 'DESSERT') {
+                } else if (item.nama_kategori === 'DESSERT') {
                     dessertRows += buatRow(noDessert++);
+                } else if (item.nama_kategori === 'DRINK') {
+                    drinkRows += buatRow(noDrink++);
+                } else if (item.nama_kategori === 'ADDITIONAL') {
+                    additionalRows += buatRow(noAdd++);
                 }
             });
 
             $('#tabel-main-course tbody').html(mainRows);
             $('#tabel-appetizer tbody').html(appetizerRows);
             $('#tabel-dessert tbody').html(dessertRows);
+            $('#tabel-drink tbody').html(drinkRows);
+            $('#tabel-additional tbody').html(additionalRows);
         });
     }
 

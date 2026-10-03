@@ -241,58 +241,56 @@ $(document).ready(function() {
                 menuDikelompokkan[item.nama_kategori].push(item);
             });
 
+            const URUTAN = ['APPETIZER', 'MAIN COURSE', 'DESSERT', 'MINUMAN', 'DRINK', 'ADDITIONAL'];
+            const idx = k => (URUTAN.indexOf(k) === -1 ? 99 : URUTAN.indexOf(k));
+            let kategoriUrut = Object.keys(menuDikelompokkan).sort((a, b) => idx(a) - idx(b));
+
+            let htmlTabs = '<div class="menu-tabs">' + kategoriUrut.map((k, i) =>
+                `<button type="button" class="menu-tab ${i === 0 ? 'active' : ''}" data-kat="${k}">${k}</button>`
+            ).join('') + '</div>';
+
             let htmlMenu = '';
 
-            const urutanKategori = ['APPETIZER', 'MAIN COURSE', 'DESSERT'];
+            for (let kategori of kategoriUrut) {
+                htmlMenu += `
+                <div class="menu-group ${kategori === kategoriUrut[0] ? 'active' : ''}" data-kat="${kategori}">
+                    <div class="category-header">${kategori}</div>
+                    <div class="menu-grid">
+                `;
 
-            const kategoriLainnya = Object.keys(menuDikelompokkan).filter(
-                kategori => !urutanKategori.includes(kategori)
-            );
+                menuDikelompokkan[kategori].forEach(function(makanan) {
+                    let isTersedia = (makanan.status === true || makanan.status === 'true');
+                    let cssKosong = isTersedia ? '' : 'menu-kosong';
+                    let tombolKeranjang = isTersedia
+                        ? `<button class="add-to-cart-btn" data-id="${esc(makanan.id)}" data-nama="${esc(makanan.nama_makanan)}" data-harga="${esc(makanan.harga)}">+ Keranjang</button>`
+                        : `<button class="add-to-cart-btn disabled-btn" disabled>Habis</button>`;
+                    let labelStatus = isTersedia ? '' : '<div class="status-badge-kosong">Tidak Tersedia</div>';
 
-            const urutanFinal = [...urutanKategori, ...kategoriLainnya];
-
-            urutanFinal.forEach(function(kategori) {
-                if (menuDikelompokkan[kategori] && menuDikelompokkan[kategori].length > 0) {
                     htmlMenu += `
-                    <div class="menu-group">
-                        <div class="category-header">${esc(kategori)}</div>
-                        <div class="menu-grid">
-                    `;
-
-                    menuDikelompokkan[kategori].forEach(function(makanan) {
-                        let isTersedia = (makanan.status === true || makanan.status === 'true');
-                        let cssKosong = isTersedia ? '' : 'menu-kosong';
-                        let tombolKeranjang = isTersedia
-                            ? `<button class="add-to-cart-btn" data-id="${esc(makanan.id)}" data-nama="${esc(makanan.nama_makanan)}" data-harga="${esc(makanan.harga)}">+ Keranjang</button>`
-                            : `<button class="add-to-cart-btn disabled-btn" disabled>Habis</button>`;
-                        let labelStatus = isTersedia ? '' : '<div class="status-badge-kosong">Tidak Tersedia</div>';
-
-                        htmlMenu += `
-                            <div class="menu-item menu-card ${esc(cssKosong)}" data-id="${esc(makanan.id)}">
-                                ${labelStatus}
-                                <div class="mc-photo">
-                                    <img src="${esc(makanan.gambar)}" alt="${esc(makanan.nama_makanan)}" class="menu-img">
-                                    ${esc(makanan.pedas) > 0 ? `<div class="mc-spicy spicy" title="${esc(LABEL_PEDAS[makanan.pedas])}">${cabai(makanan.pedas)}</div>` : ''}
-                                    <span class="card-open"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
-                                    <span class="mc-detail"><i class="fa-regular fa-eye"></i> Lihat Detail</span>
-                                </div>
-                                <div class="mc-body">
-                                    <div class="dish-name">${esc(makanan.nama_makanan)}</div>
-                                    <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
-                                    <div class="menu-details">
-                                        <div class="menu-price">Rp ${esc(makanan.harga.toLocaleString('id-ID'))}</div>
-                                        ${tombolKeranjang}
-                                    </div>
+                        <div class="menu-item menu-card ${esc(cssKosong)}" data-id="${esc(makanan.id)}">
+                            ${labelStatus}
+                            <div class="mc-photo">
+                                <img src="${esc(makanan.gambar)}" alt="${esc(makanan.nama_makanan)}" class="menu-img">
+                                ${esc(makanan.pedas) > 0 ? `<div class="mc-spicy spicy" title="${esc(LABEL_PEDAS[makanan.pedas])}">${cabai(makanan.pedas)}</div>` : ''}
+                                <span class="card-open"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                                <span class="mc-detail"><i class="fa-regular fa-eye"></i> Lihat Detail</span>
+                            </div>
+                            <div class="mc-body">
+                                <div class="dish-name">${esc(makanan.nama_makanan)}</div>
+                                <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
+                                <div class="menu-details">
+                                    <div class="menu-price">Rp ${esc(makanan.harga.toLocaleString('id-ID'))}</div>
+                                    ${tombolKeranjang}
                                 </div>
                             </div>
-                        `;
-                    });
+                        </div>
+                    `;
+                });
 
-                    htmlMenu += `</div></div>`;
-                }
-            });
+                htmlMenu += `</div></div>`;
+            }
 
-            $('#tempat-menu-dinamis').html(htmlMenu);
+            $('#tempat-menu-dinamis').html(htmlTabs + htmlMenu);
             fiturMenuInteraktif(dataMenu);
 
         }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -302,6 +300,15 @@ $(document).ready(function() {
     }
 
     muatMenuDariDatabase();
+
+    $('#tempat-menu-dinamis').on('click', '.menu-tab', function () {
+        const kat = $(this).data('kat');
+        $('.menu-tab').removeClass('active');
+        $(this).addClass('active');
+        $('.menu-group').removeClass('active').filter(function () {
+            return $(this).data('kat') === kat;
+        }).addClass('active');
+    });
 
     /* Cart */
     let cartItems = [];
