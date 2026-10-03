@@ -257,23 +257,112 @@
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="page-section">
-        <div class="hero-banner reveal">
-            <h1>This is FAQ Section</h1>
+    <section id="faq" class="page-section faq-section">
+        <div class="hero-banner faq-hero">
+            <div class="faq-hero-bg" aria-hidden="true">
+                <span class="faq-rings"></span>
+                <span class="faq-float f1"><i class="fa-solid fa-question"></i></span>
+                <span class="faq-float f2"><i class="fa-solid fa-question"></i></span>
+                <span class="faq-float f3"><i class="fa-solid fa-question"></i></span>
+            </div>
+
+            <span class="faq-q q1" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
+            <span class="faq-q q2" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
+            <span class="faq-q q3" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
+            <span class="faq-q q4" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
+
+            <div class="container text-center position-relative" style="z-index:1">
+                <p class="hero-eyebrow reveal">Pertanyaan Umum</p>
+                <h1 class="faq-title reveal" style="--d:.15s">Frequently Asked<br>Questions</h1>
+                <ul class="loc-chips reveal" style="--d:.3s">
+                    <li><i class="fa-solid fa-list-check"></i><span id="faq-total">Jawaban Cepat</span></li>
+                    <li><i class="fa-solid fa-comments"></i>Tanya Langsung ke Kami</li>
+                </ul>
+            </div>
         </div>
-        <div class="content-container">
-            <div class="faq-list d-flex flex-column" id="tempat-faq-dinamis">
-                <p class="text-center py-4">Memuat FAQ...</p>
+
+        <div class="content-container faq-wrap">
+            <div class="faq-grid">
+                <div class="faq-aside-col">
+                    <aside class="faq-aside reveal">
+                        <div class="faq-aside-body">
+                            <div class="faq-aside-icon"><i class="fa-solid fa-comments"></i></div>
+                            <p class="loc-kicker">Masih Penasaran?</p>
+                            <h2>Still Have Questions?</h2>
+                            <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
+                            <p class="faq-aside-desc">Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.</p>
+                            <button type="button" class="btn-map-open faq-ask-btn" data-bs-toggle="modal" data-bs-target="#faqAskModal">
+                                <i class="fa-solid fa-pen-to-square me-2"></i>Tulis Pertanyaan
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+
+                <div class="faq-list d-flex flex-column" id="tempat-faq-dinamis">
+                    <p class="faq-empty"><i class="fa-solid fa-spinner fa-spin me-2"></i>Memuat FAQ...</p>
+                </div>
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="faqAskModal" tabindex="-1" aria-labelledby="faqAskTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content faq-modal border-0">
+                <button type="button" class="btn-close mm-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+
+                <div class="faq-modal-head">
+                    <div class="faq-modal-icon"><i class="fa-solid fa-circle-question"></i></div>
+                    <h3 id="faqAskTitle">Ask Us</h3>
+                    <p>Pertanyaan Anda akan dibaca langsung oleh tim Papeda Restaurant</p>
+                </div>
+
+                <form id="form-faq-ask" class="faq-modal-body" novalidate>
+                    <div class="faq-field">
+                        <label for="faq-ask-nama">Nama <span>(opsional)</span></label>
+                        <input type="text" id="faq-ask-nama" class="form-control" maxlength="40" placeholder="Nama Anda" autocomplete="name">
+                    </div>
+                    <div class="faq-field">
+                        <label for="faq-ask-email">Email <span>(opsional)</span></label>
+                        <input type="email" id="faq-ask-email" class="form-control" maxlength="100" placeholder="nama@email.com" autocomplete="email">
+                    </div>
+                    <div class="faq-field">
+                        <label for="faq-ask-text">Pertanyaan Anda</label>
+                        <textarea id="faq-ask-text" class="form-control" rows="4" maxlength="300" placeholder="Contoh: Apakah tersedia menu tanpa pedas untuk anak-anak?" required></textarea>
+                        <div class="faq-counter"><span id="faq-ask-count">0/300</span></div>
+                    </div>
+
+                    <input type="text" id="faq-hp" class="faq-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                    <p id="faq-ask-error" class="faq-error" role="alert" hidden></p>
+
+                    <button type="submit" id="faq-ask-submit" class="btn mm-order-btn w-100">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Kirim Pertanyaan
+                    </button>
+                </form>
+
+                <div id="faq-ask-success" class="faq-success" hidden>
+                    <div class="faq-success-icon"><i class="fa-solid fa-check"></i></div>
+                    <h3>Terima kasih!</h3>
+                    <p>Pertanyaan Anda sudah kami terima dan akan segera kami baca.</p>
+                    <button type="button" class="btn mm-order-btn" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Location Section -->
     <section id="location" class="page-section loc-section">
         <div class="loc-motif" aria-hidden="true"></div>
 
         <div class="loc-hero">
-            <span class="loc-rings" aria-hidden="true"></span>
+            <div class="loc-hero-bg" aria-hidden="true">
+                <span class="loc-rings"></span>
+            </div>
+
+            <span class="loc-pin p1" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+            <span class="loc-pin p2" aria-hidden="true"><i class="fa-solid fa-map-location-dot"></i></span>
+            <span class="loc-pin p3" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+            <span class="loc-pin p4" aria-hidden="true"><i class="fa-solid fa-map-pin"></i></span>
 
             <div class="container text-center position-relative" style="z-index:1">
                 <p class="hero-eyebrow reveal">Temukan Kami</p>
@@ -292,7 +381,7 @@
             <div class="loc-grid">
                 <article class="loc-intro reveal">
                     <p class="loc-kicker">Rasakan Cita Rasa Kami</p>
-                    <h2>Hangatnya Sajian, Rasa Timur Nusantara</h2>
+                    <h2>Warmth in Every Dish, Flavors from Eastern Indonesia</h2>
                     <p class="loc-desc">Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.</p>
                     <button type="button" id="btn-open-map" class="btn-map-open" aria-expanded="false" aria-controls="map-reveal">
                         <i class="fa-solid fa-location-dot me-2"></i><span>Lihat Peta Cabang</span>
