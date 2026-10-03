@@ -11,8 +11,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="d-flex vh-100">
+<body class="d-flex vh-100 admin-locked">
+<div id="admin-login">
+    <span class="al-float a1"><i class="fa-solid fa-pepper-hot"></i></span>
+    <span class="al-float a2"><i class="fa-solid fa-fish"></i></span>
+    <span class="al-float a3"><i class="fa-solid fa-lemon"></i></span>
+    <span class="al-float a4"><i class="fa-solid fa-leaf"></i></span>
 
+    <div class="al-card">
+        <div class="al-side">
+            <img src="/img/Web-Icon/Papeda-icon.png" class="al-logo" alt="Papeda">
+            <h3>Admin Papeda</h3>
+            <p>Area khusus pengelola restoran</p>
+        </div>
+
+        <form id="form-admin-login" class="al-form" autocomplete="off">
+            <div class="al-lockwrap"><i id="al-lock" class="fa-solid fa-lock"></i></div>
+            <h4>Selamat Datang, Admin</h4>
+            <p class="text-muted small mb-4">Masuk untuk mengelola menu, pesanan, dan konten.</p>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
+                <input type="text" id="al-user" class="form-control" placeholder="Username" autocomplete="username" required>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" id="al-pass" class="form-control" placeholder="Password" autocomplete="current-password" required>
+                <span class="input-group-text" id="al-eye" style="cursor:pointer"><i class="fa-solid fa-eye"></i></span>
+            </div>
+
+            <div id="al-error" class="al-error d-none"></div>
+            <button type="submit" id="al-submit" class="btn al-btn w-100"><i class="fa-solid fa-right-to-bracket me-2"></i>Masuk</button>
+            <a href="/" class="al-back"><i class="fa-solid fa-arrow-left me-1"></i>Kembali ke website</a>
+        </form>
+    </div>
+</div>
     <!-- SIDEBAR -->
     <aside class="sidebar text-white p-3 d-flex flex-column shadow-sm">
         <h2 class="text-center mb-4 fs-4 fw-bold mt-2">Admin Papeda</h2>
@@ -82,6 +115,11 @@
                 <a href="#" data-target="tab-pendapatan" class="nav-link text-white"><i class="fa-solid fa-sack-dollar me-2"></i>Pendapatan</a>
             </li>
         </ul>
+    <div class="mt-3 pt-3 admin-logout-wrap">
+        <button type="button" id="btn-admin-logout" class="btn-admin-logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i>Keluar
+        </button>
+    </div>
     </aside>
 
     <!-- KONTEN UTAMA -->

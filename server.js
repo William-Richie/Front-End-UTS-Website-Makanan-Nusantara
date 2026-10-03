@@ -15,9 +15,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
+const ADMIN_SECRET = process.env.JWT_SECRET + '-admin';
+const API_PUBLIK = [
+    ['GET',  /^\/(menu|favorit|faq|konten|maps)$/],
+    ['POST', /^\/(pengunjung|pesanan|faq\/pertanyaan|register|login|admin\/login)$/],
+    ['ANY',  /^\/(me|reservasi)(\/|$)/]   // punya auth user sendiri
+];
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+/* Admin protection */
+app.use('/api', (req, res, next) => {
+    if (API_PUBLIK.some(([m, re]) => (m === 'ANY' || m === req.method) && re.test(req.path))) return next();
+    try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '');
+        if (jwt.verify(token, ADMIN_SECRET).role !== 'admin') throw new Error();
+        next();
+    } catch {
+        res.status(401).json({ error: 'Akses admin diperlukan.' });
+    }
+});
 
 /* Redirect */
 app.get('/', (req, res) => {
@@ -718,3 +736,28 @@ app.get('/api/pendapatan', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server backend (Supabase) berjalan di http://localhost:${port}`);
 });
+
+/* Login Admin */
+const gagalLogin = {};
+
+app.post('/api/admin/login', async (req, res) => {
+    const g = gagalLogin[req.ip] || { n: 0, sampai: 0 };
+    if (g.sampai > Date.now())
+        return res.status(429).json({ error: 'Terlalu banyak percobaan gagal.', sisa: Math.ceil((g.sampai - Date.now()) / 1000) });
+
+    const { username = '', password = '' } = req.body;
+    let ok = false;
+    try { ok = username === process.env.ADMIN_USER && await bcrypt.compare(password, process.env.ADMIN_PASS_HASH || ''); } catch {}
+
+    if (!ok) {
+        g.n++;
+        if (g.n >= 5) { g.sampai = Date.now() + 5 * 60 * 1000; g.n = 0; }
+        gagalLogin[req.ip] = g;
+        return res.status(401).json({ error: 'Username atau password salah.' });
+    }
+
+    delete gagalLogin[req.ip];
+    res.json({ token: jwt.sign({ role: 'admin', user: username }, ADMIN_SECRET, { expiresIn: '8h' }) });
+});
+
+app.get('/api/admin/cek', (req, res) => res.json({ ok: true }));
