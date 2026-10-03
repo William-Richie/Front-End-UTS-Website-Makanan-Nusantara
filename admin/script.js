@@ -530,11 +530,11 @@ $(document).ready(function() {
             let rowHtml = `
                 <tr>
                     <td><strong>ORD-${shortId}</strong></td>
-                    <td><strong>${$('<div>').text(esc(namaPemesan)).html()}</strong></td>
-                    <td><small>${$('<div>').text(esc(pesanan.item || '-')).html()}</small></td>
-                    <td class="fw-bold text-success">Rp ${esc(Number(pesanan.total)).toLocaleString('id-ID')}</td>
-                    <td>${esc(statusBadge)}</td>
-                    <td>${esc(actionBtn)}</td>
+                    <td><strong>${$('<div>').text(namaPemesan).html()}</strong></td>
+                    <td><small>${$('<div>').text(pesanan.item || '-').html()}</small></td>
+                    <td class="fw-bold text-success">Rp ${Number(pesanan.total).toLocaleString('id-ID')}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
                 </tr>
             `;
             $tbody.append(rowHtml);

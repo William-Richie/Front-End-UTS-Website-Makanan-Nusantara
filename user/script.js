@@ -173,7 +173,7 @@ $(document).ready(function() {
         for (let i = 0; i < l; i++) {
             icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
         }
-        return `<span class="ms-2 d-inline-flex align-items-center">${esc(icons)}</span>`;
+        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
     }
 
     function muatMenuFavoritUser() {
@@ -195,7 +195,7 @@ $(document).ready(function() {
                         <div class="menu-desc-item text-center">
                             <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
                                 ${esc(item.nama_makanan)} 
-                                ${esc(renderIconPedasUser(item.pedas))}
+                                ${renderIconPedasUser(item.pedas)}
                             </h4>
                             <p class="small text-muted mb-0">${esc(item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.')}</p>
                         </div>

@@ -1461,30 +1461,54 @@ main {
 }
 
 /* Footer */
-footer {
-    background: #4a2c17 !important;;
+.custom-footer {
+    background-color: #4a2c17 !important; /* Warna cokelat utama */
     color: white;
     position: relative;
-    padding-top: 150px;
     border-top: none !important;
-    margin-top: 100px;
+    overflow: hidden; /* Mencegah gambar palem keluar dari area footer */
 }
 
-.footer-curve-wrapper {
+/* .footer-motif-ribbon {
+    width: 100%;
+    height: 35px; /* Tinggi pita motif */
+    /* background-color: #d3b589; /* Warna dasar krem emas */
+    /* SVG Data URI Motif Tradisional */
+    /* border-bottom: 2px solid #331e10; /* Garis batas bawah pita */
+/* } */
+
+.custom-footer::before {
+    content: "";
     position: absolute;
-    /* Posisikan persis di atas footer */
-    bottom: 100%; 
-    left: 0;
-    width: 100%;
-    /* overflow: hidden dihapus agar lengkungan bisa tampil utuh jika lebih tinggi */
-    line-height: 0; 
+    bottom: -10px;
+    left: -20px;
+    width: 250px;
+    height: 250px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none; /* Agar tidak menghalangi klik */
+    z-index: 1;
 }
 
-/* SVG Lengkungan */
-.footer-curve-svg {
-    display: block; /* Mencegah jarak misterius di bawah SVG */
-    width: 100%;
-    height: 150px; /* Tingkatkan tinggi agar lengkungan lebih jelas */
+.custom-footer::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    right: -20px;
+    width: 250px;
+    height: 250px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+    transform: scaleX(-1); /* Membalik gambar agar menghadap ke dalam */
+    pointer-events: none;
+    z-index: 1;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 5;
 }
 
 .custom-social-btn {
@@ -1509,24 +1533,17 @@ footer {
 }
 
 .custom-social-btn:hover {
-    background-color: #835532;
+    background-color: #d3b589; /* Berubah jadi krem saat di-hover */
+    color: #4a2c17 !important; /* Ikon jadi cokelat */
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .footer-link {
-    transition: opacity 0.2s ease-in-out;
-    position: relative;
-    z-index: 10;
+    transition: all 0.2s ease-in-out;
 }
 .footer-link:hover {
-    opacity: 1 !important;
+    color: #d3b589 !important; /* Teks link menjadi krem saat di-hover */
     text-decoration: underline !important;
-}
-
-.footer-content {
-    position: relative;
-    z-index: 5;
 }
 
 /* Floating Button */
