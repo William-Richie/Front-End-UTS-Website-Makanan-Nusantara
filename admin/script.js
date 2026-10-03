@@ -42,6 +42,12 @@ $(document).ready(function() {
         $('#' + targetId).fadeIn(300);
     });
 
+    $('.nav-link').on('click', function(e) {
+        $('.nav-link').removeClass('text-info fw-bold');
+        $(this).addClass('text-info fw-bold');
+    });
+    
+
     /* Statistik & Konten */
     function updateLivePreview() {
         let heroText = $('#teks_hero').val() || '';
