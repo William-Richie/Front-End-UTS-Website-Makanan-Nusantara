@@ -100,6 +100,16 @@ function esc(str) {
 
 $(document).ready(function() {
     let dataKontenAsli = { hero: '', about: '' };
+    let dataFooterAsli = {
+        judul: '',
+        copyright: '',
+        link_ig: '',
+        link_wa: '',
+        link_tiktok: '',
+        email: '',
+        link_linkedin: ''
+    };
+
     /* Notification */
     function tampilkanNotif(pesan, tipe = 'success') {
         let $toastEl =$('#liveToast');
@@ -131,7 +141,17 @@ $(document).ready(function() {
         if (typeof dataKontenAsli !== 'undefined') {
             $('#teks_hero').val(esc(dataKontenAsli.hero));
             $('#teks_about').val(esc(dataKontenAsli.about));
-            updateLivePreview(); 
+            updateLivePreviewKonten(); 
+        }
+
+        if (typeof dataFooterAsli !== 'undefined') {
+            $('#footer_title').val(esc(dataFooterAsli.judul));
+            $('#footer_copyright').val(esc(dataFooterAsli.copyright));
+            $('#input_link_ig').val(esc(dataFooterAsli.link_ig));
+            $('#input_link_tiktok').val(esc(dataFooterAsli.link_tiktok));
+            $('#input_link_wa').val(esc(dataFooterAsli.link_wa));
+            $('#input_email').val(esc(dataFooterAsli.email));
+            $('#input_link_linkedin').val(esc(dataFooterAsli.link_linkedin));
         }
 
         $('#admin-nav a').removeClass('active');
@@ -148,8 +168,14 @@ $(document).ready(function() {
     });
     
 
-    /* Statistik & Konten */
-    function updateLivePreview() {
+    /* Statistik, Konten, dan Footer */
+    function muatStatistik() {
+        $.get('/api/statistik', function(data) {
+            $('#angka-pengunjung').text(data.jumlah_pengunjung);
+        });
+    }
+
+    function updateLivePreviewKonten() {
         let heroText = $('#teks_hero').val() || '';
         let aboutText = $('#teks_about').val() || '';
 
@@ -157,11 +183,7 @@ $(document).ready(function() {
         $('#preview-about').text(esc(aboutText));
     }
 
-    function muatStatistikDanKonten() {
-        $.get('/api/statistik', function(data) {
-            $('#angka-pengunjung').text(data.jumlah_pengunjung);
-        });
-        
+    function muatDataKonten() {
         $.get('/api/konten', function(data) {
             $('#teks_hero').val(data.teks_hero);
             $('#teks_about').val(data.teks_about);
@@ -169,15 +191,35 @@ $(document).ready(function() {
             dataKontenAsli.hero = data.teks_hero;
             dataKontenAsli.about = data.teks_about;
             
-            updateLivePreview();
+            updateLivePreviewKonten();
         });
     }
 
-    muatStatistikDanKonten();
+    function updateLivePreviewFooter() {
+        let titleVal = $('#footer_title').val();
+        let copyVal = $('#footer_copyright').val();
 
-    $('#teks_hero, #teks_about').on('input', function() {
-        updateLivePreview();
-    });
+        $('#preview_footer_title').text(titleVal === '' ? 'Ikuti Kami' : titleVal);
+        $('#preview_footer_copyright').html(copyVal === '' ? '&copy; 2026 Papeda Restaurant. All Rights Reserved.' : copyVal);
+    }
+
+    function muatDataFooter() {
+        $.get('/api/footer', function(data) {
+            $('#footer_title').val(data.judul);
+            $('#footer_copyright').val(data.copyright);
+            $('#input_link_ig').val(data.link_ig);
+            $(`#input_link_tiktok`).val(data.link_tiktok);
+            $('#input_link_wa').val(data.link_wa);
+            $('#input_email').val(data.email);
+            $('#input_link_linkedin').val(data.link_linkedin);
+
+            dataFooterAsli = { ...data };
+            updateLivePreviewFooter();
+        });
+    }
+
+    $('#teks_hero, #teks_about').on('input', updateLivePreviewKonten);
+    $('#footer_title, #footer_copyright, #input_link_ig, #input_link_tiktok, #input_link_wa, #input_email, #input_link_linkedin').on('input', updateLivePreviewFooter);
 
     /* Update Content */
     $('#form-konten .btn-simpan').on('click', function(e) {
@@ -204,6 +246,43 @@ $(document).ready(function() {
             $btn.prop('disabled', false).text(originalText);
         });
     });
+
+    $('#form-footer .btn-simpan').on('click', function(e) {
+        e.preventDefault();
+        let $btn = $(this);
+        let originalText = $btn.text();
+        
+        $btn.prop('disabled', true).text('Menyimpan...');
+
+        let dataFooter = {
+            judul: $('#footer_title').val(),
+            copyright: $('#footer_copyright').val(),
+            link_ig: $('#input_link_ig').val(),
+            link_wa: $('#input_link_wa').val(),
+            link_tiktok: $('#input_link_tiktok').val(),
+            email: $('#input_email').val(),
+            link_linkedin: $('#input_link_linkedin').val()
+        };
+
+        $.ajax({
+            url: '/api/footer', 
+            type: 'PUT',
+            data: dataFooter,
+            success: function(response) {
+                tampilkanNotif(response.pesan);
+                dataFooterAsli = { ...dataFooter }; 
+            },
+            error: function() {
+                alert('Gagal menyimpan pengaturan footer.');
+            }
+        }).always(function() {
+            $btn.prop('disabled', false).text(originalText);
+        });
+    });
+
+    muatStatistik();
+    muatDataKonten();
+    muatDataFooter();
 
     /* Function Menu + FAQ */
     function muatData(endpoint, tbodySelector, counterSelector, templateHTML) {

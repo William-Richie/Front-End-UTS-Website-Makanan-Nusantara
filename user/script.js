@@ -131,6 +131,7 @@ $(document).ready(function() {
                     $('.faq-modal-head').hide();
                     $form.prop('hidden', true);
                     $('#faq-ask-success').prop('hidden', false);
+                    notifPapeda('Pertanyaan Anda berhasil dikirim!', 'success');
                 },
                 error: function(xhr) {
                     console.error('Gagal kirim pertanyaan FAQ:', xhr.responseText);
@@ -397,6 +398,7 @@ $(document).ready(function() {
         }
 
         saveCart();
+        notifPapeda(itemName + ' berhasil ditambahkan ke keranjang!', 'success');
 
         let $btn = $(this);
         let originalText = $btn.text(); 
@@ -536,7 +538,7 @@ $(document).ready(function() {
                 total: finalTotal
             }),
             success: function(response) {
-                alert("Berhasil!\nPesanan Anda telah dibuat dan sedang menunggu konfirmasi admin.");
+                notifPapeda('Berhasil! Pesanan dan Reservasi Anda sedang diproses admin.', 'success');
                 
                 cartItems = []; 
                 currentOngkir = 0;
@@ -770,6 +772,27 @@ $(document).ready(function() {
             $reservationForm.slideUp(300);
         }
     });
+
+    // Notification
+    function notifPapeda(pesan, tipe = 'success') {
+    let iconClass = 'fa-circle-check';
+    let iconColor = '#27ae60';
+
+    if (tipe === 'akun') {
+        iconClass = 'fa-hand-sparkles';
+        iconColor = '#f39c12';
+    } else if (tipe === 'info') {
+        iconClass = 'fa-circle-info';
+        iconColor = '#3498db';
+    }
+
+    $('#papedaToastIcon').attr('class', `fa-solid ${iconClass} me-2 fs-5`).css('color', iconColor);
+    $('#papedaToastPesan').text(esc(pesan));
+    
+    let toastEl = document.getElementById('papedaToast');
+    let toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+    toast.show();
+}
 });
 
 // Scroll reveal

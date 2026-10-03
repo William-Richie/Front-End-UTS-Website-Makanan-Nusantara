@@ -1476,6 +1476,10 @@ main {
 }
 
 /* Footer */
+h6.fw-bold {
+    letter-spacing: 1px;
+}
+
 .footer-contact-list {
     line-height: 2;
 }
@@ -1486,20 +1490,12 @@ main {
 }
 
 .custom-footer {
-    background-color: #4a2c17 !important; /* Warna cokelat utama */
+    background-color: #4a2c17 !important; 
     color: white;
     position: relative;
     border-top: none !important;
-    overflow: hidden; /* Mencegah gambar palem keluar dari area footer */
+    overflow: hidden; 
 }
-
-/* .footer-motif-ribbon {
-    width: 100%;
-    height: 35px; /* Tinggi pita motif */
-    /* background-color: #d3b589; /* Warna dasar krem emas */
-    /* SVG Data URI Motif Tradisional */
-    /* border-bottom: 2px solid #331e10; /* Garis batas bawah pita */
-/* } */
 
 .custom-footer::before {
     content: "";
@@ -1511,7 +1507,7 @@ main {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
     background-repeat: no-repeat;
     background-size: contain;
-    pointer-events: none; /* Agar tidak menghalangi klik */
+    pointer-events: none; 
     z-index: 1;
 }
 
@@ -1525,7 +1521,7 @@ main {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
     background-repeat: no-repeat;
     background-size: contain;
-    transform: scaleX(-1); /* Membalik gambar agar menghadap ke dalam */
+    transform: scaleX(-1); 
     pointer-events: none;
     z-index: 1;
 }
@@ -1550,6 +1546,7 @@ main {
     position: relative;
     transition: all 0.3s ease-in-out;
     box-shadow: none !important;
+    text-decoration: none;
 }
 
 .custom-social-btn i {
@@ -1557,17 +1554,13 @@ main {
 }
 
 .custom-social-btn:hover {
-    background-color: #d3b589; /* Berubah jadi krem saat di-hover */
-    color: #4a2c17 !important; /* Ikon jadi cokelat */
+    background-color: #d3b589; 
+    color: #4a2c17 !important; 
     transform: translateY(-5px);
 }
 
-.footer-link {
-    transition: all 0.2s ease-in-out;
-}
-.footer-link:hover {
-    color: #d3b589 !important; /* Teks link menjadi krem saat di-hover */
-    text-decoration: underline !important;
+.custom-social-btn:hover i {
+    color: #4a2c17 !important;
 }
 
 /* Floating Button */
@@ -2098,6 +2091,41 @@ main {
   pointer-events: none;
 }
 
+/* Notifikasi */
+.toast-container {
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw; 
+    max-width: 400px;
+    pointer-events: none; 
+}
+
+.custom-papeda-toast {
+    width: 100%;
+    background-color: #4a2c11;
+    color: #fdf5eb;
+    border-radius: 6px;
+    border-left: 4px solid #c9a17a !important;
+    box-shadow: 0 4px 10px rgba(74, 44, 17, 0.2);
+    font-size: 0.75rem;
+    pointer-events: auto;
+}
+
+.custom-papeda-toast .fa-solid {
+    font-size: 0.9rem;
+}
+
+.custom-papeda-toast .btn-close {
+    filter: invert(88%) sepia(12%) saturate(548%) hue-rotate(338deg) brightness(107%) contrast(98%);
+    opacity: 0.7;
+    transform: scale(0.65);
+}
+
+.custom-papeda-toast .btn-close:hover {
+    opacity: 1;
+}
+
 /* INTRO */
 body.intro-active { overflow: hidden; }
 html.has-entered body.intro-active { overflow: auto; }
@@ -2422,6 +2450,19 @@ html.has-entered #intro { display: none !important; }
     .loc-cards {
         padding-left: 40px;
     }
+
+    .toast-container {
+        left: auto; 
+        right: 20px;
+        transform: none; 
+        width: max-content; 
+    }
+
+    .custom-papeda-toast {
+        width: max-content; 
+        max-width: 320px; 
+        font-size: 0.813rem;
+    }
 }
 
 /* Desktop */
@@ -2456,6 +2497,29 @@ html.has-entered #intro { display: none !important; }
         position: sticky;
         top: max(90px, calc(50vh - 240px));
         width: 100%;
+    }
+
+    .toast-container {
+        top: 25px;
+        right: 25px;
+    }
+
+    .custom-papeda-toast {
+        max-width: 380px; 
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    
+    .custom-papeda-toast .toast-body {
+        padding: 0.6rem 1rem;
+    }
+
+    .custom-papeda-toast .fa-solid {
+        font-size: 1rem;
+    }
+
+    .custom-papeda-toast .btn-close {
+        transform: scale(0.8);
     }
 }
 

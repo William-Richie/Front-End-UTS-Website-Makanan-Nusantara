@@ -539,57 +539,21 @@
     
     <!-- Footer -->
     <footer class="mt-auto custom-footer">
-        <!-- Pita Motif Tradisional yang digenerate via CSS -->
-        <div class="footer-motif-ribbon"></div>
-
-        <!-- Konten Utama Footer -->
-        <div class="container pt-5 pb-4 footer-content">
-            <div class="row text-center text-md-start">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h6 class="fw-bold mb-4 mt-4 text-warning">Ikuti Kami</h6>
                 
-                <!-- Kolom 1: Kisah Kami -->
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <h6 class="fw-bold mb-3 text-warning">Tanya Kami</h6>
-                    <ul class="list-unstyled small text-light text-opacity-75 mb-0 footer-contact-list">
-                        <li>
-                            <a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">
-                                <i class="fab fa-whatsapp me-2"></i>+62 123 4567 890
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">
-                                <i class="fas fa-envelope me-2"></i>papedaresto@gmail.com
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">
-                                <i class="fas fa-question-circle me-2"></i>FAQ & Bantuan
-                            </a>
-                        </li>
-                    </ul>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#" class="custom-social-btn text-decoration-none" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="custom-social-btn text-decoration-none" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" class="custom-social-btn text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="custom-social-btn text-decoration-none" title="Email"><i class="fas fa-envelope"></i></a>
+                    <a href="#" class="custom-social-btn text-decoration-none" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-
-                <!-- Kolom 2: Tautan Penting -->
-                <div class="col-md-4 mb-4 mb-md-0 text-center">
-                    <!-- Ganti dengan URL Logo Anda -->
-                    <img src="/img/Web-Icon/Papeda-icon.png" alt="Papeda Restaurant Logo" class="footer-logo">
-                    <p class="small text-light text-opacity-50 mt-2 mb-0">Cita rasa asli Timur Indonesia.</p>
-                </div>
-
-                <!-- Kolom 3: Hubungi Kami -->
-                <div class="col-md-4 text-center text-md-end">
-                    <h6 class="fw-bold mb-3 text-warning">Ikuti Kami</h6>
-                    <div class="d-flex justify-content-center justify-content-md-end gap-3">
-                        <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                        <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                </div>
-
             </div>
 
-            <hr class="border-light opacity-25 my-3">
+            <hr class="border-light opacity-25 my-4">
 
-            <!-- Copyright -->
             <div class="text-center small text-light text-opacity-75">
                 &copy; 2026 Papeda Restaurant. All Rights Reserved.
             </div>
@@ -701,7 +665,20 @@
         </div>
     </div>
 
-        <!-- Auth Modal -->
+    <!-- Notification -->
+    <div class="toast-container position-fixed" style="z-index: 9999;">
+        <div id="papedaToast" class="toast align-items-center custom-papeda-toast border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-medium d-flex align-items-center">
+                    <i id="papedaToastIcon" class="fa-solid fa-circle-check me-2"></i> 
+                    <span id="papedaToastPesan">Pesan notifikasi di sini.</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content auth-card border-0 overflow-hidden">
