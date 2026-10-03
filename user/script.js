@@ -41,12 +41,16 @@ $(document).ready(function() {
             let htmlFaq = '';
 
             if (dataFaq.length === 0) {
-                htmlFaq = '<p class="text-center">Belum ada FAQ yang tersedia.</p>';
+                htmlFaq = '<p class="faq-empty"><i class="fa-regular fa-circle-question me-2"></i>Belum ada FAQ yang tersedia.</p>';
             } else {
-                dataFaq.forEach(function(item) {
+                dataFaq.forEach(function(item, i) {
                     htmlFaq += `
                         <div class="faq-item">
-                            <div class="faq-question fw-bold">${item.pertanyaan}</div>
+                            <div class="faq-question fw-bold" style="--d:${Math.min(i, 8) * 0.08}s">
+                                <span class="faq-num">${String(i + 1).padStart(2, '0')}</span>
+                                <span class="faq-q-text">${item.pertanyaan}</span>
+                                <span class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                            </div>
                             <div class="faq-answer">${item.jawaban}</div>
                         </div>
                     `;
@@ -57,7 +61,7 @@ $(document).ready(function() {
             
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error("Gagal mengambil data FAQ:", errorThrown);
-            $('#tempat-faq-dinamis').html('<p style="text-align: center; color: red;">Gagal memuat FAQ.</p>');
+            $('#tempat-faq-dinamis').html('<p class="faq-empty faq-empty-error"><i class="fa-solid fa-triangle-exclamation me-2"></i>Gagal memuat FAQ.</p>');
         });
     }
 
@@ -70,6 +74,82 @@ $(document).ready(function() {
 
         $answer.slideToggle(300);
     });
+
+    $('#tempat-faq-dinamis').on('click', '.faq-question', function() {
+        var $item = $(this).parent('.faq-item');
+        var sedangBuka = $item.hasClass('open');
+
+        $('.faq-item.open').not($item).removeClass('open');
+        if (sedangBuka) {
+            setTimeout(function() { $item.removeClass('open'); }, 280);
+        } else {
+            $item.addClass('open');
+        }
+    });
+
+    (function() {
+        var $form    = $('#form-faq-ask');
+        var $error   = $('#faq-ask-error');
+        var $submit  = $('#faq-ask-submit');
+        var modalEl  = document.getElementById('faqAskModal');
+
+        function tampilError(pesan) {
+            $error.text(pesan).prop('hidden', false);
+        }
+
+        $('#faq-ask-text').on('input', function() {
+            $('#faq-ask-count').text(this.value.length + '/300');
+            $error.prop('hidden', true);
+        });
+
+        $form.on('submit', function(e) {
+            e.preventDefault();
+            if ($('#faq-hp').val()) return;
+
+            var nama       = $.trim($('#faq-ask-nama').val());
+            var email      = $.trim($('#faq-ask-email').val());
+            var pertanyaan = $.trim($('#faq-ask-text').val());
+
+            if (pertanyaan.length < 10) {
+                tampilError('Pertanyaan minimal 10 karakter ya.');
+                return;
+            }
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                tampilError('Format email belum benar.');
+                return;
+            }
+
+            $error.prop('hidden', true);
+            $submit.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Mengirim...');
+
+            $.ajax({
+                url: '/api/faq/pertanyaan',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ nama: nama, email: email, pertanyaan: pertanyaan }),
+                success: function() {
+                    $form.prop('hidden', true);
+                    $('#faq-ask-success').prop('hidden', false);
+                },
+                error: function(xhr) {
+                    console.error('Gagal kirim pertanyaan FAQ:', xhr.responseText);
+                    var pesan = (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal mengirim pertanyaan. Coba lagi sebentar lagi.';
+                    tampilError(pesan);
+                },
+                complete: function() {
+                    $submit.prop('disabled', false).html('<i class="fa-solid fa-paper-plane me-2"></i>Kirim Pertanyaan');
+                }
+            });
+        });
+
+        modalEl.addEventListener('hidden.bs.modal', function() {
+            $form[0].reset();
+            $('#faq-ask-count').text('0/300');
+            $error.prop('hidden', true);
+            $form.prop('hidden', false);
+            $('#faq-ask-success').prop('hidden', true);
+        });
+    })();
 
     /* Tombol ke atas */
     $(window).on('scroll', function() {

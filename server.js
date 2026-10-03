@@ -223,6 +223,74 @@ app.delete('/api/faq/:id', async (req, res) => {
     res.json({ pesan: 'FAQ berhasil dihapus!' });
 });
 
+/* PERTANYAAN PENGUNJUNG */
+const riwayatTanya = new Map();
+function batasTanya(req, res, next) {
+    const sekarang = Date.now();
+    const waktu = (riwayatTanya.get(req.ip) || []).filter(t => sekarang - t < 10 * 60 * 1000);
+    if (waktu.length >= 3)
+        return res.status(429).json({ error: 'Terlalu banyak pertanyaan. Coba lagi beberapa menit lagi.' });
+    waktu.push(sekarang);
+    riwayatTanya.set(req.ip, waktu);
+    next();
+}
+
+/* Post */
+app.post('/api/faq/pertanyaan', batasTanya, async (req, res) => {
+    const pertanyaan = String(req.body.pertanyaan ?? '').trim();
+    const nama = String(req.body.nama ?? '').trim();
+    const email = String(req.body.email ?? '').trim().toLowerCase();
+
+    if (pertanyaan.length < 10 || pertanyaan.length > 300)
+        return res.status(400).json({ error: 'Pertanyaan harus 10 - 300 karakter.' });
+    if (nama.length > 40)
+        return res.status(400).json({ error: 'Nama maksimal 40 karakter.' });
+    if (email && (email.length > 100 || !/^\S+@\S+\.\S+$/.test(email)))
+        return res.status(400).json({ error: 'Format email belum benar.' });
+
+    const { error } = await supabase
+        .from('faq_pertanyaan')
+        .insert([{ pertanyaan, nama: nama || null, email: email || null }]);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.status(201).json({ pesan: 'Pertanyaan berhasil dikirim!' });
+});
+
+/* Get */
+app.get('/api/admin/pertanyaan', async (req, res) => {
+    let query = supabase.from('faq_pertanyaan').select('*').order('created_at', { ascending: false });
+    if (req.query.dibaca === 'true' || req.query.dibaca === 'false')
+        query = query.eq('dibaca', req.query.dibaca === 'true');
+
+    const { data, error } = await query;
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ data: data });
+});
+
+/* Put (admin) */
+app.put('/api/admin/pertanyaan/:id', async (req, res) => {
+    const dibaca = (req.body.dibaca === 'true' || req.body.dibaca === true);
+
+    const { error } = await supabase
+        .from('faq_pertanyaan')
+        .update({ dibaca })
+        .eq('id', req.params.id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: dibaca ? 'Ditandai sudah dibaca.' : 'Ditandai belum dibaca.' });
+});
+
+/* Delete (admin) */
+app.delete('/api/admin/pertanyaan/:id', async (req, res) => {
+    const { error } = await supabase
+        .from('faq_pertanyaan')
+        .delete()
+        .eq('id', req.params.id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Pertanyaan berhasil dihapus!' });
+});
+
 /* STATISTIK PENGUNJUNG */
 app.get('/api/statistik', async (req, res) => {
     const { data, error } = await supabase.from('statistik').select('*').eq('id', 1).single();
