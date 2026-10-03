@@ -516,54 +516,232 @@ $(document).ready(function() {
 
     /* Data FAQ */
     const urlFaq = '/api/faq';
+    const urlPertanyaan = '/api/admin/pertanyaan';
 
     function muatDataFaq() {
-        muatData('faq', '#tabel-faq tbody', null, function(item) {
-            return `
-                <tr>
-                    <td>${esc(item.id)}</td>
-                    <td>${esc(item.pertanyaan)}</td>
-                    <td>${esc(item.jawaban)}</td>
-                    <td>
-                        <button class="btn btn-sm text-dark fw-bold btn-edit-faq btn-edit" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
-                        <button class="btn btn-sm fw-bold btn-hapus-faq btn-hapus" data-id="${esc(item.id)}">Hapus</button>
-                    </td>
-                </tr>
-            `;
+        $.get(urlFaq, function(response) {
+            const data = response.data || [];
+            $('#faq-total').text(data.length);
+
+            const rows = data.map(function(item, i) {
+                return `
+                    <tr>
+                        <td><div class="menu-no">${i + 1}</div></td>
+                        <td><span class="faq-clamp faq-q-text">${esc(item.pertanyaan)}</span></td>
+                        <td><span class="faq-clamp">${esc(item.jawaban)}</span></td>
+                        <td>
+                            <button class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
+                            <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">Hapus</button>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-center text-muted py-4">Belum ada FAQ.</td></tr>');
+            $('#search-faq').trigger('keyup');
         });
     }
 
+    function lepasSumberFaq() {
+        $('#sumber_id_faq').val('');
+        $('#faq-sumber').addClass('d-none');
+    }
+
     function resetFormFaq() {
-        resetForm('form-faq', 'edit_id_faq', 'judul-form-faq', 'Input Pertanyaan Baru', 'btn-faq-submit', 'btn-faq-cancel');
+        resetForm('form-faq', 'edit_id_faq', 'judul-form-faq', 'Tambah FAQ Baru', 'btn-faq-submit', 'btn-faq-cancel');
+        lepasSumberFaq();
+    }
+
+    function scrollKeFormFaq() {
+        const $main = $('main');
+        $main.stop(true).animate({
+            scrollTop: $main.scrollTop() + $('#card-form-faq').offset().top - $main.offset().top - 16
+        }, 500);
     }
 
     $('#form-faq').on('submit', function(e) {
         e.preventDefault();
+        const sumberId = $('#sumber_id_faq').val();
         let payload = {
-            pertanyaan: $('#judul_faq').val(),
-            jawaban: $('#jawaban_faq').val()
+            pertanyaan: $('#judul_faq').val().trim(),
+            jawaban: $('#jawaban_faq').val().trim()
         };
         simpanData(urlFaq, $('#edit_id_faq').val(), payload, $('#btn-faq-submit'), function() {
-            resetFormFaq(); 
+            if (sumberId) setDibaca(sumberId, true, true);
+            resetFormFaq();
             muatDataFaq();
         });
     });
 
     $(document).on('click', '.btn-edit-faq', function() {
+        lepasSumberFaq();
         $('#edit_id_faq').val($(this).data('id'));
         $('#judul_faq').val($(this).data('pertanyaan'));
         $('#jawaban_faq').val($(this).data('jawaban'));
-        setFormEdit('judul-form-faq', 'Edit Data FAQ', 'btn-faq-submit', 'btn-faq-cancel', '#tab-faq');
+        $('#judul-form-faq').text('Edit FAQ');
+        $('#btn-faq-submit').text('Update Data').css('background-color', '#f39c12');
+        $('#btn-faq-cancel').show();
+        scrollKeFormFaq();
     });
 
     $('#btn-faq-cancel').on('click', resetFormFaq);
+    $('#btn-lepas-sumber').on('click', function() {
+        lepasSumberFaq();
+        $('#judul-form-faq').text($('#edit_id_faq').val() ? 'Edit FAQ' : 'Tambah FAQ Baru');
+    });
 
     $(document).on('click', '.btn-hapus-faq', function() {
-        hapusData(urlFaq, $(this).data('id'), muatDataFaq);
+        hapusData(urlFaq, $(this).data('id'), muatDataFaq, $(this).closest('tr').find('.faq-q-text').text());
     });
 
     fiturPencarian('search-faq', '#tabel-faq tbody tr');
     muatDataFaq();
+
+    let daftarPertanyaan = [];
+    let filterPertanyaan = 'belum';
+
+    function cariPertanyaan(id) {
+        return daftarPertanyaan.find(p => String(p.id) === String(id));
+    }
+
+    function formatTanggal(iso) {
+        const d = new Date(iso);
+        if (isNaN(d)) return '';
+        return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderPertanyaan() {
+        const belum = daftarPertanyaan.filter(p => !p.dibaca).length;
+        const total = daftarPertanyaan.length;
+
+        $('#faq-belum-dibaca, #faq-count-belum').text(belum);
+        $('#faq-total-masuk, #faq-count-semua').text(total);
+        $('#faq-count-sudah').text(total - belum);
+        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggle(belum > 0);
+        $('#btn-baca-semua').prop('disabled', belum === 0);
+
+        const kata = $('#search-pertanyaan').val().toLowerCase().trim();
+        const hasil = daftarPertanyaan.filter(function(p) {
+            if (filterPertanyaan === 'belum' && p.dibaca) return false;
+            if (filterPertanyaan === 'sudah' && !p.dibaca) return false;
+            return !kata || [p.pertanyaan, p.nama, p.email].join(' ').toLowerCase().includes(kata);
+        });
+
+        let kosong = 'Belum ada pertanyaan masuk.';
+        if (kata) kosong = 'Tidak ada pertanyaan yang cocok.';
+        else if (total && filterPertanyaan === 'belum') kosong = 'Semua pertanyaan sudah dibaca.';
+        else if (total && filterPertanyaan === 'sudah') kosong = 'Belum ada pertanyaan yang ditandai dibaca.';
+
+        const $list = $('#faq-in-list');
+        const posisi = $list.scrollTop();
+
+        $list.html(hasil.map(function(p) {
+            const id = esc(p.id);
+            return `
+                <div class="faq-in-item ${p.dibaca ? 'is-read' : ''}" data-id="${id}">
+                    <span class="faq-in-dot" title="${p.dibaca ? 'Sudah dibaca' : 'Belum dibaca'}"></span>
+                    <div class="faq-in-body">
+                        <p class="faq-in-q">${esc(p.pertanyaan)}</p>
+                        <div class="faq-in-meta">
+                            <span><i class="fa-solid fa-user"></i>${esc(p.nama || 'Anonim')}</span>
+                            ${p.email ? `<span><i class="fa-solid fa-envelope"></i>${esc(p.email)}</span>` : ''}
+                            <span><i class="fa-regular fa-clock"></i>${esc(formatTanggal(p.created_at))}</span>
+                        </div>
+                        <div class="faq-in-actions">
+                            <button type="button" class="btn-faq-in utama btn-jadikan-faq" data-id="${id}"><i class="fa-solid fa-pen-to-square me-1"></i>Jadikan FAQ</button>
+                            <button type="button" class="btn-faq-in btn-toggle-baca" data-id="${id}" data-dibaca="${p.dibaca ? 'true' : 'false'}">
+                                <i class="fa-solid ${p.dibaca ? 'fa-envelope' : 'fa-check'} me-1"></i>${p.dibaca ? 'Tandai belum dibaca' : 'Tandai dibaca'}
+                            </button>
+                            <button type="button" class="btn-faq-in bahaya btn-hapus-pertanyaan" data-id="${id}" aria-label="Hapus pertanyaan"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('') || `<p class="faq-kosong">${kosong}</p>`);
+
+        $list.scrollTop(posisi);
+    }
+
+    function muatPertanyaan() {
+        $.get(urlPertanyaan, function(response) {
+            daftarPertanyaan = response.data || [];
+            renderPertanyaan();
+        }).fail(function() {
+            $('#faq-in-list').html('<p class="faq-kosong">Gagal memuat pertanyaan masuk.</p>');
+        });
+    }
+
+    function setDibaca(id, dibaca, senyap) {
+        const p = cariPertanyaan(id);
+        if (p) { p.dibaca = dibaca; renderPertanyaan(); }
+
+        $.ajax({
+            url: `${urlPertanyaan}/${id}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ dibaca: dibaca }),
+            success: function(response) {
+                if (!senyap) tampilkanNotif(response.pesan);
+            },
+            error: function() {
+                tampilkanNotif('Gagal mengubah status pertanyaan.', 'danger');
+                muatPertanyaan();
+            }
+        });
+    }
+
+    $(document).on('click', '.btn-toggle-baca', function() {
+        setDibaca($(this).data('id'), String($(this).data('dibaca')) !== 'true');
+    });
+
+    $('#btn-baca-semua').on('click', function() {
+        const $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: urlPertanyaan,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ dibaca: true }),
+            success: function(response) {
+                tampilkanNotif(response.pesan);
+                muatPertanyaan();
+            },
+            error: function() {
+                tampilkanNotif('Gagal menandai semua pertanyaan.', 'danger');
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-hapus-pertanyaan', function() {
+        const p = cariPertanyaan($(this).data('id'));
+        hapusData(urlPertanyaan, $(this).data('id'), muatPertanyaan, p ? p.pertanyaan : '');
+    });
+
+    $(document).on('click', '.btn-jadikan-faq', function() {
+        const p = cariPertanyaan($(this).data('id'));
+        if (!p) return;
+
+        resetFormFaq();
+        $('#sumber_id_faq').val(p.id);
+        $('#judul_faq').val(p.pertanyaan);
+        $('#faq-sumber-teks').text(p.pertanyaan);
+        $('#faq-sumber-nama').text(' · ' + (p.nama || 'Anonim'));
+        $('#faq-sumber').removeClass('d-none');
+        $('#judul-form-faq').text('Tulis FAQ dari Pertanyaan Pengunjung');
+
+        scrollKeFormFaq();
+        $('#jawaban_faq')[0].focus({ preventScroll: true });
+    });
+
+    $('#faq-filter').on('click', '.faq-filter-btn', function() {
+        filterPertanyaan = $(this).data('filter');
+        $('.faq-filter-btn').removeClass('active');
+        $(this).addClass('active');
+        renderPertanyaan();
+    });
+
+    $('#search-pertanyaan').on('input', renderPertanyaan);
+    $('#admin-nav a[data-target="tab-faq"]').on('click', muatPertanyaan);
+    setInterval(function() { if (!document.hidden) muatPertanyaan(); }, 60000);
+    muatPertanyaan();
 
     /* Pesanan */
     let tabPesananAktif = 'pending';
