@@ -1476,6 +1476,10 @@ main {
 }
 
 /* Footer */
+h6.fw-bold {
+    letter-spacing: 1px;
+}
+
 .footer-contact-list {
     line-height: 2;
 }
@@ -1486,20 +1490,12 @@ main {
 }
 
 .custom-footer {
-    background-color: #4a2c17 !important; /* Warna cokelat utama */
+    background-color: #4a2c17 !important; 
     color: white;
     position: relative;
     border-top: none !important;
-    overflow: hidden; /* Mencegah gambar palem keluar dari area footer */
+    overflow: hidden; 
 }
-
-/* .footer-motif-ribbon {
-    width: 100%;
-    height: 35px; /* Tinggi pita motif */
-    /* background-color: #d3b589; /* Warna dasar krem emas */
-    /* SVG Data URI Motif Tradisional */
-    /* border-bottom: 2px solid #331e10; /* Garis batas bawah pita */
-/* } */
 
 .custom-footer::before {
     content: "";
@@ -1511,7 +1507,7 @@ main {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
     background-repeat: no-repeat;
     background-size: contain;
-    pointer-events: none; /* Agar tidak menghalangi klik */
+    pointer-events: none; 
     z-index: 1;
 }
 
@@ -1525,7 +1521,7 @@ main {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M0,100 C0,50 50,10 80,0 C50,30 40,60 0,100 Z' fill='%23ffffff' opacity='0.05'/><path d='M0,100 C20,60 70,40 90,30 C60,50 40,70 0,100 Z' fill='%23ffffff' opacity='0.08'/></svg>");
     background-repeat: no-repeat;
     background-size: contain;
-    transform: scaleX(-1); /* Membalik gambar agar menghadap ke dalam */
+    transform: scaleX(-1); 
     pointer-events: none;
     z-index: 1;
 }
@@ -1550,6 +1546,7 @@ main {
     position: relative;
     transition: all 0.3s ease-in-out;
     box-shadow: none !important;
+    text-decoration: none;
 }
 
 .custom-social-btn i {
@@ -1557,17 +1554,13 @@ main {
 }
 
 .custom-social-btn:hover {
-    background-color: #d3b589; /* Berubah jadi krem saat di-hover */
-    color: #4a2c17 !important; /* Ikon jadi cokelat */
+    background-color: #d3b589; 
+    color: #4a2c17 !important; 
     transform: translateY(-5px);
 }
 
-.footer-link {
-    transition: all 0.2s ease-in-out;
-}
-.footer-link:hover {
-    color: #d3b589 !important; /* Teks link menjadi krem saat di-hover */
-    text-decoration: underline !important;
+.custom-social-btn:hover i {
+    color: #4a2c17 !important;
 }
 
 /* Floating Button */
