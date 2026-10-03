@@ -2044,6 +2044,41 @@ main {
   pointer-events: none;
 }
 
+/* Notifikasi */
+.toast-container {
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw; 
+    max-width: 400px;
+    pointer-events: none; 
+}
+
+.custom-papeda-toast {
+    width: 100%;
+    background-color: #4a2c11;
+    color: #fdf5eb;
+    border-radius: 6px;
+    border-left: 4px solid #c9a17a !important;
+    box-shadow: 0 4px 10px rgba(74, 44, 17, 0.2);
+    font-size: 0.75rem;
+    pointer-events: auto;
+}
+
+.custom-papeda-toast .fa-solid {
+    font-size: 0.9rem;
+}
+
+.custom-papeda-toast .btn-close {
+    filter: invert(88%) sepia(12%) saturate(548%) hue-rotate(338deg) brightness(107%) contrast(98%);
+    opacity: 0.7;
+    transform: scale(0.65);
+}
+
+.custom-papeda-toast .btn-close:hover {
+    opacity: 1;
+}
+
 /* INTRO */
 body.intro-active { overflow: hidden; }
 html.has-entered body.intro-active { overflow: auto; }
@@ -2286,6 +2321,19 @@ html.has-entered #intro { display: none !important; }
     .loc-cards {
         padding-left: 40px;
     }
+
+    .toast-container {
+        left: auto; 
+        right: 20px;
+        transform: none; 
+        width: max-content; 
+    }
+
+    .custom-papeda-toast {
+        width: max-content; 
+        max-width: 320px; 
+        font-size: 0.813rem;
+    }
 }
 
 /* Desktop */
@@ -2320,6 +2368,29 @@ html.has-entered #intro { display: none !important; }
         position: sticky;
         top: max(90px, calc(50vh - 240px));
         width: 100%;
+    }
+
+    .toast-container {
+        top: 25px;
+        right: 25px;
+    }
+
+    .custom-papeda-toast {
+        max-width: 380px; 
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    
+    .custom-papeda-toast .toast-body {
+        padding: 0.6rem 1rem;
+    }
+
+    .custom-papeda-toast .fa-solid {
+        font-size: 1rem;
+    }
+
+    .custom-papeda-toast .btn-close {
+        transform: scale(0.8);
     }
 }
 

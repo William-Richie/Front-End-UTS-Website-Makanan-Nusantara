@@ -702,7 +702,20 @@
         </div>
     </div>
 
-        <!-- Auth Modal -->
+    <!-- Notification -->
+    <div class="toast-container position-fixed" style="z-index: 9999;">
+        <div id="papedaToast" class="toast align-items-center custom-papeda-toast border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-medium d-flex align-items-center">
+                    <i id="papedaToastIcon" class="fa-solid fa-circle-check me-2"></i> 
+                    <span id="papedaToastPesan">Pesan notifikasi di sini.</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content auth-card border-0 overflow-hidden">
