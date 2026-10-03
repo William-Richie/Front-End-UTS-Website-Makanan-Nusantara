@@ -430,6 +430,7 @@
         <section id="tab-konten" class="tab-section">
             <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
             
+            <!-- KONTEN: HERO BANNER -->
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 p-4 h-100">
@@ -459,8 +460,8 @@
                             <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3">
                                 
                                 <div class="text-center text-lg-start preview-hero-info">
-                                    <h1 id="preview-hero">Memuat...</h1>
                                     <p class="hero-sub preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
+                                    <h1 id="preview-hero">Memuat...</h1>
                                 </div>
 
                                 <div class="papeda-area position-relative">
@@ -480,7 +481,105 @@
                                 <h2 class="preview-about-title">Tentang Kami</h2>
                                 <p id="preview-about">Memuat...</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KONTEN: FOOTER -->
+            <div class="row g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 p-4 h-100">
+                        <form id="form-footer">
                             
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Judul Sosial Media</label>
+                                <input type="text" id="footer_title" class="form-control" value="Ikuti Kami">
+                                <small class="text-muted">Teks yang muncul di atas deretan ikon.</small>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Teks Copyright</label>
+                                <textarea id="footer_copyright" class="form-control" rows="3">&copy; 2026 Papeda Restaurant. All Rights Reserved.</textarea>
+                            </div>
+                            
+                            <hr class="mb-4">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Tautan Instagram</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-brands fa-instagram"></i></span>
+                                    <input type="text" id="input_link_ig" class="form-control" placeholder="https://instagram.com/...">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Tautan TikTok</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-brands fa-tiktok"></i></span>
+                                    <input type="text" id="input_link_tiktok" class="form-control" placeholder="https://tiktok.com/@...">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Tautan WhatsApp</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-brands fa-whatsapp"></i></span>
+                                    <input type="text" id="input_link_wa" class="form-control" placeholder="6281234567890">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Alamat Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                    <input type="email" id="input_email" class="form-control" placeholder="email@contoh.com">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Tautan LinkedIn</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-brands fa-linkedin-in"></i></span>
+                                    <input type="text" id="input_link_linkedin" class="form-control" placeholder="https://linkedin.com/in/...">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan" id="btn-update-footer">Update Footer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 overflow-hidden preview-card">
+                        <div class="card-header bg-dark text-white">
+                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
+                        </div>
+                        
+                        <div class="card-body p-0 preview-card-body" style="background-color: #4a2c17;">
+                            <div class="py-5 w-100 text-white">
+                                <div class="container pt-4">
+                                    <div class="text-center mb-4">
+                                        <h6 id="preview_footer_title" class="fw-bold mb-4 text-warning" style="letter-spacing: 1px;">Ikuti Kami</h6>
+                                        
+                                        <div class="d-flex justify-content-center gap-3 mt-4">
+                                            <span class="custom-social-btn"><i class="fa-brands fa-instagram"></i></span>
+                                            <span class="custom-social-btn"><i class="fa-brands fa-tiktok"></i></span>
+                                            <span class="custom-social-btn"><i class="fa-brands fa-whatsapp"></i></span>
+                                            <span class="custom-social-btn"><i class="fa-solid fa-envelope"></i></span>
+                                            <span class="custom-social-btn"><i class="fa-brands fa-linkedin-in"></i></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr class="border-light opacity-25 my-4">
+                                    
+                                    <!-- ID target preview copyright -->
+                                    <div id="preview_footer_copyright" class="text-center small text-light text-opacity-75 px-3">
+                                        &copy; 2026 Papeda Restaurant. All Rights Reserved.
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

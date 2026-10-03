@@ -345,6 +345,22 @@ app.put('/api/konten', async (req, res) => {
     res.json({ pesan: 'Konten web berhasil diperbarui!' });
 });
 
+/* KONTEN FOOTER */
+/* Get */
+app.get('/api/footer', async (req, res) => {
+    const { data, error } = await supabase.from('konten_footer').select('*').eq('id', 1).single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+});
+
+/* Update */
+app.put('/api/footer', async (req, res) => {
+    const { judul, copyright, link_ig, link_wa, link_tiktok, email, link_linkedin } = req.body;
+    const { error } = await supabase.from('konten_footer').update({ judul, copyright, link_ig, link_wa, link_tiktok, email, link_linkedin }).eq('id', 1);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ pesan: 'Konten footer berhasil diperbarui!' });
+});
+
 /* AUTH */
 const buatToken = (u) => jwt.sign({ id: u.id, email: u.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
