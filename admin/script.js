@@ -1,3 +1,93 @@
+(function () {
+    const KEY = 'papeda_admin_token';
+    const LABEL = '<i class="fa-solid fa-right-to-bracket me-2"></i>Masuk';
+    const token = () => localStorage.getItem(KEY);
+    let timer = null;
+
+    if (token()) document.body.classList.add('al-checking');
+
+    $.ajaxPrefilter((opt, orig, xhr) => {
+        if (token() && /\/api\//.test(opt.url)) xhr.setRequestHeader('Authorization', 'Bearer ' + token());
+    });
+    const _fetch = window.fetch.bind(window);
+    window.fetch = (url, opts = {}) => {
+        if (String(url).includes('/api/') && token())
+            opts = { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + token() } };
+        return _fetch(url, opts).then(r => { if (r.status === 401) kunci('Sesi berakhir, silakan login lagi.'); return r; });
+    };
+    $(document).ajaxError((e, xhr, set) => {
+        if (xhr.status === 401 && !/admin\/login/.test(set.url)) kunci(token() ? 'Sesi berakhir, silakan login lagi.' : '');
+    });
+
+    function tampilPesan(msg) {
+        const el = document.getElementById('al-error');
+        $(el).text(msg).removeClass('d-none shake');
+        void el.offsetWidth;
+        $(el).addClass('shake');
+    }
+
+    function kunci(msg) {
+        localStorage.removeItem(KEY);
+        document.body.classList.remove('al-checking');
+        document.body.classList.add('admin-locked');
+        if (msg) tampilPesan(msg);
+    }
+
+    function hitungMundur(detik) {
+        const $btn = $('#al-submit');
+        clearInterval(timer);
+        $btn.prop('disabled', true);
+        timer = setInterval(() => {
+            if (detik <= 0) {
+                clearInterval(timer);
+                $btn.prop('disabled', false).html(LABEL);
+                $('#al-error').addClass('d-none');
+                return;
+            }
+            const m = Math.floor(detik / 60), s = String(detik % 60).padStart(2, '0');
+            $btn.html(`<i class="fa-solid fa-hourglass-half me-2"></i>Coba lagi ${m}:${s}`);
+            detik--;
+        }, 1000);
+    }
+
+    $('#form-admin-login').on('submit', function (e) {
+        e.preventDefault();
+        const $btn = $('#al-submit');
+        $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Memeriksa...');
+
+        $.ajax({
+            url: '/api/admin/login', method: 'POST', contentType: 'application/json',
+            data: JSON.stringify({ username: $('#al-user').val().trim(), password: $('#al-pass').val() })
+        }).done(res => {
+            localStorage.setItem(KEY, res.token);
+            $('#al-lock').removeClass('fa-lock').addClass('fa-lock-open');
+            $('.al-card').addClass('al-success');
+            setTimeout(() => location.reload(), 1100);
+        }).fail(x => {
+            tampilPesan((x.responseJSON && x.responseJSON.error) || 'Tidak bisa terhubung ke server.');
+            $('#al-pass').val('').trigger('focus');
+            if (x.status === 429) hitungMundur(x.responseJSON.sisa);
+            else $btn.prop('disabled', false).html(LABEL);
+        });
+    });
+
+    $('#al-eye').on('click', function () {
+        const $p = $('#al-pass');
+        $p.attr('type', $p.attr('type') === 'password' ? 'text' : 'password');
+        $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+    });
+
+    $('#btn-admin-logout').on('click', () => { localStorage.removeItem(KEY); location.reload(); });
+
+    if (token()) {
+        $.get('/api/admin/cek')
+            .done(() => document.body.classList.remove('admin-locked', 'al-checking'))
+            .fail(() => kunci(''));
+    } else {
+        kunci('');
+    }
+})();
+
 function esc(str) {
     if (!str) return '';
     return String(str)
