@@ -104,8 +104,9 @@ header, .sticky-top, .header-container {
     transition: all 0.2s ease;
 }
 
-.Sign-in:hover .regist:hover {
-    background-color: #4a2c17;
+.Sign-in:hover, .regist:hover {
+    background-color: #6b4226;
+    border-color: #6b4226;
     color: #ffffff;
 }
 
@@ -1208,6 +1209,8 @@ footer {
 
 /* INTRO */
 body.intro-active { overflow: hidden; }
+html.has-entered body.intro-active { overflow: auto; }
+html.has-entered #intro { display: none !important; }
 
 #intro {
     position: fixed;

@@ -52,11 +52,11 @@ $(document).ready(function() {
     }
 
     function muatStatistikDanKonten() {
-        $.get('http://localhost:3000/api/statistik', function(data) {
+        $.get('/api/statistik', function(data) {
             $('#angka-pengunjung').text(data.jumlah_pengunjung);
         });
         
-        $.get('http://localhost:3000/api/konten', function(data) {
+        $.get('/api/konten', function(data) {
             $('#teks_hero').val(data.teks_hero);
             $('#teks_about').val(data.teks_about);
             
@@ -85,7 +85,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: 'http://localhost:3000/api/konten',
+            url: '/api/konten',
             type: 'PUT',
             data: dataKonten,
             success: function(response) {
@@ -101,7 +101,7 @@ $(document).ready(function() {
 
     /* Function Menu + FAQ */
     function muatData(endpoint, tbodySelector, counterSelector, templateHTML) {
-        $.get(`http://localhost:3000/api/${endpoint}`, function(response) {
+        $.get(`/api/${endpoint}`, function(response) {
             let rows = '';
             let jumlahData = 0;
             response.data.forEach(function(item, index) {
@@ -210,10 +210,10 @@ $(document).ready(function() {
     }
 
     /* Data Menu */
-    const urlMenu = 'http://localhost:3000/api/menu';
+    const urlMenu = '/api/menu';
 
     function muatDataMenu() {
-        $.get('http://localhost:3000/api/menu', function(response) {
+        $.get('/api/menu', function(response) {
             let mainRows = '';
             let appetizerRows = '';
             let dessertRows = '';
@@ -409,7 +409,7 @@ $(document).ready(function() {
     muatDataMenu();
 
     /* Data FAQ */
-    const urlFaq = 'http://localhost:3000/api/faq';
+    const urlFaq = '/api/faq';
 
     function muatDataFaq() {
         muatData('faq', '#tabel-faq tbody', null, function(item) {
@@ -502,11 +502,20 @@ $(document).ready(function() {
                 actionBtn = `<button class="btn btn-success btn-sm fw-bold btn-selesai-pesanan shadow-sm" data-id="${pesanan.id}"><i class="fa-solid fa-flag-checkered me-1"></i> Selesai</button>`;
             }
 
+            let namaPemesan = pesanan.nama;
+            if (!namaPemesan && pesanan.item) {
+                let match = String(pesanan.item).match(/^\[(.*?)(?:\s*-\s*(?:Dine-in|Online|Alamat)|\])/i);
+                if (match && match[1]) {
+                    namaPemesan = match[1].replace(/^Nama:\s*/i, '').trim();
+                }
+            }
+            namaPemesan = namaPemesan || 'Pelanggan';
+
             let rowHtml = `
                 <tr>
                     <td><strong>ORD-${shortId}</strong></td>
-                    <td>${pesanan.nama}</td>
-                    <td><small>${pesanan.item}</small></td>
+                    <td><strong>${$('<div>').text(namaPemesan).html()}</strong></td>
+                    <td><small>${$('<div>').text(pesanan.item || '-').html()}</small></td>
                     <td class="fw-bold text-success">Rp ${Number(pesanan.total).toLocaleString('id-ID')}</td>
                     <td>${statusBadge}</td>
                     <td>${actionBtn}</td>
@@ -583,7 +592,7 @@ $(document).ready(function() {
     });
 
     /* Kelola Lokasi */
-    const urlCabang = 'http://localhost:3000/api/maps';
+    const urlCabang = '/api/maps';
     const VIEW_DEFAULT = [-2.5, 118];
     const ZOOM_CABANG = 15;
 
@@ -773,7 +782,7 @@ $(document).ready(function() {
     let seluruhMenuTersedia = [];
     const formatRp = (angka) => 'Rp ' + Number(angka).toLocaleString('id-ID');
     function muatOpsiMenuFavorit() {
-        $.get('http://localhost:3000/api/menu', function(response) {
+        $.get('/api/menu', function(response) {
             seluruhMenuTersedia = response.data.filter(item => String(item.status) === 'true');
             renderOptionsKeSemuaSlot(seluruhMenuTersedia);
             muatDataFavoritTersimpan();
@@ -803,7 +812,7 @@ $(document).ready(function() {
     }
 
     function muatDataFavoritTersimpan() {
-        $.get('http://localhost:3000/api/favorit', function(response) {
+        $.get('/api/favorit', function(response) {
             if(response && response.data) {
                 response.data.forEach(function(fav, index) {
                     let slotNumber = index + 1;
@@ -900,7 +909,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: 'http://localhost:3000/api/favorit',
+            url: '/api/favorit',
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ data: payload }),
@@ -975,10 +984,16 @@ $(function () {
             semuaReservasi = result.data || [];
 
             $('#count-pending').text(semuaReservasi.filter(r => r.status === 'pending').length);
-            $('#count-approved').text(semuaReservasi.filter(r => r.status === 'approved').length);
-            $('#count-complete').text(semuaReservasi.filter(r => r.status === 'complete').length);
+            $('#count-approved').text(semuaReservasi.filter(r => r.status === 'approved' || r.status === 'dikonfirmasi').length);
+            $('#count-complete').text(semuaReservasi.filter(r => r.status === 'complete' || r.status === 'selesai').length);
+            $('#count-dibatalkan').text(semuaReservasi.filter(r => r.status === 'dibatalkan' || r.status === 'cancelled').length);
 
-            const filtered = semuaReservasi.filter(r => r.status === statusFilter);
+            const filtered = semuaReservasi.filter(r => {
+                if (statusFilter === 'approved') return r.status === 'approved' || r.status === 'dikonfirmasi';
+                if (statusFilter === 'complete') return r.status === 'complete' || r.status === 'selesai';
+                if (statusFilter === 'dibatalkan') return r.status === 'dibatalkan' || r.status === 'cancelled';
+                return r.status === statusFilter;
+            });
             const $tbody =$('#reservation-table-body');
             $tbody.empty();
 
@@ -997,9 +1012,13 @@ $(function () {
                     <td>${r.ruangan || '-'}</td>
                     <td>${r.catatan || '-'}</td>
                     <td>
-                        ${r.status === 'complete' 
+                        ${(r.status === 'complete' || r.status === 'selesai')
                             ? '<span class="badge bg-success">Selesai</span>'
-                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${r.id}" data-next="${r.status === 'pending' ? 'approved' : 'complete'}">✓ Konfirmasi</button>`
+                            : (r.status === 'dibatalkan' || r.status === 'cancelled')
+                            ? '<span class="badge bg-danger">Dibatalkan</span>'
+                            : (r.status === 'approved' || r.status === 'dikonfirmasi')
+                            ? `<button class="btn btn-sm btn-success btn-confirm" data-id="${r.id}" data-next="complete">✓ Selesaikan</button>`
+                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${r.id}" data-next="approved">✓ Konfirmasi</button>`
                         }
                     </td>
                 </tr>
