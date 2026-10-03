@@ -13,8 +13,12 @@ $(function () {
     };
     const STATUS = {
         pending: ['Menunggu', 'warning', 'fa-hourglass-half'],
-        dikonfirmasi: ['Dikonfirmasi', 'success', 'fa-circle-check'],
-        dibatalkan: ['Dibatalkan', 'danger', 'fa-circle-xmark']
+        approved: ['Dikonfirmasi', 'primary', 'fa-circle-check'],
+        dikonfirmasi: ['Dikonfirmasi', 'primary', 'fa-circle-check'],
+        complete: ['Selesai', 'success', 'fa-circle-check'],
+        selesai: ['Selesai', 'success', 'fa-circle-check'],
+        dibatalkan: ['Dibatalkan', 'danger', 'fa-circle-xmark'],
+        cancelled: ['Dibatalkan', 'danger', 'fa-circle-xmark']
     };
 
     /* Helper */
@@ -40,6 +44,7 @@ $(function () {
     /* State user */
     function setUser(u) {
         currentUser = u;
+        window.currentUser = u;
         $('body').toggleClass('logged-in', !!u);
         if (u) {
             $('#user-name').text(u.nama.split(' ')[0]);
@@ -219,7 +224,7 @@ $(function () {
     function kartu(r) {
         const s = STATUS[r.status] || STATUS.pending;
         const tgl = new Date(r.tanggal + 'T00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        const bisaBatal = r.status !== 'dibatalkan';
+        const bisaBatal = r.status === 'pending' || r.status === 'approved' || r.status === 'dikonfirmasi';
         return `
         <div class="col-md-6">
             <div class="res-card">

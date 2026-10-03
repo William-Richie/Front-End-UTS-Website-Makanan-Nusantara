@@ -19,6 +19,19 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+/* Redirect */
+app.get('/', (req, res) => {
+    res.redirect('/user/index.html');
+});
+
+app.get('/user', (req, res) => {
+    res.redirect('/user/index.html');
+});
+
+app.get('/admin', (req, res) => {
+    res.redirect('/admin/index.html');
+});
+
 /* MENU */
 /* Get */
 app.get('/api/menu', async (req, res) => {
@@ -358,10 +371,6 @@ app.put('/api/reservasi/:id/batal', auth, async (req, res) => {
     res.json({ pesan: 'Reservasi dibatalkan.' });
 });
 
-app.listen(port, () => {
-    console.log(`Server backend (Supabase) berjalan di http://localhost:${port}`);
-});
-
 /* admin */
 app.get('/api/admin/users', async (req, res) => {
     try {
@@ -386,34 +395,6 @@ app.get('/api/admin/users', async (req, res) => {
         res.json({ data: usersWithCount });
     } catch (err) {
         console.error("Error /api/admin/users:", err.message);
-        res.status(500).json({ error: err.message });
-    }
-});
-app.get('/api/admin/users', async (req, res) => {
-    try {
-        const { data: users, error: userErr } = await supabase
-            .from('users')
-            .select('id, nama, email, created_at')
-            .order('created_at', { ascending: true });
-
-        if (userErr) throw userErr;
-
-        const { data: reservasi, error: resErr } = await supabase
-            .from('reservasi')
-            .select('user_id');
-
-        if (resErr) throw resErr;
-
-        const usersWithCount = users.map(user => {
-            const totalReserve = reservasi.filter(r => r.user_id === user.id).length;
-            return {
-                ...user,
-                total_reserve: totalReserve
-            };
-        });
-
-        res.json({ data: usersWithCount });
-    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
@@ -518,16 +499,25 @@ app.delete('/api/maps/:id', async (req, res) => {
 /* Post */
 app.post('/api/pesanan', async (req, res) => {
     try {
-        const { /*nama,*/ item, total } = req.body;
+        const { nama, item, total } = req.body;
         
-        const { data, error } = await supabase
+        const payload = {
+            item: item,
+            total: parseInt(total),
+            status: 'pending'
+        };
+        if (nama) payload.nama = String(nama).trim();
+
+        let { data, error } = await supabase
             .from('pesanan')
-            .insert([{ 
-                // nama: nama, 
-                item: item, 
-                total: parseInt(total), 
-                status: 'pending'
-            }]);
+            .insert([payload]);
+
+        if (error && error.message && error.message.toLowerCase().includes('nama')) {
+            delete payload.nama;
+            const retry = await supabase.from('pesanan').insert([payload]);
+            data = retry.data;
+            error = retry.error;
+        }
 
         if (error) throw error;
 
@@ -623,20 +613,25 @@ app.get('/api/pendapatan', async (req, res) => {
             const nilai = Number(r.total) || 0;
             const daftar = String(r.item || '').replace(/^\[[^\]]*\]\s*/, '').split(',').map(s => s.trim()).filter(Boolean);
 
+            let itemsCountInOrder = 0;
+            daftar.forEach(namaRaw => {
+                const match = namaRaw.match(/^(.*?)(?:\s*\((?:x?(\d+)|(\d+)x)\))?$/i);
+                const nama = (match && match[1]) ? match[1].trim() : namaRaw.trim();
+                const qty = (match && (match[2] || match[3])) ? parseInt(match[2] || match[3], 10) : 1;
+                itemsCountInOrder += qty;
+                const key = nama.toLowerCase();
+                if (!perMenu[key]) perMenu[key] = { nama, qty: 0, pendapatan: 0 };
+                perMenu[key].qty += qty;
+                perMenu[key].pendapatan += (harga[key] || 0) * qty;
+            });
+
             perHari[t].pesanan++;
-            perHari[t].item += daftar.length;
+            perHari[t].item += itemsCountInOrder;
             perHari[t].pendapatan += nilai;
             perJam[parseInt(jamWIB(r.created_at), 10)].total += nilai;
 
-            daftar.forEach(nama => {
-                const key = nama.toLowerCase();
-                if (!perMenu[key]) perMenu[key] = { nama, qty: 0, pendapatan: 0 };
-                perMenu[key].qty++;
-                perMenu[key].pendapatan += harga[key] || 0;
-            });
-
             total += nilai;
-            totalItem += daftar.length;
+            totalItem += itemsCountInOrder;
             totalPesanan++;
         });
 
@@ -650,4 +645,8 @@ app.get('/api/pendapatan', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+app.listen(port, () => {
+    console.log(`Server backend (Supabase) berjalan di http://localhost:${port}`);
 });
