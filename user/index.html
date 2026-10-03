@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/user/style.css">
     <link rel="stylesheet" href="/user/auth.css">
+    <script>
+        if (sessionStorage.getItem('hasEntered') === 'true') {
+            document.documentElement.classList.add('has-entered');
+        }
+    </script>
 </head>
 <body class="intro-active">
     <div id="intro" class="d-flex flex-column justify-content-center align-items-center text-center">
@@ -88,6 +93,7 @@
             <nav id="main-nav">
                 <ul>
                     <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#favorite-menus" class="nav-link">Favorite</a></li>
                     <li><a href="#menu" class="nav-link">Menu</a></li>
                     <li><a href="#faq" class="nav-link">FAQ</a></li>
@@ -359,7 +365,6 @@
                 <label class="form-label fw-bold" for="store-select">Select a store</label>
                 <select id="store-select" name="store" class="form-select" required>
                     <option value="" disabled selected>-- Choose The Store --</option>
-                    <option value="gerai-a">Jl. Cendrawasih No. 45, Jakarta</option>
                 </select>
             </div>
 
@@ -376,7 +381,7 @@
 
                 <div class="mb-3">
                     <label for="phone" class="form-label fw-bold">Active Phone Number</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="08xx-xxxx-xxxx" required>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="08xxxxxxxxxx" pattern="^08[0-9]{8,11}$" title="Nomor telepon harus diawali 08 dan memiliki panjang 10-13 digit angka" required>
                 </div>
 
                 <div class="row g-3 mb-3">
@@ -458,12 +463,28 @@
     <div class="container relative-z-index">
         <div class="row text-center text-md-start">
             
+<<<<<<< HEAD
             <!-- Kolom 1: Kisah Kami -->
             <div class="col-md-4 mb-4">
                 <h6 class="fw-bold mb-3">Kisah Kami</h6>
                 <p class="small text-light text-opacity-75" style="line-height: 1.6;">
                     Papeda Restaurant menyajikan warisan kuliner otentik yang membawa nuansa khas Indonesia Timur dengan cita rasa aslinya.
                 </p>
+=======
+            <div class="d-flex justify-content-center gap-3">
+                <a href="javascript:void(0)" class="btn custom-social-btn" title="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="javascript:void(0)" class="btn custom-social-btn" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="javascript:void(0)" class="btn custom-social-btn" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="javascript:void(0)" class="btn custom-social-btn" title="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+>>>>>>> 14cdb28033d67990fb08e5fb6176118fd45d601c
             </div>
 
             <!-- Kolom 2: Tautan Penting -->
@@ -575,11 +596,6 @@
                             <label class="form-label fw-bold small text-uppercase" style="color: #6b4226; letter-spacing: 1px;">Pilih Gerai Restoran</label>
                             <select class="form-select custom-input" id="checkoutStore">
                                 <option value="" disabled selected>-- Pilih Lokasi --</option>
-                                <option value="Gerai A (Jakarta)">Gerai A (Jakarta)</option>
-                                <option value="Gerai B (Bandung)">Gerai B (Bandung)</option>
-                                <option value="Gerai C (Bogor)">Gerai C (Bogor)</option>
-                                <option value="Gerai D (Jawa)">Gerai D (Jawa)</option>
-                                <option value="Gerai E (Papua)">Gerai E (Papua)</option>
                             </select>
                         </div>
                     </div>

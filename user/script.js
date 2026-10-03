@@ -87,7 +87,7 @@ $(document).ready(function() {
     }
 
     function muatMenuFavoritUser() {
-        $.get('http://localhost:3000/api/favorit', function(response) {
+        $.get('/api/favorit', function(response) {
             let orbitHtml = '';
             let descHtml = '';
             
@@ -212,73 +212,136 @@ $(document).ready(function() {
     muatMenuDariDatabase();
 
     /* Cart */
-    let cartItemCount = 0; 
-    let cartTotal = 0;
     let cartItems = [];
+    try {
+        const saved = localStorage.getItem('cartItems');
+        if (saved) {
+            cartItems = JSON.parse(saved);
+            if (!Array.isArray(cartItems)) cartItems = [];
+        }
+    } catch (e) {
+        cartItems = [];
+    }
 
-    function updateCartBadge() {
-        if (cartItemCount > 0) {
-            $('#cart-count').text(cartItemCount).css('display', 'flex'); 
+    function saveCart() {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        renderCart();
+    }
+
+    function getCartTotal() {
+        return cartItems.reduce((acc, item) => acc + ((parseInt(item.harga, 10) || 0) * (parseInt(item.qty, 10) || 0)), 0);
+    }
+
+    function getCartCount() {
+        return cartItems.reduce((acc, item) => acc + (parseInt(item.qty, 10) || 0), 0);
+    }
+
+    function renderCart() {
+        const count = getCartCount();
+        const total = getCartTotal();
+
+        if (count > 0) {
+            $('#cart-count').text(count).css('display', 'flex'); 
             $('#empty-cart-msg').hide();
         } else {
             $('#cart-count').css('display', 'none'); 
             $('#empty-cart-msg').show();
         }
 
-        $('#cart-total-price').text('Rp ' + cartTotal.toLocaleString('id-ID'));
+        $('#cart-total-price').text('Rp ' + total.toLocaleString('id-ID'));
+
+        // Clear existing cart items
+        $('#cart-items-list').find('li:not(#empty-cart-msg)').remove();
+
+        // Render each item with +/- and delete button
+        cartItems.forEach(item => {
+            let itemHtml = `
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom" data-id="${item.id}">
+                    <div class="me-2" style="max-width: 50%;">
+                        <div class="fw-semibold text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
+                        <small class="text-muted">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-minus" data-id="${item.id}" title="Kurangi">-</button>
+                            <span class="btn btn-outline-secondary px-2 py-0 disabled text-dark fw-bold border-secondary" style="min-width: 28px; opacity: 1;">${item.qty}</span>
+                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-plus" data-id="${item.id}" title="Tambah">+</button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger px-2 py-0 btn-cart-delete" data-id="${item.id}" title="Hapus menu">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </li>
+            `;
+            $('#cart-items-list').append(itemHtml);
+        });
     }
 
-    updateCartBadge(); 
+    renderCart();
 
     $('#tempat-menu-dinamis').on('click', '.add-to-cart-btn', function(e) {
         e.preventDefault(); 
 
+        let itemId = $(this).data('id');
         let itemName = $(this).data('nama');
-        let itemPrice = parseInt($(this).data('harga'));
-        
-        cartItemCount++; 
-        cartTotal += itemPrice;
-        cartItems.push(itemName);
+        let itemPrice = parseInt($(this).data('harga'), 10) || 0;
 
-        let existingItem = $(`#cart-items-list .cart-item-row[data-nama="${itemName}"]`);
-        if (existingItem.length > 0) {
-            let qtySpan = existingItem.find('.item-qty');
-            let currentQty = parseInt(qtySpan.text());
-            qtySpan.text(currentQty + 1);
+        let existing = cartItems.find(i => (itemId && String(i.id) === String(itemId)) || i.nama === itemName);
+        if (existing) {
+            existing.qty = (parseInt(existing.qty, 10) || 0) + 1;
         } else {
-            let cartItemHtml = `
-                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom cart-item-row" data-nama="${itemName}" data-harga="${itemPrice}">
-                    <div class="d-flex flex-column" style="max-width: 55%;">
-                        <span class="fw-bold" style="color: #4a2c17; font-size: 14px; line-height: 1.2;">${itemName}</span>
-                        <span style="font-size: 12px; color: #8b5e34;">Rp ${itemPrice.toLocaleString('id-ID')}</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-qty btn-decrease" style="padding: 0 8px; border: 1px solid #d8c3ab; background: #fffaf3;">-</button>
-                        <span class="fw-bold item-qty" style="font-size: 14px; width: 24px; text-align: center;">1</span>
-                        <button type="button" class="btn btn-qty btn-increase" style="padding: 0 8px; border: 1px solid #d8c3ab; background: #fffaf3;">+</button>
-                    </div>
-                </li>
-            `;
-        
-            $('#cart-items-list').append(cartItemHtml);
+            cartItems.push({
+                id: itemId,
+                nama: itemName,
+                harga: itemPrice,
+                qty: 1
+            });
         }
 
-        updateCartBadge(); 
-        
-        let $btn =$(this);
+        saveCart();
+
+        let $btn = $(this);
         let originalText = $btn.text(); 
         
-        $btn.text('Berhasil!');$btn.css({'background-color': '#27ae60', 'color': 'white'}); 
+        $btn.text('Berhasil!').css({'background-color': '#27ae60', 'color': 'white'}); 
         
         setTimeout(function() {
-            $btn.text(originalText);$btn.css({'background-color': '', 'color': ''}); 
+            $btn.text(originalText).css({'background-color': '', 'color': ''}); 
         }, 1000);
+    });
+
+    $('#cart-items-list').on('click', '.btn-qty-plus', function() {
+        let id = $(this).data('id');
+        let item = cartItems.find(i => String(i.id) === String(id));
+        if (item) {
+            item.qty = (parseInt(item.qty, 10) || 0) + 1;
+            saveCart();
+        }
+    });
+
+    $('#cart-items-list').on('click', '.btn-qty-minus', function() {
+        let id = $(this).data('id');
+        let idx = cartItems.findIndex(i => String(i.id) === String(id));
+        if (idx > -1) {
+            if (cartItems[idx].qty > 1) {
+                cartItems[idx].qty -= 1;
+            } else {
+                cartItems.splice(idx, 1);
+            }
+            saveCart();
+        }
+    });
+
+    $('#cart-items-list').on('click', '.btn-cart-delete', function() {
+        let id = $(this).data('id');
+        cartItems = cartItems.filter(i => String(i.id) !== String(id));
+        saveCart();
     });
 
     let currentOngkir = 0;
 
     $('#btn-checkout-cart').on('click', function() {
-        if (cartItemCount === 0) {
+        if (cartItems.length === 0) {
             alert("Keranjang Anda masih kosong. Silakan pesan menu terlebih dahulu!");
             return;
         }
@@ -287,8 +350,9 @@ $(document).ready(function() {
         var cartOffcanvas = bootstrap.Offcanvas.getInstance(cartSidebarEl);
         if(cartOffcanvas) cartOffcanvas.hide();
 
-        $('#modalSubtotal').text('Rp ' + cartTotal.toLocaleString('id-ID'));
-        $('#modalTotalBayar').text('Rp ' + cartTotal.toLocaleString('id-ID'));
+        let total = getCartTotal();
+        $('#modalSubtotal').text('Rp ' + total.toLocaleString('id-ID'));
+        $('#modalTotalBayar').text('Rp ' + total.toLocaleString('id-ID'));
         
         $('input[name="orderType"]').prop('checked', false);
         $('#dineInForm, #onlineForm').hide();
@@ -362,43 +426,41 @@ $(document).ready(function() {
     });
 
     function updateModalTotal() {
-        let finalTotal = cartTotal + currentOngkir;
+        let finalTotal = getCartTotal() + currentOngkir;
         $('#modalTotalBayar').text('Rp ' + finalTotal.toLocaleString('id-ID'));
     }
 
     $('#btn-confirm-pay').on('click', function() {
         let orderType = $('input[name="orderType"]:checked').val();
         let detailPesananStr = "";
-        let finalTotal = cartTotal + currentOngkir;
+        let finalTotal = getCartTotal() + currentOngkir;
         
+        let namaPelanggan = (window.currentUser && window.currentUser.nama)
+            || ($('#name').val() && $('#name').val().trim())
+            || 'Pelanggan';
+
         if (orderType === 'dine-in') {
             let store = $('#checkoutStore').val();
             if (!store) {
                 alert('Silakan pilih lokasi gerai restoran terlebih dahulu!');
                 return;
             }
-            detailPesananStr = `[Dine-in di ${store}] `;
+            detailPesananStr = `[${namaPelanggan} - Dine-in: ${store}] `;
         } else if (orderType === 'online') {
             let address = $('#deliveryAddress').val();
             if (!address || !address.trim()) {
                 alert('Silakan masukkan alamat pengiriman Anda secara lengkap!');
                 return;
             }
-            detailPesananStr = `[Online - Alamat: ${address}] `;
+            detailPesananStr = `[${namaPelanggan} - Online: ${address}] `;
         } else {
              alert('Silakan pilih metode pesanan!');
              return;
         }
 
-        // let namaPelanggan = prompt("Silakan masukkan nama Anda untuk pesanan ini:");
-        // if (!namaPelanggan || !namaPelanggan.trim()) {
-        //     alert("Nama harus diisi untuk memproses pesanan!");
-        //     return;
-        // }
+        detailPesananStr += cartItems.map(i => `${i.nama} (${i.qty}x)`).join(', ');
 
-        detailPesananStr += cartItems.join(', ');
-
-        let $btn =$(this);
+        let $btn = $(this);
         let originalText = $btn.text();
         
         $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Memproses...');
@@ -408,20 +470,16 @@ $(document).ready(function() {
             type: 'POST',
             contentType: 'application/json', 
             data: JSON.stringify({
-                // nama: namaPelanggan,
+                nama: namaPelanggan,
                 item: detailPesananStr,
                 total: finalTotal
             }),
             success: function(response) {
                 alert("Berhasil!\nPesanan Anda telah dibuat dan sedang menunggu konfirmasi admin.");
                 
-                cartItemCount = 0;
-                cartTotal = 0;
                 cartItems = []; 
                 currentOngkir = 0;
-                
-                $('#cart-items-list').find('li:not(#empty-cart-msg)').remove();
-                updateCartBadge();
+                saveCart();
                 
                 var modalEl = document.getElementById('checkoutModal');
                 var modalInst = bootstrap.Modal.getInstance(modalEl);
@@ -472,6 +530,18 @@ $(document).ready(function() {
                 <i class="fa-solid fa-location-dot"></i>
                 <strong>${esc(c.nama)}</strong>
             </button>`).join(''));
+
+        // Populasi dinamis dropdown pilihan gerai untuk Reservasi dan Checkout
+        let storeOptions = '<option value="" disabled selected>-- Choose The Store --</option>';
+        let checkoutOptions = '<option value="" disabled selected>-- Pilih Lokasi --</option>';
+
+        CABANG.forEach(c => {
+            storeOptions += `<option value="${esc(c.nama)}">${esc(c.nama)} - ${esc(c.alamat)}</option>`;
+            checkoutOptions += `<option value="${esc(c.nama)} (${esc(c.alamat)})">${esc(c.nama)} (${esc(c.alamat)})</option>`;
+        });
+
+        $('#store-select').html(storeOptions);
+        $('#checkoutStore').html(checkoutOptions);
     });
 
     const popupHtml = c => `<b>${esc(c.nama)}</b><br>${esc(c.alamat)}`;
@@ -672,14 +742,30 @@ function initReveal() {
     }).observe(box, { childList: true, subtree: true });
 });
 
-// Tombol intro
-document.getElementById('btn-start').addEventListener('click', () => {
-    const intro = document.getElementById('intro');
-    intro.classList.add('hide');
+// Cek apakah user sudah pernah masuk ke restoran dalam sesi ini
+if (sessionStorage.getItem('hasEntered') === 'true') {
     document.body.classList.remove('intro-active');
-    setTimeout(initReveal, 400);
-    setTimeout(() => intro.remove(), 1000);
-});
+    const existingIntro = document.getElementById('intro');
+    if (existingIntro) {
+        existingIntro.remove();
+    }
+    setTimeout(initReveal, 300);
+}
+
+// Tombol intro
+const btnStart = document.getElementById('btn-start');
+if (btnStart) {
+    btnStart.addEventListener('click', () => {
+        sessionStorage.setItem('hasEntered', 'true');
+        const intro = document.getElementById('intro');
+        if (intro) {
+            intro.classList.add('hide');
+            document.body.classList.remove('intro-active');
+            setTimeout(initReveal, 400);
+            setTimeout(() => intro.remove(), 1000);
+        }
+    });
+}
 
 // Badge keranjang membal saat jumlah berubah
 const badge = document.getElementById('cart-count');
@@ -691,38 +777,12 @@ if (badge) {
     }).observe(badge, { childList: true, characterData: true, subtree: true });
 }
 
-document.body.classList.add('intro-active');
-
-document.getElementById('btn-start').addEventListener('click', () => {
-    const intro = document.getElementById('intro');
-    intro.classList.add('hide');
-    document.body.classList.remove('intro-active');
-    setTimeout(() => intro.remove(), 1000);
-});
-
 const LABEL_PEDAS = ['Tidak Pedas', 'Mild', 'Mild', 'Medium', 'Hot', 'Extra Hot'];
 const cabai = n => [1, 2, 3, 4, 5].map(i => `<i class="fa-solid fa-pepper-hot ${i <= n ? 'on' : ''}" style="--i:${i}"></i>`).join('');
 
 function fiturMenuInteraktif(data) {
     window.menuData = {};
-    data.forEach(m => { window.menuData[m.id] = m; });
-
-    const rec = data.find(m => m.rekomendasi && (m.status === true || m.status === 'true'));
-    if (!rec) return $('#chef-recommendation').addClass('d-none');
-
-    $('#chef-box').html(`
-        <div class="chef-card text-center">
-            <span class="chef-badge">★ CHEF'S CHOICE</span>
-            <p class="hero-eyebrow mb-1">Today's Recommendation</p>
-            <h2 class="chef-title">CHEF'S RECOMMENDATION</h2>
-            <img src="${rec.gambar}" alt="${rec.nama_makanan}" class="chef-img">
-            <h3 class="chef-name">${rec.nama_makanan}</h3>
-            ${rec.deskripsi ? `<p class="chef-desk">${rec.deskripsi}</p>` : ''}
-            ${rec.pedas > 0 ? `<div class="spicy justify-content-center mb-2">${cabai(rec.pedas)}</div>` : ''}
-            <div class="chef-price">Rp ${rec.harga.toLocaleString('id-ID')}</div>
-            <button type="button" class="btn btn-papeda btn-lg chef-order" data-id="${rec.id}">Order Now</button>
-        </div>`);
-    $('#chef-recommendation').removeClass('d-none');
+    (data || []).forEach(m => { window.menuData[m.id] = m; });
 }
 
 $(function () {
@@ -748,5 +808,4 @@ $(function () {
     });
 
     $('#mm-order').on('click', () => { pesan(aktifId); modal.hide(); });
-    $(document).on('click', '.chef-order', function () { pesan($(this).data('id')); });
 });
