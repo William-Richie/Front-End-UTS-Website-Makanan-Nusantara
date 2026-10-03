@@ -1,3 +1,13 @@
+function esc(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 $(document).ready(function() {
     /* Navigation */
     $('#hamburger-menu').on('click', function() {
@@ -38,10 +48,10 @@ $(document).ready(function() {
                         <div class="faq-item">
                             <div class="faq-question fw-bold" style="--d:${Math.min(i, 8) * 0.08}s">
                                 <span class="faq-num">${String(i + 1).padStart(2, '0')}</span>
-                                <span class="faq-q-text">${item.pertanyaan}</span>
+                                <span class="faq-q-text">${esc(item.pertanyaan)}</span>
                                 <span class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
                             </div>
-                            <div class="faq-answer">${item.jawaban}</div>
+                            <div class="faq-answer">${esc(item.jawaban)}</div>
                         </div>
                     `;
                 });
@@ -163,7 +173,7 @@ $(document).ready(function() {
         for (let i = 0; i < l; i++) {
             icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
         }
-        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
+        return `<span class="ms-2 d-inline-flex align-items-center">${esc(icons)}</span>`;
     }
 
     function muatMenuFavoritUser() {
@@ -178,16 +188,16 @@ $(document).ready(function() {
                 if(item && item.nama_makanan) {
                     orbitHtml += `
                         <div class="orbit-item">
-                            <img src="${item.gambar}" alt="${item.nama_makanan}">
+                            <img src="${esc(item.gambar)}" alt="${esc(item.nama_makanan)}">
                         </div>
                     `;
                     descHtml += `
                         <div class="menu-desc-item text-center">
                             <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
-                                ${item.nama_makanan} 
-                                ${renderIconPedasUser(item.pedas)}
+                                ${esc(item.nama_makanan)} 
+                                ${esc(renderIconPedasUser(item.pedas))}
                             </h4>
-                            <p class="small text-muted mb-0">${item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.'}</p>
+                            <p class="small text-muted mb-0">${esc(item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.')}</p>
                         </div>
                     `;
                 } else {
@@ -243,7 +253,7 @@ $(document).ready(function() {
                 if (menuDikelompokkan[kategori] && menuDikelompokkan[kategori].length > 0) {
                     htmlMenu += `
                     <div class="menu-group">
-                        <div class="category-header">${kategori}</div>
+                        <div class="category-header">${esc(kategori)}</div>
                         <div class="menu-grid">
                     `;
 
@@ -251,24 +261,24 @@ $(document).ready(function() {
                         let isTersedia = (makanan.status === true || makanan.status === 'true');
                         let cssKosong = isTersedia ? '' : 'menu-kosong';
                         let tombolKeranjang = isTersedia
-                            ? `<button class="add-to-cart-btn" data-id="${makanan.id}" data-nama="${makanan.nama_makanan}" data-harga="${makanan.harga}">+ Keranjang</button>`
+                            ? `<button class="add-to-cart-btn" data-id="${esc(makanan.id)}" data-nama="${esc(makanan.nama_makanan)}" data-harga="${esc(makanan.harga)}">+ Keranjang</button>`
                             : `<button class="add-to-cart-btn disabled-btn" disabled>Habis</button>`;
                         let labelStatus = isTersedia ? '' : '<div class="status-badge-kosong">Tidak Tersedia</div>';
 
                         htmlMenu += `
-                            <div class="menu-item menu-card ${cssKosong}" data-id="${makanan.id}">
+                            <div class="menu-item menu-card ${esc(cssKosong)}" data-id="${esc(makanan.id)}">
                                 ${labelStatus}
                                 <div class="mc-photo">
-                                    <img src="${makanan.gambar}" alt="${makanan.nama_makanan}" class="menu-img">
-                                    ${makanan.pedas > 0 ? `<div class="mc-spicy spicy" title="${LABEL_PEDAS[makanan.pedas]}">${cabai(makanan.pedas)}</div>` : ''}
+                                    <img src="${esc(makanan.gambar)}" alt="${esc(makanan.nama_makanan)}" class="menu-img">
+                                    ${esc(makanan.pedas) > 0 ? `<div class="mc-spicy spicy" title="${esc(LABEL_PEDAS[makanan.pedas])}">${cabai(makanan.pedas)}</div>` : ''}
                                     <span class="card-open"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
                                     <span class="mc-detail"><i class="fa-regular fa-eye"></i> Lihat Detail</span>
                                 </div>
                                 <div class="mc-body">
-                                    <div class="dish-name">${makanan.nama_makanan}</div>
+                                    <div class="dish-name">${esc(makanan.nama_makanan)}</div>
                                     <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
                                     <div class="menu-details">
-                                        <div class="menu-price">Rp ${makanan.harga.toLocaleString('id-ID')}</div>
+                                        <div class="menu-price">Rp ${esc(makanan.harga.toLocaleString('id-ID'))}</div>
                                         ${tombolKeranjang}
                                     </div>
                                 </div>
@@ -329,25 +339,24 @@ $(document).ready(function() {
         }
 
         $('#cart-total-price').text('Rp ' + total.toLocaleString('id-ID'));
-
-        // Clear existing cart items
         $('#cart-items-list').find('li:not(#empty-cart-msg)').remove();
 
-        // Render each item with +/- and delete button
         cartItems.forEach(item => {
             let itemHtml = `
-                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom" data-id="${item.id}">
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 bg-transparent" data-id="${item.id}">
                     <div class="me-2" style="max-width: 50%;">
-                        <div class="fw-semibold text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
-                        <small class="text-muted">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</small>
+                        <div class="cart-item-title text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
+                        <div class="cart-item-price">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-minus" data-id="${item.id}" title="Kurangi">-</button>
-                            <span class="btn btn-outline-secondary px-2 py-0 disabled text-dark fw-bold border-secondary" style="min-width: 28px; opacity: 1;">${item.qty}</span>
-                            <button type="button" class="btn btn-outline-secondary px-2 py-0 btn-qty-plus" data-id="${item.id}" title="Tambah">+</button>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-qty-custom btn-qty-minus" data-id="${esc(item.id)}">-</button>
+                            <span class="qty-number">${item.qty}</span>
+                            <button type="button" class="btn btn-qty-custom btn-qty-plus" data-id="${esc(item.id)}">+</button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger px-2 py-0 btn-cart-delete" data-id="${item.id}" title="Hapus menu">
+                        
+                        <button type="button" class="btn btn-delete-custom btn-cart-delete" data-id="${esc(item.id)}" title="Hapus menu">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -451,6 +460,7 @@ $(document).ready(function() {
         if (this.value === 'dine-in') {
             $('#dineInForm').slideDown(300);
             $('#onlineForm').slideUp(300);
+            $('#ongkirRow').slideUp(300);
             
             currentOngkir = 0;
             updateModalTotal();
@@ -458,6 +468,7 @@ $(document).ready(function() {
         } else if (this.value === 'online') {
             $('#dineInForm').slideUp(300);
             $('#onlineForm').slideDown(300);
+            $('#ongkirRow').slideDown(300);
             
             currentOngkir = Math.floor(Math.random() * 26 + 10) * 1000;
             $('#modalOngkir').text('+ Rp ' + currentOngkir.toLocaleString('id-ID'));
@@ -486,14 +497,14 @@ $(document).ready(function() {
                 alert('Silakan pilih lokasi gerai restoran terlebih dahulu!');
                 return;
             }
-            detailPesananStr = `[${namaPelanggan} - Dine-in: ${store}] `;
+            detailPesananStr = `[Dine-in: ${store}] [Pelanggan: ${namaPelanggan}] `;
         } else if (orderType === 'online') {
             let address = $('#deliveryAddress').val();
             if (!address || !address.trim()) {
                 alert('Silakan masukkan alamat pengiriman Anda secara lengkap!');
                 return;
             }
-            detailPesananStr = `[${namaPelanggan} - Online: ${address}] `;
+            detailPesananStr = `[Online: ${address.trim()}] [Pelanggan: ${namaPelanggan}] `;
         } else {
              alert('Silakan pilih metode pesanan!');
              return;
@@ -556,8 +567,6 @@ $(document).ready(function() {
     let hopTimer = null, hopIndex = 0;
     let isLocked = false, arrived = true, targetBranch = null;
 
-    const esc = s => $('<div>').text(s ?? '').html();
-
     $.get('/api/maps', function(res) {
         CABANG = (Array.isArray(res) ? res : []).map(c => ({
             id: 'c' + c.id, nama: c.nama, alamat: c.alamat, lat: +c.latitude, lng: +c.longitude
@@ -572,7 +581,6 @@ $(document).ready(function() {
                 <strong>${esc(c.nama)}</strong>
             </button>`).join(''));
 
-        // Populasi dinamis dropdown pilihan gerai untuk Reservasi dan Checkout
         let storeOptions = '<option value="" disabled selected>-- Choose The Store --</option>';
         let checkoutOptions = '<option value="" disabled selected>-- Pilih Lokasi --</option>';
 
@@ -769,7 +777,6 @@ function initReveal() {
     document.querySelectorAll('.reveal:not(.show)').forEach(el => io.observe(el));
 }
 
-// Menu & FAQ dibuat dinamis oleh script.js: beri class reveal otomatis
 ['tempat-menu-dinamis', 'tempat-faq-dinamis'].forEach(id => {
     const box = document.getElementById(id);
     if (!box) return;
@@ -783,7 +790,6 @@ function initReveal() {
     }).observe(box, { childList: true, subtree: true });
 });
 
-// Cek apakah user sudah pernah masuk ke restoran dalam sesi ini
 if (sessionStorage.getItem('hasEntered') === 'true') {
     document.body.classList.remove('intro-active');
     const existingIntro = document.getElementById('intro');

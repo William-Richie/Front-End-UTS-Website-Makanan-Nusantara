@@ -18,29 +18,66 @@
         <h2 class="text-center mb-4 fs-4 fw-bold mt-2">Admin Papeda</h2>
         <ul id="admin-nav" class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-2">
-                <a href="#" data-target="tab-statistik" class="nav-link text-white active">Statistik Pengunjung</a>
+                <a href="#" data-target="tab-statistik" class="nav-link text-white active">Beranda</a>
             </li>
+
             <li class="nav-item mb-2">
-                <a href="#" data-target="tab-menu" class="nav-link text-white">Kelola Menu</a>
+                <span href="#" class="nav-link text-white" data-bs-toggle="collapse" data-bs-target="#menu" data-bs-parent="#menu-utama">
+                    Menu
+                    <i class="fas fa-chevron-down icon-arrow"></i>
+                </span>
+
+                <div class="collapse mt-1 submenu" id="menu" data-bs-parent="#admin-nav">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-menu" class="nav-link text-white">Kelola Menu</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-favorit" class="nav-link text-white">Kelola Menu Favorit</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
+
             <li class="nav-item mb-2">
-                <a href="#" data-target="tab-favorit" class="nav-link text-white">Kelola Menu Favorit</a>
+                <span href="#" class="nav-link text-white" data-bs-toggle="collapse" data-bs-target="#kelola">
+                    Kelola
+                    <i class="fas fa-chevron-down icon-arrow"></i>
+                </span>
+
+                <div class="collapse mt-1 submenu" id="kelola" data-bs-parent="#admin-nav">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ</a>
+                        </li>
+                        <li  class="nav-item mb-2">
+                            <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
+
             <li class="nav-item mb-2">
-                <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
+                <span href="#" class="nav-link text-white" data-bs-toggle="collapse" data-bs-target="#pesan">
+                    Reservasi & Pesanan
+                    <i class="fas fa-chevron-down icon-arrow"></i>
+                </span>
+
+                <div class="collapse mt-1 submenu" id="pesan" data-bs-parent="#admin-nav">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-reservasi" class="nav-link text-white">User & Reservasi</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="#" data-target="tab-pesanan" class="nav-link text-white"></i>Kelola Pesanan</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
-            <li class="nav-item mb-2">
-                <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ</a>
-            </li>
-            <li  class="nav-item mb-2">
-                <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="#" data-target="tab-reservasi" class="nav-link text-white">User & Reservasi</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="#" data-target="tab-pesanan" class="nav-link text-white"></i>Kelola Pesanan</a>
-            </li>
+
             <li class="nav-item mb-2">
                 <a href="#" data-target="tab-pendapatan" class="nav-link text-white"><i class="fa-solid fa-sack-dollar me-2"></i>Pendapatan</a>
             </li>

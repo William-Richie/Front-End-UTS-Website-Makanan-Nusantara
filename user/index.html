@@ -525,6 +525,7 @@
             </form>
         </div>
     </section>
+
     <!-- My Reservation -->
     <section id="my-reservation" class="page-section">
         <div class="hero-banner reveal"><h1>My Reservation</h1></div>
@@ -536,9 +537,20 @@
     </section>
     </main>
 
-    <footer class="mt-auto py-4">
-        <div class="container text-center">
-            <h6 class="mb-3">Hubungi Kami</h6>
+    
+    <!-- Footer -->
+    <footer class="mt-auto pt-4 pb-3">
+    <!-- Pembungkus Lengkungan -->
+    <div class="footer-curve-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" class="footer-curve-svg">
+            <!-- Bentuk lengkungan tunggal asimetris -->
+            <path fill="#4a2c17" fill-opacity="1" d="M0,224L1440,32L1440,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <!-- Konten Utama Footer -->
+    <div class="container relative-z-index">
+        <div class="row text-center text-md-start">
             
             <div class="d-flex justify-content-center gap-3">
                 <a href="javascript:void(0)" class="btn custom-social-btn" title="Email">
@@ -555,15 +567,50 @@
                 </a>
             </div>
 
-            <div class="mt-4" style="font-size: 0.85rem; color: #8e735b;">
-                &copy; 2026 Papeda Restaurant. All Rights Reserved.
+            <!-- Kolom 2: Tautan Penting -->
+            <div class="col-md-4 mb-4 text-md-center">
+                <h6 class="fw-bold mb-3">Tautan Penting</h6>
+                <ul class="list-unstyled small text-light text-opacity-75">
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">Menu</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">Lokasi</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">Reservasi</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-light text-opacity-75 footer-link">FAQ</a></li>
+                </ul>
             </div>
+
+            <!-- Kolom 3: Hubungi Kami -->
+            <div class="col-md-4 mb-4 text-md-end">
+                <h6 class="fw-bold mb-3">Hubungi Kami</h6>
+                <div class="d-flex justify-content-center justify-content-md-end gap-3 mb-3">
+                    <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="custom-social-btn text-decoration-none" target="_blank" title="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+
         </div>
-    </footer>
+
+        <hr class="border-light opacity-25 my-3">
+
+        <!-- Copyright -->
+        <div class="text-center small text-light text-opacity-75">
+            &copy; 2026 Papeda Restaurant. All Rights Reserved.
+        </div>
+    </div>
+</footer>
 
     <!-- Floating Action Buttons -->
     <div class="fab-container">
-        <div class="fab fab-action d-flex justify-content-center align-items-center rounded-circle" id="cart-button" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar" style="cursor: pointer;">
+        <div class="fab fab-action d-flex justify-content-center align-items-center rounded-circle" id="cart-button" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
             <i class="fa-solid fa-cart-shopping cart-icon"></i>
             <span class="cart-badge" id="cart-count">0</span>
         </div> 
@@ -598,27 +645,36 @@
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true" style="z-index: 999999;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-light border-bottom">
-                    <h5 class="modal-title fw-bold" id="checkoutModalLabel">Konfirmasi Pesanan</h5>
+                <div class="modal-header checkout-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="gate-icon" style="font-size: 20px; color: #8b5e34;">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold" id="checkoutModalLabel">Konfirmasi Pesanan</h5>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body checkout-body">
                     <div class="mb-4 text-center">
-                        <p class="fw-bold mb-2">Pilih metode pesanan Anda:</p>
-                        <div class="btn-group w-100" role="group">
+                        <p class="fw-bold mb-2" style="color: #4a2c17;">Pilih metode pesanan Anda:</p>
+                        <div class="checkout-type-group w-100" role="group">
                             <input type="radio" class="btn-check" name="orderType" id="dineIn" autocomplete="off" value="dine-in">
-                            <label class="btn btn-outline-secondary" for="dineIn"><i class="fa-solid fa-store"></i> Makan di Tempat</label>
+                            <label class="btn checkout-type-btn" for="dineIn">
+                                <i class="fa-solid fa-store"></i> Makan di Tempat
+                            </label>
 
                             <input type="radio" class="btn-check" name="orderType" id="online" autocomplete="off" value="online">
-                            <label class="btn btn-outline-secondary" for="online"><i class="fa-solid fa-motorcycle"></i> Pesan Antar</label>
+                            <label class="btn checkout-type-btn" for="online">
+                                <i class="fa-solid fa-motorcycle"></i> Pesan Antar
+                            </label>
                         </div>
                     </div>
 
                     <div id="dineInForm" style="display: none;">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Pilih Gerai Restoran:</label>
-                            <select class="form-select" id="checkoutStore">
+                            <label class="form-label fw-bold small text-uppercase" style="color: #6b4226; letter-spacing: 1px;">Pilih Gerai Restoran</label>
+                            <select class="form-select custom-input" id="checkoutStore">
                                 <option value="" disabled selected>-- Pilih Lokasi --</option>
                             </select>
                         </div>
@@ -626,29 +682,32 @@
 
                     <div id="onlineForm" style="display: none;">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Alamat Pengiriman:</label>
-                            <textarea class="form-control" id="deliveryAddress" rows="3" placeholder="Masukkan alamat lengkap Anda..."></textarea>
-                        </div>
-                        <div class="d-flex justify-content-between mb-1 text-muted">
-                            <span>Subtotal Makanan:</span>
-                            <span id="modalSubtotal">Rp 0</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 text-danger fw-bold">
-                            <span>Ongkos Kirim:</span>
-                            <span id="modalOngkir">Rp 0</span>
+                            <label class="form-label fw-bold small text-uppercase" style="color: #6b4226; letter-spacing: 1px;">Alamat Pengiriman</label>
+                            <textarea class="form-control custom-input" id="deliveryAddress" rows="3" placeholder="Masukkan alamat lengkap Anda..."></textarea>
                         </div>
                     </div>
-                    
-                    <hr>
-                    
-                    <div class="d-flex justify-content-between fw-bold fs-5 mb-2">
-                        <span>Total Bayar:</span>
-                        <span id="modalTotalBayar">Rp 0</span>
+
+                    <div class="checkout-summary">
+                        <div class="summary-row">
+                            <span>Subtotal Makanan</span>
+                            <span id="modalSubtotal" class="fw-bold">Rp 0</span>
+                        </div>
+                        <div class="summary-row text-danger" id="ongkirRow" style="display: none;">
+                            <span>Ongkos Kirim</span>
+                            <span id="modalOngkir" class="fw-bold">+ Rp 0</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total Bayar</span>
+                            <span id="modalTotalBayar">Rp 0</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn w-100 text-white fw-bold" style="background-color: #5b3e31;" id="btn-confirm-pay" disabled>Konfirmasi & Bayar</button>
+    
+                <div class="modal-footer border-0 pb-4 px-4 pt-0">
+                    <button type="button" class="btn w-100 text-white fw-bold" style="background-color: #5b3e31;" id="btn-confirm-pay" disabled>
+                        Konfirmasi & Bayar
+                        <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
                 </div>
             </div>
         </div>

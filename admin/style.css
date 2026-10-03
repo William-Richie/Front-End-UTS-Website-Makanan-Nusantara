@@ -89,6 +89,7 @@ main.p-4 {
 .sidebar .nav-link:hover {
     background-color: #f0e4d6 !important;
     color: #3b2314 !important;
+    transition: all 0.2s ease-in-out;
 }
 
 .sidebar .nav-link.active {
@@ -106,6 +107,20 @@ main.p-4 {
     background: rgba(0,0,0,0.5);
     z-index: 1035;
     display: none; 
+}
+
+.submenu {
+    border-radius: 6px;
+    padding: 5px 0;
+}
+
+.icon-arrow {
+    transition: transform 0.3s ease-in-out;
+    display: inline-block; 
+}
+
+.nav-link[aria-expanded="true"] .icon-arrow {
+    transform: rotate(180deg);
 }
 
 /* SECTION TAB */
