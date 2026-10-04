@@ -759,7 +759,6 @@ $(document).ready(function() {
 
     // reservation
     let $reservationForm = $('#reservation-form-group');
-
     $reservationForm.hide();
 
     $('#store-select').on('change', function () {
@@ -772,6 +771,28 @@ $(document).ready(function() {
             $reservationForm.slideUp(300);
         }
     });
+
+    function getStatusReservasiUser(status) {
+        switch (status) {
+            case 'pending':
+                return 'Menunggu';
+
+            case 'approved':
+            case 'dikonfirmasi':
+                return 'Ongoing';
+
+            case 'complete':
+            case 'selesai':
+                return 'Complete';
+
+            case 'dibatalkan':
+            case 'cancelled':
+                return 'Dibatalkan';
+
+            default:
+                return status || '-';
+        }
+    }
 
     // Notification
     function notifPapeda(pesan, tipe = 'success') {
