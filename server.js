@@ -928,7 +928,14 @@ app.get('/api/pendapatan', async (req, res) => {
             if (!perHari[t]) return;
 
             const nilai = Number(r.total) || 0;
-            const daftar = String(r.item || '').replace(/^\[[^\]]*\]\s*/, '').split(',').map(s => s.trim()).filter(Boolean);
+            const itemText = String(r.item || '')
+                .replace(/\[[^\]]*\]\s*/g, '')
+                .trim();
+
+            const daftar = itemText
+                .split(/,(?![^(]*\))/)
+                .map(s => s.trim())
+                .filter(Boolean);
 
             let itemsCountInOrder = 0;
             daftar.forEach(namaRaw => {
@@ -956,7 +963,7 @@ app.get('/api/pendapatan', async (req, res) => {
         res.json({
             ringkasan: { total, pesanan: totalPesanan, item: totalItem, rata: totalPesanan ? Math.round(total / totalPesanan) : 0 },
             grafik: range === 'hari' ? perJam : hari.map(h => ({ label: h.tanggal, total: h.pendapatan })),
-            terlaris: Object.values(perMenu).sort((a, b) => b.qty - a.qty).slice(0, 5),
+            terlaris: Object.values(perMenu).filter(m => harga[m.nama.trim().toLowerCase()] !== undefined).sort((a, b) => b.qty - a.qty).slice(0, 5),
             laporan: [...hari].reverse()
         });
     } catch (err) {
