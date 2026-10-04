@@ -99,7 +99,7 @@ function esc(str) {
 }
 
 $(document).ready(function() {
-    let dataKontenAsli = { hero: '', about: '' };
+    let dataKontenAsli = {};
     let dataFooterAsli = {
         judul: '',
         copyright: '',
@@ -138,21 +138,19 @@ $(document).ready(function() {
     $('#admin-nav a').on('click', function(e) {
         e.preventDefault();
          
-        if (typeof dataKontenAsli !== 'undefined') {
-            $('#teks_hero').val(esc(dataKontenAsli.hero));
-            $('#teks_about').val(esc(dataKontenAsli.about));
-            updateLivePreviewKonten(); 
+        if (Object.keys(dataKontenAsli).length) {
+            isiFormKonten(dataKontenAsli);
+            updateLivePreviewKonten();
         }
 
-        if (typeof dataFooterAsli !== 'undefined') {
-            $('#footer_title').val(esc(dataFooterAsli.judul));
-            $('#footer_copyright').val(esc(dataFooterAsli.copyright));
-            $('#input_link_ig').val(esc(dataFooterAsli.link_ig));
-            $('#input_link_tiktok').val(esc(dataFooterAsli.link_tiktok));
-            $('#input_link_wa').val(esc(dataFooterAsli.link_wa));
-            $('#input_email').val(esc(dataFooterAsli.email));
-            $('#input_link_linkedin').val(esc(dataFooterAsli.link_linkedin));
-        }
+        $('#footer_title').val(dataFooterAsli.judul || '');
+        $('#footer_copyright').val(dataFooterAsli.copyright || '');
+        $('#input_link_ig').val(dataFooterAsli.link_ig || '');
+        $('#input_link_tiktok').val(dataFooterAsli.link_tiktok || '');
+        $('#input_link_wa').val(dataFooterAsli.link_wa || '');
+        $('#input_email').val(dataFooterAsli.email || '');
+        $('#input_link_linkedin').val(dataFooterAsli.link_linkedin || '');
+        updateLivePreviewFooter();
 
         $('#admin-nav a').removeClass('active');
         $(this).addClass('active');
@@ -160,6 +158,7 @@ $(document).ready(function() {
         let targetId = $(this).data('target');
         $('.tab-section').hide();
         $('#' + targetId).fadeIn(300);
+        if (targetId === 'tab-konten') muatSampelFaqPreview();
     });
 
     $('.nav-link').on('click', function(e) {
@@ -175,25 +174,125 @@ $(document).ready(function() {
         });
     }
 
-    function updateLivePreviewKonten() {
-        let heroText = $('#teks_hero').val() || '';
-        let aboutText = $('#teks_about').val() || '';
+    /* Kelola Konten: Home, FAQ, Lokasi */
+    const PREVIEW_KONTEN = {
+        teks_hero: '#preview-hero',
+        teks_about: '#preview-about',
+        hero_eyebrow: '#preview-hero-eyebrow',
+        hero_sub: '#preview-hero-sub',
+        about_eyebrow: '#preview-about-eyebrow',
+        about_title: '#preview-about-title',
+        card1_title: '#preview-card1-title',
+        card1_desc: '#preview-card1-desc',
+        card2_title: '#preview-card2-title',
+        card2_desc: '#preview-card2-desc',
+        card3_title: '#preview-card3-title',
+        card3_desc: '#preview-card3-desc',
 
-        $('#preview-hero').html(esc(heroText).replace(/\n/g, '<br>'));
-        $('#preview-about').text(esc(aboutText));
+        faq_eyebrow: '#pv-faq-eyebrow',
+        faq_title: '#pv-faq-title',
+        faq_chip1: '#pv-faq-chip1',
+        faq_chip2: '#pv-faq-chip2',
+        faq_aside_kicker: '#pv-faq-aside-kicker',
+        faq_aside_title: '#pv-faq-aside-title',
+        faq_aside_desc: '#pv-faq-aside-desc',
+        faq_aside_btn: '#pv-faq-aside-btn',
+
+        loc_eyebrow: '#pv-loc-eyebrow',
+        loc_title: '#pv-loc-title',
+        loc_chip2: '#pv-loc-chip2',
+        loc_kicker: '#pv-loc-kicker',
+        loc_heading: '#pv-loc-heading',
+        loc_desc: '#pv-loc-desc',
+        loc_btn_buka: '#pv-loc-btn',
+        loc_utama_title: '#pv-loc-utama-title',
+        loc_utama_text: '#pv-loc-utama-text',
+        loc_telp_title: '#pv-loc-telp-title',
+        loc_telp_text: '#pv-loc-telp-text',
+        loc_email_title: '#pv-loc-email-title',
+        loc_email_text: '#pv-loc-email-text',
+        loc_parkir_title: '#pv-loc-parkir-title',
+        loc_parkir_text: '#pv-loc-parkir-text'
+    };
+    const KONTEN_BARIS_BARU = ['teks_hero', 'faq_title', 'loc_title'];
+    /* Judul banner FAQ & Lokasi: baris pertama biasa, baris berikutnya disorot (<em>) seperti di web user */
+    const JUDUL_BANNER = ['faq_title', 'loc_title'];
+    function htmlJudulBanner(teks) {
+        const baris = String(teks).split('\n');
+        if (baris.length < 2) return esc(baris[0]);
+        return esc(baris[0]) + '<br><em>' + baris.slice(1).map(esc).join('<br>') + '</em>';
     }
+
+    function isiFormKonten(data) {
+        $('[data-konten]').each(function() {
+            const nilai = data[$(this).attr('data-konten')];
+            $(this).val(nilai === undefined || nilai === null ? '' : nilai);
+        });
+    }
+
+    function nilaiKonten(kunci) {
+        return $(`[data-konten="${kunci}"]`).val() || dataKontenAsli[kunci] || '';
+    }
+
+    function updateLivePreviewKonten() {
+        $.each(PREVIEW_KONTEN, function(kunci, selektor) {
+            const teks = nilaiKonten(kunci);
+            if (JUDUL_BANNER.includes(kunci)) $(selektor).html(htmlJudulBanner(teks));
+            else if (KONTEN_BARIS_BARU.includes(kunci)) $(selektor).html(esc(teks).replace(/\n/g, '<br>'));
+            else $(selektor).text(teks);
+        });
+    }
+
+    function muatSampelFaqPreview() {
+        $.get('/api/faq', function(response) {
+            const daftar = Array.isArray(response) ? response : (response.data || []);
+
+            if (daftar.length === 0) {
+                $('#pv-faq-list').html('<p class="pv-faq-empty"><i class="fa-regular fa-circle-question me-2"></i>Belum ada FAQ yang tersedia.</p>');
+                return;
+            }
+
+            $('#pv-faq-list').html(daftar.map((item, i) => `
+                <div class="pv-faq-item${i === 0 ? ' open' : ''}">
+                    <div class="pv-faq-question">
+                        <span class="pv-faq-num">${String(i + 1).padStart(2, '0')}</span>
+                        <span class="pv-faq-q-text">${esc(item.pertanyaan)}</span>
+                        <span class="pv-faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+                    <div class="pv-faq-answer">${esc(item.jawaban)}</div>
+                </div>`).join(''));
+        });
+    }
+
+    $('#pv-faq-list').on('click', '.pv-faq-question', function() {
+        const $item = $(this).parent('.pv-faq-item');
+        $('#pv-faq-list .pv-faq-item').not($item).removeClass('open');
+        $item.toggleClass('open');
+    });
 
     function muatDataKonten() {
         $.get('/api/konten', function(data) {
-            $('#teks_hero').val(data.teks_hero);
-            $('#teks_about').val(data.teks_about);
-            
-            dataKontenAsli.hero = data.teks_hero;
-            dataKontenAsli.about = data.teks_about;
-            
+            const isi = { ...data };
+
+            dataKontenAsli = isi;
+            isiFormKonten(isi);
             updateLivePreviewKonten();
         });
     }
+
+    /* Sub-tab Kelola Konten */
+    $('#konten-tabs').on('click', '.konten-tab', function() {
+        const target = $(this).attr('data-konten-tab');
+
+        $('#konten-tabs .konten-tab').removeClass('active').attr('aria-selected', 'false');
+        $(this).addClass('active').attr('aria-selected', 'true');
+
+        $('#tab-konten .konten-panel').removeClass('active');
+        $('#' + target).addClass('active');
+
+        if (target === 'konten-faq') muatSampelFaqPreview();
+        this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
 
     function updateLivePreviewFooter() {
         let titleVal = $('#footer_title').val();
@@ -218,19 +317,19 @@ $(document).ready(function() {
         });
     }
 
-    $('#teks_hero, #teks_about').on('input', updateLivePreviewKonten);
+    $('.form-konten').on('input', 'input, textarea', updateLivePreviewKonten);
     $('#footer_title, #footer_copyright, #input_link_ig, #input_link_tiktok, #input_link_wa, #input_email, #input_link_linkedin').on('input', updateLivePreviewFooter);
 
-    /* Update Content */
-    $('#form-konten .btn-simpan').on('click', function(e) {
+    $('.form-konten .btn-simpan').on('click', function(e) {
         e.preventDefault();
-        let $btn =$(this);
-        let originalText = $btn.text();$btn.prop('disabled', true).text('Memperbarui...'); 
+        let $btn = $(this);
+        let originalHtml = $btn.html();
+        $btn.prop('disabled', true).text('Memperbarui...');
 
-        let dataKonten = {
-            teks_hero: $('#teks_hero').val(),
-            teks_about: $('#teks_about').val()
-        };
+        let dataKonten = {};
+        $btn.closest('form').find('[data-konten]').each(function() {
+            dataKonten[$(this).attr('data-konten')] = $(this).val();
+        });
 
         $.ajax({
             url: '/api/konten',
@@ -238,12 +337,13 @@ $(document).ready(function() {
             data: dataKonten,
             success: function(response) {
                 tampilkanNotif(response.pesan);
-
-                dataKontenAsli.hero = dataKonten.teks_hero;
-                dataKontenAsli.about = dataKonten.teks_about;
+                dataKontenAsli = { ...dataKontenAsli, ...dataKonten };
+            },
+            error: function() {
+                tampilkanNotif('Gagal menyimpan konten.', 'danger');
             }
         }).always(function() {
-            $btn.prop('disabled', false).text(originalText);
+            $btn.prop('disabled', false).html(originalHtml);
         });
     });
 
@@ -370,13 +470,13 @@ $(document).ready(function() {
         $(`#${formId}`)[0].reset();
         $(`#${inputId}`).val('');
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Simpan ke Database').css('background-color', '#27ae60');
+        $(`#${btnSubmitId}`).text('Simpan ke Database').removeClass('is-editing');
         $(`#${btnCancelId}`).hide();
     }
 
     function setFormEdit(judulId, textJudul, btnSubmitId, btnCancelId, tabSelector) {
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Update Data').css('background-color', '#f39c12');
+        $(`#${btnSubmitId}`).text('Update Data').addClass('is-editing');
         $(`#${btnCancelId}`).show();
 
         const $main = $('main');
@@ -444,7 +544,7 @@ $(document).ready(function() {
                     appetizerRows += buatRow(noApp++);
                 } else if (item.nama_kategori === 'DESSERT') {
                     dessertRows += buatRow(noDessert++);
-                } else if (item.nama_kategori === 'DRINK') {
+                } else if (item.nama_kategori === 'DRINK' || item.nama_kategori === 'MINUMAN') {
                     drinkRows += buatRow(noDrink++);
                 } else if (item.nama_kategori === 'ADDITIONAL') {
                     additionalRows += buatRow(noAdd++);
@@ -465,7 +565,7 @@ $(document).ready(function() {
         $('#judul-form-menu').text('Input Menu Baru');
         $('#btn-menu-submit')
             .text('Tambah')
-            .css('background-color', '#27ae60');
+            .removeClass('is-editing');
         $('#btn-menu-cancel').hide();
         setPedas(0);
     }
@@ -550,13 +650,9 @@ $(document).ready(function() {
 
     $('#search-menu').on('keyup', function() {
         let keyword = $(this).val().toLowerCase();
-        $('#tabel-main-course tbody tr, \
-        #tabel-appetizer tbody tr, \
-        #tabel-dessert tbody tr')
+        $('#tabel-main-course tbody tr, #tabel-appetizer tbody tr, #tabel-dessert tbody tr, #tabel-drink tbody tr, #tabel-additional tbody tr')
         .filter(function() {
-            $(this).toggle(
-                $(this).text().toLowerCase().indexOf(keyword) > -1
-            );
+            $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
         });
     });
     muatDataMenu();
@@ -575,15 +671,21 @@ $(document).ready(function() {
                     <tr>
                         <td><div class="menu-no">${i + 1}</div></td>
                         <td><span class="faq-clamp faq-q-text">${esc(item.pertanyaan)}</span></td>
-                        <td><span class="faq-clamp">${esc(item.jawaban)}</span></td>
+                        <td><span class="faq-clamp faq-a-text">${esc(item.jawaban)}</span></td>
                         <td>
-                            <button class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
-                            <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">Hapus</button>
+                            <div class="faq-aksi">
+                                <button type="button" class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">
+                                    <i class="fa-solid fa-pen-to-square"></i><span>Edit</span>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">
+                                    <i class="fa-solid fa-trash"></i><span>Hapus</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>`;
             }).join('');
 
-            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-center text-muted py-4">Belum ada FAQ.</td></tr>');
+            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-muted">Belum ada FAQ.</td></tr>');
             $('#search-faq').trigger('keyup');
         });
     }
@@ -625,7 +727,7 @@ $(document).ready(function() {
         $('#judul_faq').val($(this).data('pertanyaan'));
         $('#jawaban_faq').val($(this).data('jawaban'));
         $('#judul-form-faq').text('Edit FAQ');
-        $('#btn-faq-submit').text('Update Data').css('background-color', '#f39c12');
+        $('#btn-faq-submit').text('Update Data').addClass('is-editing');
         $('#btn-faq-cancel').show();
         scrollKeFormFaq();
     });
@@ -663,7 +765,7 @@ $(document).ready(function() {
         $('#faq-belum-dibaca, #faq-count-belum').text(belum);
         $('#faq-total-masuk, #faq-count-semua').text(total);
         $('#faq-count-sudah').text(total - belum);
-        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggle(belum > 0);
+        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggleClass('d-none', belum <= 0);
         $('#btn-baca-semua').prop('disabled', belum === 0);
 
         const kata = $('#search-pertanyaan').val().toLowerCase().trim();
@@ -1266,47 +1368,175 @@ $(document).ready(function() {
 /* Reservasi */
 $(function () {
     let semuaReservasi = [];
+    let dataUsersGlobal = [];
+    let isDataLoaded = false;
+    let globalSearch = '';
+    let globalFilter = '';
+
+    const esc = (str) => {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, 
+            tag => (
+                {'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}
+                [tag]
+            )
+        );
+    };
+
+    function dataCocokSearch(data, keyword) {
+        if (!keyword) return true;
+
+        keyword = keyword.toLowerCase().trim();
+
+        return Object.values(data).some(value =>
+            String(value ?? '').toLowerCase().includes(keyword)
+        );
+    }
+
+    function renderCurrentSearch() {
+        const activeTab = $('.reservation-tabs .tab-btn.active');
+
+        if (!activeTab.length) return;
+        
+        const isUserTab = activeTab.data('tab') === 'tab-user';
+        
+        if (isUserTab) {
+            renderTableUsers();
+        } else {
+            loadDataReservasi(activeTab.data('status'));
+        }
+    }
 
     async function loadDataUsers() {
         try {
-            const res = await fetch('/api/admin/users');
-            const result = await res.json();
-            const users = result.data || [];
-
-            $('#count-user').text(users.length);
-
-            const $tbody =$('#user-table-body');
-            $tbody.empty();
-
-            if (users.length === 0) {
-                $tbody.html('<tr><td colspan="6" class="text-center text-muted py-4">Belum ada user terdaftar.</td></tr>');
-                return;
+            if (!isDataLoaded) {
+                const res = await fetch('/api/admin/users');
+                const result = await res.json();
+                dataUsersGlobal = result.data || [];
+                isDataLoaded = true;
             }
-
-            const rows = users.map((u, i) => {
-                const formattedId = String(i + 1).padStart(5, '0');
-                const tgl = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
-                
-                return `
-                    <tr>
-                        <td class="text-center">
-                            <input type="checkbox" class="form-check-input user-row-check" value="${esc(u.id)}">
-                        </td>
-                        <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
-                        <td><strong>${esc(u.nama || '-')}</strong></td>
-                        <td>${esc(u.email || '-')}</td>
-                        <td>${esc(tgl)}</td>
-                        <td><span class="badge bg-secondary">${esc(u.total_reserve ?? 0)} Kali</span></td>
-                    </tr>
-                `;
-            }).join('');
-
-            $tbody.html(rows);
-            syncAction();
+            renderTableUsers();
         } catch (err) {
             console.error('Gagal mengambil data user:', err);
         }
     }
+
+    function formatTanggal(dateString) {
+        if (!dateString) return '-';
+
+        const date = new Date(dateString);
+
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'numeric', year: 'numeric'
+        });
+    }
+
+function renderTableUsers() {
+    $('#count-user').text(dataUsersGlobal.length);
+    const $tbody = $('#user-table-body');
+    $tbody.empty();
+    if (dataUsersGlobal.length === 0) {
+        $tbody.html(`
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4"> Belum ada user terdaftar. </td>
+            </tr>
+        `);
+        return;
+    }
+
+    const filteredUsers = dataUsersGlobal.filter(u => {
+        if (globalFilter === 'active') {
+            const rawActive = 
+                u.Is_Active !== undefined
+                    ? u.Is_Active
+                    : u.is_active;
+            if (
+                rawActive === false ||
+                rawActive === 'false' ||
+                rawActive === 0
+            ) {
+                return false;
+            }
+        }
+        if (globalFilter === 'blocked') {
+            const rawActive =
+                u.Is_Active !== undefined
+                ? u.Is_Active : u.is_active;
+            if (!(
+                rawActive === false ||
+                rawActive === 'false' ||
+                rawActive === 0
+            )) {
+                return false;
+            }
+        }
+        return dataCocokSearch(u,globalSearch);
+    });
+
+    const rows = filteredUsers.map(u => {
+        const originalIndex =
+            dataUsersGlobal.indexOf(u);
+
+        const formattedId =
+            String(originalIndex + 1)
+                .padStart(5, '0');
+
+        const tgl = u.created_at
+            ? new Date(u.created_at).toLocaleDateString('id-ID'): '-';
+
+        const rawActive =
+            u.Is_Active !== undefined
+            ? u.Is_Active : u.is_active;
+
+        const isActive =
+            rawActive !== false &&
+            rawActive !== 'false' &&
+            rawActive !== 0;
+
+        const statusText = isActive
+            ? 'Active': 'Blocked';
+
+        const statusColor = isActive
+            ? 'bg-success' : 'bg-danger';
+        return `
+            <tr>
+                <td class="text-center">
+                    <input
+                        type="checkbox"
+                        class="form-check-input user-row-check"
+                        value="${esc(u.id)}">
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark border font-monospace">
+                        ${formattedId}
+                    </span>
+                </td>
+                <td>
+                    <strong>
+                        ${esc(u.nama || '-')}
+                    </strong>
+                </td>
+                <td>
+                    ${esc(u.email || '-')}
+                </td>
+                <td class="text-center">
+                    ${esc(tgl)}
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-light text-dark border">
+                        ${esc(u.total_reserve || '0')}
+                    </span>
+                </td>
+                <td class="text-center">
+                    <span class="badge ${statusColor}">
+                        ${statusText}
+                    </span>
+                </td>
+            </tr>`;
+    }).join('');
+    $tbody.html(rows);
+    syncAction();
+}
 
     async function loadDataReservasi(statusFilter = 'pending') {
         try {
@@ -1320,11 +1550,30 @@ $(function () {
             $('#count-dibatalkan').text(semuaReservasi.filter(r => r.status === 'dibatalkan' || r.status === 'cancelled').length);
 
             const filtered = semuaReservasi.filter(r => {
-                if (statusFilter === 'approved') return r.status === 'approved' || r.status === 'dikonfirmasi';
-                if (statusFilter === 'complete') return r.status === 'complete' || r.status === 'selesai';
-                if (statusFilter === 'dibatalkan') return r.status === 'dibatalkan' || r.status === 'cancelled';
-                return r.status === statusFilter;
+                let cocokStatus = false;
+
+                if (statusFilter === 'approved') {
+                    cocokStatus =
+                        r.status === 'approved' ||
+                        r.status === 'dikonfirmasi';
+
+                } else if (statusFilter === 'complete') {
+                    cocokStatus =
+                        r.status === 'complete' ||
+                        r.status === 'selesai';
+
+                } else if (statusFilter === 'dibatalkan') {
+                    cocokStatus =
+                        r.status === 'dibatalkan' ||
+                        r.status === 'cancelled';
+
+                } else {
+                    cocokStatus = r.status === statusFilter;
+                }
+                if (!cocokStatus) return false;
+                return dataCocokSearch(r, globalSearch);
             });
+            
             const $tbody =$('#reservation-table-body');
             $tbody.empty();
 
@@ -1342,14 +1591,46 @@ $(function () {
                     <td>${esc(r.jumlah || 0)} Orang</td>
                     <td>${esc(r.ruangan || '-')}</td>
                     <td>${esc(r.catatan || '-')}</td>
-                    <td>
-                        ${(r.status === 'complete' || r.status === 'selesai')
-                            ? '<span class="badge bg-success">Selesai</span>'
+                    <td class="aksi">
+                        ${(r.status === 'complete' || r.status === 'selesai') 
+                            ? ` <span class="badge bg-success">Selesai</span>`
                             : (r.status === 'dibatalkan' || r.status === 'cancelled')
-                            ? '<span class="badge bg-danger">Dibatalkan</span>'
+                            ? `<span class="badge bg-danger">Dibatalkan</span>`
                             : (r.status === 'approved' || r.status === 'dikonfirmasi')
-                            ? `<button class="btn btn-sm btn-success btn-confirm" data-id="${esc(r.id)}" data-next="complete">✓ Selesaikan</button>`
-                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${esc(r.id)}" data-next="approved">✓ Konfirmasi</button>`
+                            ? `<div class="reservation-actions">
+                                    <button
+                                        type="button"
+                                        class="btn-action-confirm btn-confirm"
+                                        data-id="${esc(r.id)}"
+                                        data-next="complete">
+                                        ✓ Selesaikan
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn-action-cancel btn-cancel"
+                                        data-id="${esc(r.id)}"
+                                        data-next="dibatalkan">
+                                        ✕ Batalkan
+                                    </button>
+                                </div> `
+                            : `<div class="reservation-actions">
+                                    <button
+                                        type="button"
+                                        class="btn-action-confirm btn-confirm"
+                                        data-id="${esc(r.id)}"
+                                        data-next="approved">
+                                        ✓ Konfirmasi
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn-action-cancel btn-cancel"
+                                        data-id="${esc(r.id)}"
+                                        data-next="dibatalkan">
+                                        ✕ Batalkan
+                                    </button>
+                                </div>`
                         }
                     </td>
                 </tr>
@@ -1374,51 +1655,417 @@ $(function () {
         }
     });
 
-    $('#reservation-table-body').on('click', '.btn-confirm', async function () {
-        const id = $(this).data('id');
-        const nextStatus = $(this).data('next');
+    function showConfirmReservationModal(title,message,buttonText) {
+    return new Promise((resolve) => {
+        const modalElement =
+            document.getElementById('confirmReservationModal');
 
-        try {
-            const res = await fetch(`/api/admin/reservasi/${id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: nextStatus })
-            });
-
-            if (res.ok) {
-                const currentStatus = $('.reservation-tabs .tab-btn.active').data('status');
-                loadDataReservasi(currentStatus);
-            }
-        } catch (err) {
-            console.error('Gagal memperbarui status reservasi:', err);
+        if (!modalElement) {
+            console.error( 'confirmReservationModal tidak ditemukan' );
+            resolve(false);
+            return;
         }
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+        const titleElement =
+            document.getElementById(
+                'confirmReservationTitle'
+            );
+
+        const messageElement =
+            document.getElementById(
+                'confirmReservationMessage'
+            );
+
+        const confirmButton =
+            document.getElementById(
+                'btn-confirm-reservation-action'
+            );
+
+        titleElement.textContent = title;
+        messageElement.textContent = message;
+        confirmButton.textContent = buttonText;
+
+        let confirmed = false;
+
+        const cleanup = () => {
+
+            confirmButton.removeEventListener(
+                'click',
+                handleConfirm
+            );
+
+            modalElement.removeEventListener(
+                'hidden.bs.modal',
+                handleHidden
+            );
+        };
+
+        const handleConfirm = () => {
+            confirmed = true;
+            cleanup();
+            modal.hide();
+            resolve(true);
+        };
+
+        const handleHidden = () => {
+            cleanup();
+            if (!confirmed) { resolve(false); }
+        };
+
+        confirmButton.addEventListener( 'click', handleConfirm);
+        modalElement.addEventListener( 'hidden.bs.modal', handleHidden );
+
+        modal.show();
     });
+}
 
     const syncAction = () => {
-        const checked = $('.user-row-check:checked');$('#user-action-bar').toggleClass('d-none', checked.length === 0);
-        $('#selected-user-count').text(`${checked.length} akun dipilih`);
-        $('#check-all-users').prop('checked', checked.length > 0 && checked.length === $('.user-row-check').length);
+        const checked = $('.user-row-check:checked');
+        const total = $('.user-row-check').length;
+        const $actionWrapper =$('#user-action-wrapper');
+
+        $('#check-all-users').prop('checked', checked.length > 0 && checked.length === total);
+
+        if (checked.length > 0) {
+            $('#selected-user-count').text(`${checked.length} akun dipilih`);
+            if (!$actionWrapper.is(':visible')) {
+                $actionWrapper.slideDown(300);            
+            }         
+        } else {
+            $actionWrapper.slideUp(300);
+        }
     };
 
     $(document).on('change', '#check-all-users', function () {
         $('.user-row-check').prop('checked', this.checked);
         syncAction();
-    }).on('change', '.user-row-check', syncAction);
+    });
 
-    $('#btn-eksekusi-user-aksi').on('click', function () {
-        const aksi = $('#user-action-select').val();
-        const ids = $('.user-row-check:checked').map((_, el) => el.value).get();
-        
-        if (!aksi || !ids.length) return alert('Pilih aksi dan minimal 1 akun!');
-        
-        if (aksi === 'hapus' && confirm(`Hapus permanen ${ids.length} akun terpilih?`)) {
-            console.log('Hapus ID:', ids);
-        } else if (aksi === 'blokir') {
-            alert(`${ids.length} akun diblokir.`);
-        } else if (aksi === 'modifikasi') {
-            ids.length === 1 ? console.log('Edit ID:', ids[0]) : alert('Pilih 1 akun saja untuk diedit.');
+    $('#user-table-body').on('change', '.user-row-check', syncAction);
+
+    $('.custom-action-dropdown .dropdown-item').on('click', function(e) {
+        e.preventDefault();
+        const value = $(this).data('value');
+        const textHTML = $(this).html();$('#selected-aksi-text').html(textHTML);
+        $('#user-action-select').val(value);
+    });
+
+    $('#reservation-table-body').on(
+        'click', '.btn-confirm',
+        async function () {
+            const id = $(this).data('id');
+            const nextStatus = $(this).data('next');
+
+            let title = '';
+            let message = '';
+            let buttonText = '';
+
+            if (nextStatus === 'approved') {
+                title = 'Konfirmasi Reservasi?';
+                message = 'Apakah kamu yakin ingin mengonfirmasi reservasi ini?';
+                buttonText = 'Ya, Konfirmasi';
+
+            } else if (nextStatus === 'complete') {
+                title = 'Selesaikan Reservasi?';
+                message = 'Apakah kamu yakin reservasi ini sudah selesai?';
+                buttonText = 'Ya, Selesaikan';
+
+            } else {
+                console.warn(
+                    'Status konfirmasi tidak dikenali:',
+                    nextStatus
+                );
+                return;
+            }
+
+            const yakin = await showConfirmReservationModal(
+                title,
+                message,
+                buttonText
+            );
+
+            if (!yakin) return;
+            try {
+                const res = await fetch(
+                    `/api/admin/reservasi/${id}/status`,
+                    {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            status: nextStatus
+                        })
+                    }
+                );
+
+                const result = await res.json();
+                if (!res.ok) {
+                    throw new Error(
+                        result.message ||
+                        'Gagal memperbarui status reservasi'
+                    );
+                }
+
+                const currentStatus = $('.reservation-tabs .tab-btn.active').data('status');
+
+                loadDataReservasi(currentStatus);
+
+            } catch (err) {
+                console.error('Gagal memperbarui status reservasi:', err);
+                alert(
+                    err.message ||
+                    'Gagal memperbarui status reservasi'
+                );
+            }
         }
-        $('#user-action-select').val('');
+    );
+    $('#reservation-table-body').on(
+    'click',
+    '.btn-cancel',
+    async function () {
+
+        const id = $(this).data('id');
+        const nextStatus = $(this).data('next');
+
+        console.log('Tombol Batalkan diklik:', {
+            id: id,
+            nextStatus: nextStatus
+        });
+
+        if (!id || nextStatus !== 'dibatalkan') {
+            console.warn(
+                'Data tombol Batalkan tidak valid:',
+                id,
+                nextStatus
+            );
+            return;
+        }
+
+        const yakin = await showCancelReservationModal();
+
+        if (!yakin) {
+            return;
+        }
+
+        try {
+
+            const res = await fetch(
+                `/api/admin/reservasi/${id}/status`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: nextStatus
+                    })
+                }
+            );
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                throw new Error(
+                    result.message ||
+                    'Gagal membatalkan reservasi'
+                );
+            }
+
+            const currentStatus =
+                $('.reservation-tabs .tab-btn.active')
+                    .data('status');
+
+            await loadDataReservasi(currentStatus);
+
+        } catch (err) {
+
+            console.error(
+                'Gagal membatalkan reservasi:',
+                err
+            );
+
+            alert(
+                err.message ||
+                'Gagal membatalkan reservasi'
+            );
+        }
+    }
+);
+
+    function showCancelReservationModal() {
+        return new Promise((resolve) => {
+
+            const modalElement = document.getElementById(
+                'cancelReservationModal'
+            );
+
+            if (!modalElement) {
+                console.error(
+                    'cancelReservationModal tidak ditemukan'
+                );
+
+                resolve(false);
+                return;
+            }
+
+            const modal =
+                bootstrap.Modal.getOrCreateInstance(
+                    modalElement
+                );
+
+            const confirmButton =
+                document.getElementById(
+                    'btn-confirm-cancel-reservation'
+                );
+
+            let finished = false;
+
+            const handleConfirm = () => {
+
+                finished = true;
+
+                cleanup();
+
+                modal.hide();
+
+                resolve(true);
+            };
+
+            const handleHidden = () => {
+
+                cleanup();
+
+                if (!finished) {
+                    resolve(false);
+                }
+            };
+
+            const cleanup = () => {
+
+                confirmButton.removeEventListener(
+                    'click',
+                    handleConfirm
+                );
+
+                modalElement.removeEventListener(
+                    'hidden.bs.modal',
+                    handleHidden
+                );
+            };
+
+            confirmButton.addEventListener(
+                'click',
+                handleConfirm
+            );
+
+            modalElement.addEventListener(
+                'hidden.bs.modal',
+                handleHidden
+            );
+
+            modal.show();
+        });
+    }
+
+    function showCustomConfirm(pesan) {
+        return new Promise((resolve) => {
+            $('#confirmModalText').text(pesan);
+            
+            const modalElement = document.getElementById('customConfirmModal');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            let isConfirmed = false;
+
+            $('#btn-confirm-lanjutkan').off('click').on('click', function () {
+                isConfirmed = true; 
+                modalInstance.hide();
+            });
+
+            $(modalElement).off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                resolve(isConfirmed); 
+            });
+
+            modalInstance.show();
+        });
+    }
+
+    $('#btn-eksekusi-user-aksi').off('click').on('click', async function () { 
+        const aksi = $('#user-action-select').val(); 
+        const ids = $('.user-row-check:checked').map((_, el) => String(el.value)).get();
+        
+        if (!aksi || !ids.length){ 
+            alert('Pilih aksi dan minimal 1 akun!');
+            return;
+        }
+
+        let pesanKonfirmasi = '';
+        if (aksi === 'hapus') {
+            pesanKonfirmasi = `Yakin ingin menghapus permanen ${ids.length} akun ini?`;
+        } else if (aksi === 'blokir') {
+            pesanKonfirmasi = `Blokir ${ids.length} akun terpilih? Mereka tidak akan bisa login.`;
+        } else if (aksi === 'modifikasi') {
+            pesanKonfirmasi = `Ubah status ${ids.length} akun menjadi Active (Buka Blokir)?`;
+        }
+        
+        const isConfirmed = await showCustomConfirm(pesanKonfirmasi);
+        if (!isConfirmed) return; 
+
+        try {
+            if (aksi === 'hapus') {
+                const res = await fetch('/api/admin/users', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids })
+                });
+                if (!res.ok) throw new Error('Gagal menghapus di database');
+
+                dataUsersGlobal = dataUsersGlobal.filter(u => !ids.includes(String(u.id)));
+
+            } else if (aksi === 'blokir' || aksi === 'modifikasi') {
+                const targetIsActive = (aksi === 'modifikasi');   
+                const res = await fetch('/api/admin/users/status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids, Is_Active: targetIsActive })
+                });
+                if (!res.ok) throw new Error('Gagal memperbarui status di database');
+
+                dataUsersGlobal.forEach(u => {
+                    if (ids.includes(String(u.id))) u.Is_Active = targetIsActive;
+                });
+            }
+
+            $('#user-action-select').val('');
+            $('#selected-aksi-text').text('Pilih Aksi...');
+            $('#check-all-users').prop('checked', false);
+            $('#user-action-wrapper').slideUp(300);
+            
+            renderTableUsers();
+
+        } catch (error) {
+            console.error("Terjadi kesalahan:", error);
+            alert("Gagal menyimpan perubahan ke database.");
+        }
+    });
+
+    $('#global-search').on('input', function () {
+        globalSearch = $(this).val().trim();
+        renderCurrentSearch();
+    });
+
+    $('#global-filter-btn').on('click', function () {
+        const activeTab = $('.reservation-tabs .tab-btn.active');
+        const isUserTab = activeTab.data('tab') === 'tab-user';
+
+        if (isUserTab) {
+            globalFilter = globalFilter === '' ? 'active'
+            : globalFilter === 'active'? 'blocked': '';
+            renderTableUsers();
+            return;
+        }
     });
 
     loadDataUsers();
@@ -1583,7 +2230,7 @@ $(function () {
 
         $('#top-menu').html(
             list.map((m, i) => `
-                <div class="top-item" style="--d:${i * 0.08}s">
+                <div class="top-item">
 
                     <div class="top-rank">
                         ${MEDALI[i] || `<span class="rank-number">${i + 1}</span>`}
@@ -1595,20 +2242,24 @@ $(function () {
                             <strong>${esc(m.nama)}</strong>
 
                             <span class="text-muted small">
-                                ${m.qty} order
+                                ${m.qty} terjual
                                 &middot;
                                 ${m.pendapatan ? rp(m.pendapatan) : '-'}
                             </span>
                         </div>
 
                         <div class="top-bar">
-                            <span style="width:${(m.qty / maks) * 100}%"></span>
+                            <span data-lebar="${(m.qty / maks) * 100}"></span>
                         </div>
 
                     </div>
                 </div>
             `).join('')
         );
+
+        $('#top-menu .top-bar span').each(function() {
+            this.style.width = this.dataset.lebar + '%';
+        });
     }
 
     function renderLaporan(laporan, r) {
@@ -1712,7 +2363,7 @@ $(function () {
                     <span class="fw-bold">${rp(o.total)}</span><span class="badge text-bg-${s[1]}">${s[0]}</span></div>`;
             }).join('') : '<p class="text-muted mb-0">Belum ada pesanan masuk.</p>');
         });
-    $.get('/api/pendapatan', { range: 'bulan' }, res => {
+    $.get('/api/pendapatan', { range: 'hari' }, res => {
         const total = res.ringkasan?.total || 0;
         $('#dash-revenue').text(rp(total));
     });

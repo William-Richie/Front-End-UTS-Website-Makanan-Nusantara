@@ -213,7 +213,7 @@ $(function () {
             form.reset();
             $('#name').val(currentUser.nama);
             $('#email').val(currentUser.email);
-            $('#store-select').val('');
+            $('#store-select').val('').trigger('change');
             $(form).slideUp(300);
             muatReservasi();
             setTimeout(() => scrollKe('#my-reservation'), 400);

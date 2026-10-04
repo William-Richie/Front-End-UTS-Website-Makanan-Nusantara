@@ -5,7 +5,7 @@ const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { stat } = require('fs');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -19,7 +19,7 @@ const ADMIN_SECRET = process.env.JWT_SECRET + '-admin';
 const API_PUBLIK = [
     ['GET',  /^\/(menu|favorit|faq|konten|maps)$/],
     ['POST', /^\/(pengunjung|pesanan|faq\/pertanyaan|register|login|admin\/login)$/],
-    ['ANY',  /^\/(me|reservasi)(\/|$)/]   // punya auth user sendiri
+    ['ANY',  /^\/(me|reservasi)(\/|$)/]
 ];
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -348,18 +348,106 @@ app.post('/api/pengunjung', async (req, res) => {
 });
 
 /* KONTEN WEBSITE */
+const KONTEN_EXTRA_PATH = path.join(__dirname, 'konten_extra.json');
+const defaultKontenExtra = {
+    /* Home */
+    hero_eyebrow: "Cita Rasa Timur Indonesia",
+    hero_sub: "Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.",
+    about_eyebrow: "Tentang Kami",
+    about_title: "Warisan Rasa dari Timur",
+    card1_title: "Bahan Segar",
+    card1_desc: "Sagu dan hasil laut dipilih segar setiap hari.",
+    card2_title: "Resep Turun-temurun",
+    card2_desc: "Resep rahasia yang menjaga keaslian rasa.",
+    card3_title: "Disajikan Sepenuh Hati",
+    card3_desc: "Suasana hangat ala rumah, cocok untuk keluarga.",
+
+    /* FAQ */
+    faq_eyebrow: "Pertanyaan Umum",
+    faq_title: "Frequently Asked\nQuestions",
+    faq_chip1: "Jawaban Cepat",
+    faq_chip2: "Tanya Langsung ke Kami",
+    faq_aside_kicker: "Masih Penasaran?",
+    faq_aside_title: "Let us know !",
+    faq_aside_desc: "Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.",
+    faq_aside_btn: "Tulis Pertanyaan",
+
+    /* Lokasi */
+    loc_eyebrow: "Temukan Kami",
+    loc_title: "Let's See Our\nRestaurant Location",
+    loc_chip2: "Jakarta hingga Papua",
+    loc_kicker: "Rasakan Cita Rasa Kami",
+    loc_heading: "Warmth in Every Dish, Flavors from Eastern Indonesia",
+    loc_desc: "Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.",
+    loc_btn_buka: "Lihat Peta Cabang",
+    loc_btn_tutup: "Tutup Peta",
+    loc_utama_title: "Cabang Utama",
+    loc_utama_text: "Jl. Cendrawasih No. 45, Jakarta",
+    loc_telp_title: "Telepon",
+    loc_telp_text: "(021) 1234-5678",
+    loc_email_title: "Email",
+    loc_email_text: "halo@papedarestaurant.com",
+    loc_parkir_title: "Parkir",
+    loc_parkir_text: "Area luas untuk roda dua maupun roda empat"
+};
+const KUNCI_KONTEN_EXTRA = Object.keys(defaultKontenExtra);
+
+function getKontenExtra() {
+    try {
+        if (fs.existsSync(KONTEN_EXTRA_PATH)) {
+            const raw = fs.readFileSync(KONTEN_EXTRA_PATH, 'utf-8');
+            return { ...defaultKontenExtra, ...JSON.parse(raw) };
+        }
+    } catch (e) {
+        console.error('Error reading konten_extra.json:', e);
+    }
+    return { ...defaultKontenExtra };
+}
+
+function saveKontenExtra(extra) {
+    try {
+        const current = getKontenExtra();
+        const bersih = {};
+        KUNCI_KONTEN_EXTRA.forEach(k => {
+            if (extra[k] !== undefined) bersih[k] = String(extra[k]);
+        });
+        const merged = { ...current, ...bersih };
+        fs.writeFileSync(KONTEN_EXTRA_PATH, JSON.stringify(merged, null, 2), 'utf-8');
+    } catch (e) {
+        console.error('Error writing konten_extra.json:', e);
+    }
+}
+
 /* Get */
 app.get('/api/konten', async (req, res) => {
-    const { data, error } = await supabase.from('konten_web').select('*').eq('id', 1).single();
-    if (error) return res.status(500).json({ error: error.message });
-    res.json(data);
+    let baseData = { teks_hero: 'Welcome to Our Papeda Restaurant', teks_about: 'Selamat datang di Papeda Restaurant...' };
+    try {
+        const { data, error } = await supabase.from('konten_web').select('*').eq('id', 1).single();
+        if (!error && data) baseData = data;
+    } catch (err) {
+        console.error('Supabase konten_web error:', err);
+    }
+    const extra = getKontenExtra();
+    res.json({ ...extra, ...baseData });
 });
 
 /* Update */
 app.put('/api/konten', async (req, res) => {
     const { teks_hero, teks_about } = req.body;
-    const { error } = await supabase.from('konten_web').update({ teks_hero, teks_about }).eq('id', 1);
-    if (error) return res.status(500).json({ error: error.message });
+
+    try {
+        if (teks_hero !== undefined || teks_about !== undefined) {
+            const updatePayload = {};
+            if (teks_hero !== undefined) updatePayload.teks_hero = teks_hero;
+            if (teks_about !== undefined) updatePayload.teks_about = teks_about;
+            await supabase.from('konten_web').update(updatePayload).eq('id', 1);
+        }
+    } catch (err) {
+        console.error('Supabase update konten_web error:', err);
+    }
+
+    saveKontenExtra(req.body);
+
     res.json({ pesan: 'Konten web berhasil diperbarui!' });
 });
 
@@ -426,8 +514,17 @@ app.post('/api/login', async (req, res) => {
         const password = req.body.password || '';
 
         const { data: u } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
-        if (!u || !(await bcrypt.compare(password, u.password)))
-            return res.status(401).json({ error: 'Email atau password salah.' });
+        if (!u || !(await bcrypt.compare(password, u.password))) {
+            return res.status(401).json({
+                error: 'Email atau password salah.'
+            });
+        }
+
+        if (u.Is_Active === false) {
+            return res.status(403).json({
+                error: 'Akun kamu telah diblokir oleh admin.'
+            });
+        }
 
         const user = { id: u.id, nama: u.nama, email: u.email };
         res.json({ token: buatToken(user), user });
@@ -495,9 +592,9 @@ app.put('/api/reservasi/:id/batal', auth, async (req, res) => {
 app.get('/api/admin/users', async (req, res) => {
     try {
         const { data: users, error: userError } = await supabase
-            .from('users')
-            .select('id, nama, email, created_at')
-            .order('created_at', { ascending: true });
+        .from('users')
+        .select('id, nama, email, created_at, Is_Active')
+        .order('created_at', { ascending: true });
 
         if (userError) throw userError;
 
@@ -545,6 +642,106 @@ app.put('/api/admin/reservasi/:id/status', async (req, res) => {
         res.json({ pesan: `Status berhasil diubah menjadi ${status}` });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/admin/users/status', async (req, res) => {
+    try {
+        const { ids, Is_Active } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
+                message: 'Tidak ada user yang dipilih.'
+            });
+        }
+
+        if (typeof Is_Active !== 'boolean') {
+            return res.status(400).json({
+                message: 'Nilai Is_Active harus true atau false.'
+            });
+        }
+
+        console.log('UPDATE USER STATUS');
+        console.log('IDs:', ids);
+        console.log('Is_Active:', Is_Active);
+
+        const { data, error } = await supabase
+            .from('users')
+            .update({
+                Is_Active: Is_Active
+            })
+            .in('id', ids)
+            .select('id, nama, email, Is_Active');
+
+        if (error) {
+            console.error('Supabase UPDATE error:', error);
+
+            return res.status(500).json({
+                message: 'Gagal menyimpan perubahan ke database.',
+                error: error.message
+            });
+        }
+
+        console.log('Hasil update:', data);
+
+        res.status(200).json({
+            message: Is_Active
+                ? 'User berhasil diaktifkan.'
+                : 'User berhasil diblokir.',
+            data: data
+        });
+
+    } catch (error) {
+        console.error('Error update status user:', error);
+
+        res.status(500).json({
+            message: 'Gagal update status.',
+            error: error.message
+        });
+    }
+});
+
+app.delete('/api/admin/users', async (req, res) => {
+    try {
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
+                message: 'Tidak ada user yang dipilih.'
+            });
+        }
+
+        console.log('DELETE USERS:', ids);
+
+        const { data, error } = await supabase
+            .from('users')
+            .delete()
+            .in('id', ids)
+            .select('id, nama, email');
+
+        if (error) {
+            console.error('Supabase DELETE error:', error);
+
+            return res.status(500).json({
+                message: 'Gagal menghapus user dari database.',
+                error: error.message
+            });
+        }
+
+        console.log('User yang dihapus:', data);
+
+        res.status(200).json({
+            message: 'User berhasil dihapus permanen.',
+            data: data
+        });
+
+    } catch (error) {
+        console.error('Error delete user:', error);
+
+        res.status(500).json({
+            message: 'Gagal hapus user.',
+            error: error.message
+        });
     }
 });
 
@@ -704,7 +901,7 @@ function daftarTanggal(n) {
 
 app.get('/api/pendapatan', async (req, res) => {
     try {
-        const range = req.query.range || '7'; // hari | 7 | 30 | bulan
+        const range = req.query.range || '7';
         const hariIni = tglWIB(Date.now());
         const n = range === 'hari' ? 1 : range === '30' ? 30 : range === 'bulan' ? parseInt(hariIni.slice(8, 10)) : 7;
         const tanggal = daftarTanggal(n);
@@ -731,7 +928,14 @@ app.get('/api/pendapatan', async (req, res) => {
             if (!perHari[t]) return;
 
             const nilai = Number(r.total) || 0;
-            const daftar = String(r.item || '').replace(/^\[[^\]]*\]\s*/, '').split(',').map(s => s.trim()).filter(Boolean);
+            const itemText = String(r.item || '')
+                .replace(/\[[^\]]*\]\s*/g, '')
+                .trim();
+
+            const daftar = itemText
+                .split(/,(?![^(]*\))/)
+                .map(s => s.trim())
+                .filter(Boolean);
 
             let itemsCountInOrder = 0;
             daftar.forEach(namaRaw => {
@@ -759,7 +963,7 @@ app.get('/api/pendapatan', async (req, res) => {
         res.json({
             ringkasan: { total, pesanan: totalPesanan, item: totalItem, rata: totalPesanan ? Math.round(total / totalPesanan) : 0 },
             grafik: range === 'hari' ? perJam : hari.map(h => ({ label: h.tanggal, total: h.pendapatan })),
-            terlaris: Object.values(perMenu).sort((a, b) => b.qty - a.qty).slice(0, 5),
+            terlaris: Object.values(perMenu).filter(m => harga[m.nama.trim().toLowerCase()] !== undefined).sort((a, b) => b.qty - a.qty).slice(0, 5),
             laporan: [...hari].reverse()
         });
     } catch (err) {
@@ -781,7 +985,7 @@ app.post('/api/admin/login', async (req, res) => {
 
     const { username = '', password = '' } = req.body;
     let ok = false;
-    try { ok = username === process.env.ADMIN_USER && await bcrypt.compare(password, process.env.ADMIN_PASS_HASH || ''); } catch {}
+try { ok = username === process.env.ADMIN_USER && await bcrypt.compare(password, process.env.ADMIN_PASS_HASH || ''); } catch {}
 
     if (!ok) {
         g.n++;

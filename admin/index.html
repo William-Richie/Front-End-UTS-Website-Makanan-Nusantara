@@ -6,10 +6,10 @@
     <title>Dashboard Admin - Papeda</title>
     <link rel="icon" type="image/png" href="../img/Web-Icon/admin.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="/admin/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/style.css">
 </head>
 <body class="d-flex vh-100 admin-locked">
 <div id="admin-login">
@@ -84,7 +84,7 @@
                             <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
                         </li>
                         <li class="nav-item mb-2">
-                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ <span class="nav-badge" id="badge-pertanyaan-nav" style="display:none">0</span></a>
+                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ <span class="nav-badge d-none" id="badge-pertanyaan-nav">0</span></a>
                         </li>
                         <li  class="nav-item mb-2">
                             <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
@@ -423,9 +423,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-success w-100 fw-bold mt-2" id="btn-simpan-favorit">
-                                <i class="fa-solid fa-save me-2"></i>Simpan
-                            </button>
+                            <button type="submit" class="btn btn-success w-100 fw-bold mt-2" id="btn-simpan-favorit">Simpan</button>
                         </form>
                     </div>
 
@@ -470,158 +468,546 @@
 
         <!-- TAB 4: KELOLA KONTEN -->
         <section id="tab-konten" class="tab-section">
-            <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
-            
-            <!-- KONTEN: HERO BANNER -->
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 p-4 h-100">
-                        <form id="form-konten">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Teks Sambutan (Hero Banner)</label>
-                                <textarea id="teks_hero" class="form-control" rows="3">Memuat...</textarea>
-                                <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Deskripsi Tentang Kami</label>
-                                <textarea id="teks_about" class="form-control" rows="6">Memuat...</textarea>
-                            </div>
-                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan">Update</button>
-                        </form>
-                    </div>
-                </div>
+            <h1 class="fs-3 fw-bold mb-3">Kelola Konten</h1>
 
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 h-100 overflow-hidden preview-card">
-                        <div class="card-header bg-dark text-white">
-                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
-                        </div>
-                        
-                        <div class="card-body p-0 d-flex flex-column preview-card-body">
-                            
-                            <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3">
+            <div class="konten-tabs" id="konten-tabs" role="tablist" aria-label="Pilih bagian konten">
+                <button type="button" class="konten-tab active" data-konten-tab="konten-home" role="tab" aria-selected="true"><i class="fa-solid fa-house"></i><span>Kelola Home</span></button>
+                <button type="button" class="konten-tab" data-konten-tab="konten-faq" role="tab" aria-selected="false"><i class="fa-solid fa-circle-question"></i><span>Kelola FAQ</span></button>
+                <button type="button" class="konten-tab" data-konten-tab="konten-lokasi" role="tab" aria-selected="false"><i class="fa-solid fa-location-dot"></i><span>Kelola Lokasi</span></button>
+                <button type="button" class="konten-tab" data-konten-tab="konten-footer" role="tab" aria-selected="false"><i class="fa-solid fa-share-nodes"></i><span>Kelola Footer</span></button>
+            </div>
+
+            <!-- SUB-TAB: HOME -->
+            <div id="konten-home" class="konten-panel active" role="tabpanel">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 p-4 h-100">
+                            <form id="form-konten" class="form-konten">
+                                <div class="mb-4">
+                                    <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                        <i class="fa-solid fa-bullhorn me-2"></i>Hero Banner
+                                    </h5>
                                 
-                                <div class="text-center text-lg-start preview-hero-info">
-                                    <p class="hero-sub preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
-                                    <h1 id="preview-hero">Memuat...</h1>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="input_hero_eyebrow">Teks Eyebrow (Atas Judul)</label>
+                                        <input type="text" id="input_hero_eyebrow" data-konten="hero_eyebrow" class="form-control" placeholder="Cita Rasa Timur Indonesia">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="teks_hero">Teks Sambutan (Judul Hero)</label>
+                                        <textarea id="teks_hero" data-konten="teks_hero" class="form-control" rows="3">Memuat...</textarea>
+                                        <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="input_hero_sub">Sub-judul / Deskripsi Hero</label>
+                                        <textarea id="input_hero_sub" data-konten="hero_sub" class="form-control" rows="2" placeholder="Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning."></textarea>
+                                    </div>
                                 </div>
 
-                                <div class="papeda-area position-relative">
-                                    <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
-                                    <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
-                                    <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
-                                    <span class="food-icon fish-2 position-absolute"><i class="fa-solid fa-fish"></i></span>
-                                    <span class="food-icon star star-1 position-absolute"><i class="fa-solid fa-star"></i></span>
-                                    <span class="food-icon star star-2 position-absolute"><i class="fa-solid fa-star"></i></span>
-                                    
-                                    <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
-                                    <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                                <div class="mb-4">
+                                    <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                        <i class="fa-solid fa-circle-info me-2"></i>Tentang Kami
+                                    </h5>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="input_about_eyebrow">Teks Eyebrow Tentang Kami</label>
+                                        <input type="text" id="input_about_eyebrow" data-konten="about_eyebrow" class="form-control" placeholder="Tentang Kami">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="input_about_title">Judul Bagian Tentang Kami</label>
+                                        <input type="text" id="input_about_title" data-konten="about_title" class="form-control" placeholder="Warisan Rasa dari Timur">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="teks_about">Deskripsi Tentang Kami</label>
+                                        <textarea id="teks_about" data-konten="teks_about" class="form-control" rows="4">Memuat...</textarea>
+                                    </div>
                                 </div>
+
+                                <div class="mb-4">
+                                    <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                        <i class="fa-solid fa-shapes me-2"></i>Kartu Keunggulan (Fitur)
+                                    </h5>
+
+                                    <div class="card p-3 mb-3 border-0 konten-kartu">
+                                        <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-leaf konten-kartu-ico me-2"></i>Kartu 1</h6>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold" for="input_card1_title">Judul Kartu 1</label>
+                                            <input type="text" id="input_card1_title" data-konten="card1_title" class="form-control form-control-sm" placeholder="Bahan Segar">
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-semibold" for="input_card1_desc">Deskripsi Kartu 1</label>
+                                            <textarea id="input_card1_desc" data-konten="card1_desc" class="form-control form-control-sm" rows="2" placeholder="Sagu dan hasil laut dipilih segar setiap hari."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="card p-3 mb-3 border-0 konten-kartu">
+                                        <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-fire konten-kartu-ico me-2"></i>Kartu 2</h6>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold" for="input_card2_title">Judul Kartu 2</label>
+                                            <input type="text" id="input_card2_title" data-konten="card2_title" class="form-control form-control-sm" placeholder="Resep Turun-temurun">
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-semibold" for="input_card2_desc">Deskripsi Kartu 2</label>
+                                            <textarea id="input_card2_desc" data-konten="card2_desc" class="form-control form-control-sm" rows="2" placeholder="Resep rahasia yang menjaga keaslian rasa."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="card p-3 mb-3 border-0 konten-kartu">
+                                        <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-heart konten-kartu-ico me-2"></i>Kartu 3</h6>
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-semibold" for="input_card3_title">Judul Kartu 3</label>
+                                            <input type="text" id="input_card3_title" data-konten="card3_title" class="form-control form-control-sm" placeholder="Disajikan Sepenuh Hati">
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-semibold" for="input_card3_desc">Deskripsi Kartu 3</label>
+                                            <textarea id="input_card3_desc" data-konten="card3_desc" class="form-control form-control-sm" rows="2" placeholder="Suasana hangat ala rumah, cocok untuk keluarga."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-success w-100 fw-bold btn-simpan py-2 shadow-sm">Simpan</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                                <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
                             </div>
+                        
+                            <div class="card-body p-0 d-flex flex-column preview-card-body">
+                            
+                                <div class="hero-papeda position-relative overflow-hidden preview-hero-wrap">
+                                    <div class="preview-hero-inner">
+                                        <div class="preview-hero-text">
+                                            <p class="hero-eyebrow" id="preview-hero-eyebrow">Cita Rasa Timur Indonesia</p>
+                                            <h2 id="preview-hero" class="preview-hero-title">Memuat...</h2>
+                                            <p class="preview-hero-sub" id="preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
+                                            <div class="d-flex gap-2 flex-wrap preview-hero-btn-wrap">
+                                                <span class="hero-btn">Lihat Menu</span>
+                                                <span class="hero-btn-outline">Reservasi</span>
+                                            </div>
+                                        </div>
+                                        <div class="preview-hero-img-col">
+                                            <div class="papeda-area position-relative">
+                                                <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
+                                                <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
+                                                <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                                <span class="food-icon fish-2 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                                <span class="food-icon star star-1 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                                <span class="food-icon star star-2 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                                <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
+                                                <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="content-container text-content p-4">
-                                <h2 class="preview-about-title">Tentang Kami</h2>
-                                <p id="preview-about">Memuat...</p>
+                                <div class="preview-about-section px-3 py-3">
+                                    <div class="text-center mb-2">
+                                        <p class="hero-eyebrow mb-1" id="preview-about-eyebrow">Tentang Kami</p>
+                                        <h3 class="preview-section-title mb-2" id="preview-about-title">Warisan Rasa dari Timur</h3>
+                                        <p id="preview-about" class="preview-about-desc mb-3">Memuat...</p>
+                                    </div>
+
+                                    <div class="preview-cards-row">
+                                        <div class="preview-feature-card text-center">
+                                            <div class="preview-feature-icon"><i class="fa-solid fa-leaf"></i></div>
+                                            <p class="preview-feature-title" id="preview-card1-title">Bahan Segar</p>
+                                            <p class="preview-feature-desc" id="preview-card1-desc">Sagu dan hasil laut dipilih segar setiap hari.</p>
+                                        </div>
+                                        <div class="preview-feature-card text-center">
+                                            <div class="preview-feature-icon"><i class="fa-solid fa-fire"></i></div>
+                                            <p class="preview-feature-title" id="preview-card2-title">Resep Turun-temurun</p>
+                                            <p class="preview-feature-desc" id="preview-card2-desc">Resep rahasia yang menjaga keaslian rasa.</p>
+                                        </div>
+                                        <div class="preview-feature-card text-center">
+                                            <div class="preview-feature-icon"><i class="fa-solid fa-heart"></i></div>
+                                            <p class="preview-feature-title" id="preview-card3-title">Disajikan Sepenuh Hati</p>
+                                            <p class="preview-feature-desc" id="preview-card3-desc">Suasana hangat ala rumah, cocok untuk keluarga.</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- KONTEN: FOOTER -->
-            <div class="row g-4 mt-4">
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 p-4 h-100">
-                        <form id="form-footer">
-                            
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Judul Sosial Media</label>
-                                <input type="text" id="footer_title" class="form-control" value="Ikuti Kami">
-                                <small class="text-muted">Teks yang muncul di atas deretan ikon.</small>
-                            </div>
-                            
+            <!-- SUB-TAB: FAQ -->
+            <div id="konten-faq" class="konten-panel" role="tabpanel">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 p-4 h-100">
+                            <form id="form-konten-faq" class="form-konten">
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Teks Copyright</label>
-                                <textarea id="footer_copyright" class="form-control" rows="3">&copy; 2026 Papeda Restaurant. All Rights Reserved.</textarea>
-                            </div>
-                            
-                            <hr class="mb-4">
-                            
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Tautan Instagram</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-brands fa-instagram"></i></span>
-                                    <input type="text" id="input_link_ig" class="form-control" placeholder="https://instagram.com/...">
+                                <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-bullhorn me-2"></i>Banner FAQ
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_eyebrow">Teks Eyebrow (Atas Judul)</label>
+                                    <input type="text" id="kf_eyebrow" data-konten="faq_eyebrow" class="form-control" placeholder="Pertanyaan Umum">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_title">Judul Banner FAQ</label>
+                                    <textarea id="kf_title" data-konten="faq_title" class="form-control" rows="2" placeholder="Frequently Asked&#10;Questions"></textarea>
+                                    <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_chip1">Teks Label 1</label>
+                                    <input type="text" id="kf_chip1" data-konten="faq_chip1" class="form-control" placeholder="Jawaban Cepat">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_chip2">Teks Label 2</label>
+                                    <input type="text" id="kf_chip2" data-konten="faq_chip2" class="form-control" placeholder="Tanya Langsung ke Kami">
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Tautan TikTok</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-brands fa-tiktok"></i></span>
-                                    <input type="text" id="input_link_tiktok" class="form-control" placeholder="https://tiktok.com/@...">
-                                </div>
-                            </div>
-
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Tautan WhatsApp</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-brands fa-whatsapp"></i></span>
-                                    <input type="text" id="input_link_wa" class="form-control" placeholder="6281234567890">
+                                <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-comments me-2"></i>Kartu "Tulis Pertanyaan"
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_aside_kicker">Teks Kecil (Atas Judul)</label>
+                                    <input type="text" id="kf_aside_kicker" data-konten="faq_aside_kicker" class="form-control" placeholder="Masih Penasaran?">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_aside_title">Judul Kartu</label>
+                                    <input type="text" id="kf_aside_title" data-konten="faq_aside_title" class="form-control" placeholder="Let us know !">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_aside_desc">Deskripsi Kartu</label>
+                                    <textarea id="kf_aside_desc" data-konten="faq_aside_desc" class="form-control" rows="3" placeholder="Tulis pertanyaan Anda, tim kami akan membacanya..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kf_aside_btn">Teks Tombol</label>
+                                    <input type="text" id="kf_aside_btn" data-konten="faq_aside_btn" class="form-control" placeholder="Tulis Pertanyaan">
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Alamat Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                    <input type="email" id="input_email" class="form-control" placeholder="email@contoh.com">
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold">Tautan LinkedIn</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-brands fa-linkedin-in"></i></span>
-                                    <input type="text" id="input_link_linkedin" class="form-control" placeholder="https://linkedin.com/in/...">
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan" id="btn-update-footer">Update Footer</button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 overflow-hidden preview-card">
-                        <div class="card-header bg-dark text-white">
-                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
+                            <p class="lok-hint mb-3"><i class="fa-solid fa-circle-info me-1"></i>Pertanyaan dan jawaban FAQ dikelola di menu Kelola FAQ.</p>
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan py-2 shadow-sm">Simpan Konten FAQ</button>
+                            </form>
                         </div>
-                        
-                        <div class="card-body p-0 preview-card-body" style="background-color: #4a2c17;">
-                            <div class="py-5 w-100 text-white">
-                                <div class="container pt-4">
-                                    <div class="text-center mb-4">
-                                        <h6 id="preview_footer_title" class="fw-bold mb-4 text-warning" style="letter-spacing: 1px;">Ikuti Kami</h6>
-                                        
-                                        <div class="d-flex justify-content-center gap-3 mt-4">
-                                            <span class="custom-social-btn"><i class="fa-brands fa-instagram"></i></span>
-                                            <span class="custom-social-btn"><i class="fa-brands fa-tiktok"></i></span>
-                                            <span class="custom-social-btn"><i class="fa-brands fa-whatsapp"></i></span>
-                                            <span class="custom-social-btn"><i class="fa-solid fa-envelope"></i></span>
-                                            <span class="custom-social-btn"><i class="fa-brands fa-linkedin-in"></i></span>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                            <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
+                        </div>
+                            <div class="card-body p-0 preview-card-body">
+                                <div class="pv-page pv-page-faq">
+                                    <div class="pv-banner">
+                                        <div class="pv-banner-bg pv-bg-faq" aria-hidden="true">
+                                            <span class="pv-rings pv-rings-right"></span>
+                                            <span class="pv-float f1"><i class="fa-solid fa-question"></i></span>
+                                            <span class="pv-float f2"><i class="fa-solid fa-question"></i></span>
+                                            <span class="pv-float f3"><i class="fa-solid fa-question"></i></span>
+                                        </div>
+                                        <span class="pv-deco d1" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
+                                        <span class="pv-deco d2" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
+                                        <span class="pv-deco d3" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
+                                        <span class="pv-deco d4" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
+                                        <div class="pv-banner-inner">
+                                            <p class="hero-eyebrow" id="pv-faq-eyebrow">Pertanyaan Umum</p>
+                                            <h2 class="pv-title" id="pv-faq-title">Frequently Asked<br><em>Questions</em></h2>
+                                            <ul class="pv-chips">
+                                                <li><i class="fa-solid fa-list-check"></i><span id="pv-faq-chip1">Jawaban Cepat</span></li>
+                                                <li><i class="fa-solid fa-comments"></i><span id="pv-faq-chip2">Tanya Langsung ke Kami</span></li>
+                                            </ul>
                                         </div>
                                     </div>
-                                    
-                                    <hr class="border-light opacity-25 my-4">
-                                    
-                                    <!-- ID target preview copyright -->
-                                    <div id="preview_footer_copyright" class="text-center small text-light text-opacity-75 px-3">
-                                        &copy; 2026 Papeda Restaurant. All Rights Reserved.
+
+                                    <div class="pv-faq-wrap">
+                                        <div class="pv-faq-grid">
+                                            <div class="pv-faq-list" id="pv-faq-list">
+                                                <p class="pv-faq-empty"><i class="fa-solid fa-spinner fa-spin me-2"></i>Memuat FAQ...</p>
+                                            </div>
+                                            <aside class="pv-faq-aside">
+                                                <div class="pv-faq-aside-body">
+                                                    <div class="pv-faq-aside-icon"><i class="fa-solid fa-comments"></i></div>
+                                                    <p class="pv-kicker" id="pv-faq-aside-kicker">Masih Penasaran?</p>
+                                                    <h3 id="pv-faq-aside-title">Let us know !</h3>
+                                                    <div class="pv-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
+                                                    <p class="pv-faq-aside-desc" id="pv-faq-aside-desc">Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.</p>
+                                                    <span class="pv-btn-map"><i class="fa-solid fa-pen-to-square me-2"></i><span id="pv-faq-aside-btn">Tulis Pertanyaan</span></span>
+                                                </div>
+                                            </aside>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- SUB-TAB: LOKASI -->
+            <div id="konten-lokasi" class="konten-panel" role="tabpanel">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 p-4 h-100">
+                            <form id="form-konten-lokasi" class="form-konten">
+                            <div class="mb-4">
+                                <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-bullhorn me-2"></i>Banner Lokasi
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_eyebrow">Teks Eyebrow (Atas Judul)</label>
+                                    <input type="text" id="kl_eyebrow" data-konten="loc_eyebrow" class="form-control" placeholder="Temukan Kami">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_title">Judul Banner Lokasi</label>
+                                    <textarea id="kl_title" data-konten="loc_title" class="form-control" rows="2" placeholder="Let's See Our&#10;Restaurant Location"></textarea>
+                                    <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_chip2">Teks Label Kedua</label>
+                                    <input type="text" id="kl_chip2" data-konten="loc_chip2" class="form-control" placeholder="Jakarta hingga Papua">
+                                <small class="text-muted">Label jumlah cabang muncul otomatis sesuai data di Kelola Lokasi.</small>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-align-left me-2"></i>Pengantar Lokasi
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_kicker">Teks Kecil (Atas Judul)</label>
+                                    <input type="text" id="kl_kicker" data-konten="loc_kicker" class="form-control" placeholder="Rasakan Cita Rasa Kami">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_heading">Judul Pengantar</label>
+                                    <textarea id="kl_heading" data-konten="loc_heading" class="form-control" rows="2" placeholder="Warmth in Every Dish, Flavors from Eastern Indonesia"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_desc">Deskripsi Pengantar</label>
+                                    <textarea id="kl_desc" data-konten="loc_desc" class="form-control" rows="3" placeholder="Mampir ke gerai terdekat..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_btn_buka">Teks Tombol (Peta Tertutup)</label>
+                                    <input type="text" id="kl_btn_buka" data-konten="loc_btn_buka" class="form-control" placeholder="Lihat Peta Cabang">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="kl_btn_tutup">Teks Tombol (Peta Terbuka)</label>
+                                    <input type="text" id="kl_btn_tutup" data-konten="loc_btn_tutup" class="form-control" placeholder="Tutup Peta">
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="fw-bold konten-judul border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-address-card me-2"></i>Kartu Informasi
+                                </h5>
+                                <div class="card p-3 mb-3 border-0 konten-kartu">
+                                    <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-location-dot konten-kartu-ico me-2"></i>Cabang Utama</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_utama_title">Judul Kartu</label>
+                                        <input type="text" id="kl_utama_title" data-konten="loc_utama_title" class="form-control form-control-sm" placeholder="Cabang Utama">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_utama_text">Alamat</label>
+                                        <input type="text" id="kl_utama_text" data-konten="loc_utama_text" class="form-control form-control-sm" placeholder="Jl. Cendrawasih No. 45, Jakarta">
+                                    </div>
+                                </div>
+                                <div class="card p-3 mb-3 border-0 konten-kartu">
+                                    <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-phone konten-kartu-ico me-2"></i>Telepon</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_telp_title">Judul Kartu</label>
+                                        <input type="text" id="kl_telp_title" data-konten="loc_telp_title" class="form-control form-control-sm" placeholder="Telepon">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_telp_text">Nomor Telepon</label>
+                                        <input type="text" id="kl_telp_text" data-konten="loc_telp_text" class="form-control form-control-sm" placeholder="(021) 1234-5678">
+                                    </div>
+                                </div>
+                                <div class="card p-3 mb-3 border-0 konten-kartu">
+                                    <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-envelope konten-kartu-ico me-2"></i>Email</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_email_title">Judul Kartu</label>
+                                        <input type="text" id="kl_email_title" data-konten="loc_email_title" class="form-control form-control-sm" placeholder="Email">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_email_text">Alamat Email</label>
+                                        <input type="text" id="kl_email_text" data-konten="loc_email_text" class="form-control form-control-sm" placeholder="halo@papedarestaurant.com">
+                                    </div>
+                                </div>
+                                <div class="card p-3 mb-3 border-0 konten-kartu">
+                                    <h6 class="fw-bold konten-kartu-judul mb-2"><i class="fa-solid fa-square-parking konten-kartu-ico me-2"></i>Parkir</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_parkir_title">Judul Kartu</label>
+                                        <input type="text" id="kl_parkir_title" data-konten="loc_parkir_title" class="form-control form-control-sm" placeholder="Parkir">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="kl_parkir_text">Keterangan Parkir</label>
+                                        <textarea id="kl_parkir_text" data-konten="loc_parkir_text" class="form-control form-control-sm" rows="2" placeholder="Area luas untuk roda dua maupun roda empat"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="lok-hint mb-3"><i class="fa-solid fa-circle-info me-1"></i>Daftar cabang dan titik peta dikelola di menu Kelola Lokasi.</p>
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan py-2 shadow-sm">Simpan</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                            <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
+                        </div>
+                            <div class="card-body p-0 preview-card-body">
+                                <div class="pv-page pv-page-loc">
+                                    <div class="pv-banner">
+                                        <div class="pv-banner-bg pv-bg-loc" aria-hidden="true">
+                                            <span class="pv-rings pv-rings-left"></span>
+                                        </div>
+                                        <span class="pv-deco d1" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+                                        <span class="pv-deco d2" aria-hidden="true"><i class="fa-solid fa-map-location-dot"></i></span>
+                                        <span class="pv-deco d3" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+                                        <span class="pv-deco d4" aria-hidden="true"><i class="fa-solid fa-map-pin"></i></span>
+                                        <div class="pv-banner-inner">
+                                            <p class="hero-eyebrow" id="pv-loc-eyebrow">Temukan Kami</p>
+                                            <h2 class="pv-title" id="pv-loc-title">Let's See Our<br><em>Restaurant Location</em></h2>
+                                            <ul class="pv-chips">
+                                                <li><i class="fa-solid fa-store"></i><span><span class="jumlah-cabang">0</span> Cabang</span></li>
+                                                <li><i class="fa-solid fa-route"></i><span id="pv-loc-chip2">Jakarta hingga Papua</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="pv-loc-wrap">
+                                        <div class="pv-loc-grid">
+                                            <article class="pv-loc-intro">
+                                                <p class="pv-kicker" id="pv-loc-kicker">Rasakan Cita Rasa Kami</p>
+                                                <h3 id="pv-loc-heading">Warmth in Every Dish, Flavors from Eastern Indonesia</h3>
+                                                <p class="pv-loc-desc" id="pv-loc-desc">Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.</p>
+                                                <span class="pv-btn-map"><i class="fa-solid fa-location-dot me-2"></i><span id="pv-loc-btn">Lihat Peta Cabang</span></span>
+                                            </article>
+                                            <ul class="pv-loc-cards">
+                                                <li class="pv-loc-card">
+                                                    <span class="pv-loc-icon"><i class="fa-solid fa-location-dot"></i></span>
+                                                    <div><h3 id="pv-loc-utama-title">Cabang Utama</h3><p id="pv-loc-utama-text">Jl. Cendrawasih No. 45, Jakarta</p></div>
+                                                </li>
+                                                <li class="pv-loc-card">
+                                                    <span class="pv-loc-icon"><i class="fa-solid fa-phone"></i></span>
+                                                    <div><h3 id="pv-loc-telp-title">Telepon</h3><p id="pv-loc-telp-text">(021) 1234-5678</p></div>
+                                                </li>
+                                                <li class="pv-loc-card">
+                                                    <span class="pv-loc-icon"><i class="fa-solid fa-envelope"></i></span>
+                                                    <div><h3 id="pv-loc-email-title">Email</h3><p id="pv-loc-email-text">halo@papedarestaurant.com</p></div>
+                                                </li>
+                                                <li class="pv-loc-card">
+                                                    <span class="pv-loc-icon"><i class="fa-solid fa-square-parking"></i></span>
+                                                    <div><h3 id="pv-loc-parkir-title">Parkir</h3><p id="pv-loc-parkir-text">Area luas untuk roda dua maupun roda empat</p></div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB: FOOTER -->
+            <div id="konten-footer" class="konten-panel" role="tabpanel">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 p-4 h-100">
+                            <form id="form-footer">
+                            
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Judul Sosial Media</label>
+                                    <input type="text" id="footer_title" class="form-control" value="Ikuti Kami">
+                                    <small class="text-muted">Teks yang muncul di atas deretan ikon.</small>
+                                </div>
+                            
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Teks Copyright</label>
+                                    <textarea id="footer_copyright" class="form-control" rows="3">&copy; 2026 Papeda Restaurant. All Rights Reserved.</textarea>
+                                </div>
+                            
+                                <hr class="mb-4">
+                            
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Tautan Instagram</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-brands fa-instagram"></i></span>
+                                        <input type="text" id="input_link_ig" class="form-control" placeholder="https://instagram.com/...">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Tautan TikTok</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-brands fa-tiktok"></i></span>
+                                        <input type="text" id="input_link_tiktok" class="form-control" placeholder="https://tiktok.com/@...">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Tautan WhatsApp</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-brands fa-whatsapp"></i></span>
+                                        <input type="text" id="input_link_wa" class="form-control" placeholder="6281234567890">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Alamat Email</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                        <input type="email" id="input_email" class="form-control" placeholder="email@contoh.com">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Tautan LinkedIn</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-brands fa-linkedin-in"></i></span>
+                                        <input type="text" id="input_link_linkedin" class="form-control" placeholder="https://linkedin.com/in/...">
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-success w-100 fw-bold btn-simpan" id="btn-update-footer">Update</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                                <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
+                            </div>
+                        
+                            <div class="card-body p-0 preview-card-body">
+                                <footer class="custom-footer preview-footer py-4 text-white">
+                                    <div class="container">
+                                        <div class="text-center mb-4">
+                                            <h6 id="preview_footer_title" class="fw-bold mb-4 mt-2 text-warning preview-footer-title">Ikuti Kami</h6>
+                                        
+                                            <div class="d-flex justify-content-center gap-3">
+                                                <span class="custom-social-btn"><i class="fa-brands fa-instagram"></i></span>
+                                                <span class="custom-social-btn"><i class="fa-brands fa-tiktok"></i></span>
+                                                <span class="custom-social-btn"><i class="fa-brands fa-whatsapp"></i></span>
+                                                <span class="custom-social-btn"><i class="fa-solid fa-envelope"></i></span>
+                                                <span class="custom-social-btn"><i class="fa-brands fa-linkedin-in"></i></span>
+                                            </div>
+                                        </div>
+                                    
+                                        <hr class="border-light opacity-25 my-4">
+                                    
+                                        <div id="preview_footer_copyright" class="text-center small text-light text-opacity-75 px-3">
+                                            &copy; 2026 Papeda Restaurant. All Rights Reserved.
+                                        </div>
+                                    </div>
+                                </footer>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -638,14 +1024,14 @@
                         <p class="kpi-value" id="faq-total">0</p>
                     </div>
                 </div>
-                <div class="card lok-stat" style="--d:.08s">
+                <div class="card lok-stat">
                     <div class="kpi-icon"><i class="fa-solid fa-envelope"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Belum Dibaca</p>
                         <p class="kpi-value" id="faq-belum-dibaca">0</p>
                     </div>
                 </div>
-                <div class="card lok-stat lok-stat-wide" style="--d:.16s">
+                <div class="card lok-stat lok-stat-wide">
                     <div class="kpi-icon"><i class="fa-solid fa-inbox"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Total Pertanyaan Masuk</p>
@@ -655,7 +1041,6 @@
             </div>
 
             <div class="row g-4">
-                <!-- Pertanyaan masuk -->
                 <div class="col-lg-5">
                     <div class="card shadow-sm border-0 p-4 h-100">
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
@@ -708,7 +1093,7 @@
                                 <textarea id="jawaban_faq" class="form-control" rows="6" placeholder="Tulis jawaban yang akan tampil di web pengunjung" required></textarea>
                             </div>
                             <div class="d-flex gap-2 flex-wrap mt-4">
-                                <button type="submit" class="btn btn-success fw-bold flex-grow-1" id="btn-faq-submit">Simpan ke Database</button>
+                                <button type="submit" class="btn btn-success fw-bold flex-grow-1" id="btn-faq-submit">Simpan</button>
                                 <button type="button" class="btn btn-secondary fw-bold" id="btn-faq-cancel">Batal Edit</button>
                             </div>
                         </form>
@@ -720,14 +1105,14 @@
             <div class="card shadow-sm border-0 p-4 mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="fs-5 fw-bold m-0">Daftar FAQ</h2>
-                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan..." style="max-width: 250px;">
+                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan...">
                 </div>
 
                 <div class="table-responsive">
                     <table id="tabel-faq" class="table table-striped table-hover align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>Pertanyaan</th>
                                 <th>Jawaban</th>
                                 <th>Aksi</th>
@@ -814,7 +1199,7 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-2 flex-wrap mt-4">
-                                <button type="submit" id="btn-lokasi-simpan" class="btn btn-success fw-bold flex-grow-1">Simpan ke Database</button>
+                                <button type="submit" id="btn-lokasi-simpan" class="btn btn-success fw-bold flex-grow-1">Simpan</button>
                                 <button type="button" id="btn-lokasi-batal" class="btn btn-secondary fw-bold">Batal</button>
                                 <button type="button" id="btn-lokasi-hapus" class="btn btn-danger fw-bold">
                                     <i class="fa-solid fa-trash me-1"></i>Hapus Cabang
@@ -830,42 +1215,70 @@
         <section id="tab-reservasi" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola User & Reservasi</h1>
-                <div class="reservation-tabs mb-4">
-                    <button class="tab-btn active" data-tab="tab-user">
-                        Users <span class="badge" id="count-user">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="pending">
-                        Pending <span class="badge" id="count-pending">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="approved">
-                        Approved <span class="badge" id="count-approved">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="complete">
-                        Complete <span class="badge" id="count-complete">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">
-                        Dibatalkan <span class="badge" id="count-dibatalkan">0</span>
-                    </button>
+                <div class="reservation-toolbar">
+                    <div class="reservation-tabs">
+
+                        <button class="tab-btn active" data-tab="tab-user">Users
+                            <span class="badge" id="count-user">0</span>
+                        </button>
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi"data-status="pending">Pending
+                            <span class="badge" id="count-pending">0</span>
+                        </button>
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="approved">Approved
+                            <span class="badge" id="count-approved">0</span>
+                        </button>
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="complete">Complete
+                            <span class="badge" id="count-complete">0</span>
+                        </button>
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">Dibatalkan
+                            <span class="badge" id="count-dibatalkan">0</span>
+                        </button>
+                    </div>
+
+                    <div class="reservation-tools">
+                        <button type="button" id="global-filter-btn" class="filter-button" title="Filter"> 
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+
+                        <input type="text" id="global-search" class="form-control" placeholder="Cari data...">
+                    </div>
                 </div>
 
                 <div id="panel-tab-user">
-                    <div id="user-action-bar" class="d-none d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
-                        <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <select id="user-action-select" class="form-select form-select-sm">
-                                <option value="" disabled selected>Pilih Aksi...</option>
-                                <option value="modifikasi">✏️ Modifikasi Akun</option>
-                                <option value="blokir">🚫 Blokir Akun</option>
-                                <option value="hapus">🗑️ Hapus Akun</option>
-                            </select>
-                            <button id="btn-eksekusi-user-aksi" class="btn btn-sm btn-dark fw-bold">Terapkan</button>
+                    <div id="user-action-wrapper" style="display: none;">
+                        <div id="user-action-bar" class="d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
+                            <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="dropdown custom-action-dropdown">
+                                    <button class="btn form-select form-select-sm text-start shadow-none d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span id="selected-aksi-text">Pilih Aksi</span>
+                                    </button>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        <li><a class="dropdown-item text-muted" href="#" data-value="">Pilih Aksi...</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item fw-medium" href="#" data-value="modifikasi">✏️ Modifikasi Akun</a></li>
+                                        <li><a class="dropdown-item fw-medium text-danger" href="#" data-value="blokir">🚫 Blokir Akun</a></li>
+                                        <li><a class="dropdown-item fw-medium text-secondary" href="#" data-value="hapus">🗑️ Hapus Akun</a></li>
+                                    </ul>
+                                    <input type="hidden" id="user-action-select" value="">
+                                </div>
+                                <button id="btn-eksekusi-user-aksi" class="btn btn-sm btn-dark fw-bold">Terapkan</button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="table-responsive">
                         <table class="table table-striped align-middle">
                             <thead class="table-dark">
-                                <tr>
+                                <tr class="text-center">
                                     <th class="th-checkbox">
                                         <input type="checkbox" id="check-all-users" class="form-check-input">
                                     </th>
@@ -874,6 +1287,7 @@
                                     <th>Email</th>
                                     <th>Tanggal Pembuatan</th>
                                     <th>Jumlah Reserve</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="user-table-body">
@@ -887,14 +1301,14 @@
                         <table class="admin-table table table-striped align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Gerai</th>
-                                    <th>Nama Tamu</th>
-                                    <th>Kontak</th>
-                                    <th>Tanggal & Waktu</th>
-                                    <th>Jumlah Tamu</th>
-                                    <th>Ruangan</th>
-                                    <th>Catatan</th>
-                                    <th>Aksi</th>
+                                    <th class="text-center">Gerai</th>
+                                    <th class="text-center">Nama Tamu</th>
+                                    <th class="text-center">Kontak</th>
+                                    <th class="text-center">Tanggal & Waktu</th>
+                                    <th class="text-center">Jumlah Tamu</th>
+                                    <th class="text-center">Ruangan</th>
+                                    <th class="text-center">Catatan</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>      
                             <tbody id="reservation-table-body">
@@ -1068,4 +1482,81 @@
     <script src="/admin/script.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
+
+<!-- POP UP ALERT USER -->
+<div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+            <div class="modal-body p-5 text-center">
+                <h5 class="mb-4 fw-normal text-dark" id="confirmModalText" style="line-height: 1.5;">Apakah Anda yakin?</h5>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="btn btn-light px-4 py-2 border" data-bs-dismiss="modal" style="min-width: 120px;">Batal</button>
+                    <button type="button" class="btn btn-dark px-4 py-2" id="btn-confirm-lanjutkan" style="min-width: 120px;">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- POP UP ALERT TOLAK RESERVASI ADMIN -->
+<div class="modal fade" id="cancelReservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-confirm-modal">
+
+            <div class="modal-header border-0">
+                <div class="modal-warning-icon">
+                    !
+                </div>
+                <button  type="button"  class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body text-center pt-0">
+                <h4 class="confirm-title">
+                    Batalkan Reservasi?
+                </h4>
+                <p class="confirm-message">
+                    Apakah kamu yakin ingin membatalkan reservasi ini?
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-2">
+                <button type="button" class="btn-confirm-back" data-bs-dismiss="modal">
+                    Kembali
+                </button>
+                <button  type="button" id="btn-confirm-cancel-reservation" class="btn-confirm-danger">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- POP UP ALERT KONFIRMASI RESERVASI ADMIN -->
+<div class="modal fade" id="confirmReservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-confirm-modal">
+            <div class="modal-header border-0">
+                <div class="modal-warning-icon">?</div>
+                <button  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            
+            <div class="modal-body text-center pt-0">
+                <h4 class="confirm-title" id="confirmReservationTitle">
+                    Konfirmasi Reservasi?
+                </h4>
+                <p class="confirm-message" id="confirmReservationMessage">
+                    Apakah kamu yakin ingin mengonfirmasi reservasi ini?
+                </p>
+            </div>
+
+            <div class="modal-footer border-0 justify-content-center gap-2">
+                <button type="button" class="btn-confirm-back" data-bs-dismiss="modal">
+                    Kembali
+                </button>
+                <button  type="button" id="btn-confirm-reservation-action" class="btn-confirm-danger">
+                    Ya, Konfirmasi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </html>

@@ -176,7 +176,7 @@ $(document).ready(function() {
         for (let i = 0; i < l; i++) {
             icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
         }
-        return `<span class="ms-2 d-inline-flex align-items-center">${esc(icons)}</span>`;
+        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
     }
 
     function muatMenuFavoritUser() {
@@ -198,7 +198,7 @@ $(document).ready(function() {
                         <div class="menu-desc-item text-center">
                             <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
                                 ${esc(item.nama_makanan)} 
-                                ${esc(renderIconPedasUser(item.pedas))}
+                                ${renderIconPedasUser(item.pedas)}
                             </h4>
                             <p class="small text-muted mb-0">${esc(item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.')}</p>
                         </div>
@@ -560,14 +560,84 @@ $(document).ready(function() {
         });
     });
 
+    let labelPetaBuka = 'Lihat Peta Cabang';
+    let labelPetaTutup = 'Tutup Peta';
+
+    function setTeks(selektor, nilai) {
+        if (nilai) $(selektor).text(nilai);
+    }
+
+    function setBaris(selektor, nilai) {
+        if (nilai) $(selektor).html(esc(nilai).replace(/\n/g, '<br>'));
+    }
+
+    function setJudul(selektor, nilai) {
+        if (!nilai) return;
+        const baris = String(nilai).split('\n');
+        const html = baris.length > 1
+            ? esc(baris[0]) + '<br><em>' + baris.slice(1).map(esc).join('<br>') + '</em>'
+            : esc(baris[0]);
+        $(selektor).html(html);
+    }
+
+    function nomorTelepon(teks) {
+        let nomor = String(teks).replace(/[^\d+]/g, '');
+        if (nomor.charAt(0) === '0') nomor = '+62' + nomor.slice(1);
+        return nomor;
+    }
+
     /* Banner hero */
     $.post('/api/pengunjung');
 
     $.get('/api/konten', function(data) {
-        let teksHeroHTML = data.teks_hero.replace(/\n/g, '<br>');
-        
-        $('#judul-hero').html(teksHeroHTML);
-        $('#deskripsi-about').text(data.teks_about);
+        if (data.hero_eyebrow) $('#hero-eyebrow').text(data.hero_eyebrow);
+        if (data.teks_hero) {
+            let teksHeroHTML = data.teks_hero.replace(/\n/g, '<br>');
+            $('#judul-hero').html(teksHeroHTML);
+        }
+        if (data.hero_sub) $('#hero-sub').text(data.hero_sub);
+        if (data.about_eyebrow) $('#about-eyebrow').text(data.about_eyebrow);
+        if (data.about_title) $('#about-title').text(data.about_title);
+        if (data.teks_about) $('#deskripsi-about').text(data.teks_about);
+        if (data.card1_title) $('#card1-title').text(data.card1_title);
+        if (data.card1_desc) $('#card1-desc').text(data.card1_desc);
+        if (data.card2_title) $('#card2-title').text(data.card2_title);
+        if (data.card2_desc) $('#card2-desc').text(data.card2_desc);
+        if (data.card3_title) $('#card3-title').text(data.card3_title);
+        if (data.card3_desc) $('#card3-desc').text(data.card3_desc);
+
+        /* FAQ */
+        setTeks('#faq-eyebrow', data.faq_eyebrow);
+        setJudul('#faq-title', data.faq_title);
+        setTeks('#faq-total', data.faq_chip1);
+        setTeks('#faq-chip2', data.faq_chip2);
+        setTeks('#faq-aside-kicker', data.faq_aside_kicker);
+        setTeks('#faq-aside-title', data.faq_aside_title);
+        setTeks('#faq-aside-desc', data.faq_aside_desc);
+        setTeks('#faq-aside-btn', data.faq_aside_btn);
+
+        /* Lokasi */
+        setTeks('#loc-eyebrow', data.loc_eyebrow);
+        setJudul('#loc-title', data.loc_title);
+        setTeks('#loc-chip2', data.loc_chip2);
+        setTeks('#loc-kicker', data.loc_kicker);
+        setTeks('#loc-heading', data.loc_heading);
+        setTeks('#loc-desc', data.loc_desc);
+        setTeks('#loc-utama-title', data.loc_utama_title);
+        setTeks('#loc-utama-text', data.loc_utama_text);
+        setTeks('#loc-telp-title', data.loc_telp_title);
+        setTeks('#loc-telp-text', data.loc_telp_text);
+        setTeks('#loc-email-title', data.loc_email_title);
+        setTeks('#loc-email-text', data.loc_email_text);
+        setTeks('#loc-parkir-title', data.loc_parkir_title);
+        setTeks('#loc-parkir-text', data.loc_parkir_text);
+
+        if (data.loc_telp_text) $('#loc-telp-link').attr('href', 'tel:' + nomorTelepon(data.loc_telp_text));
+        if (data.loc_email_text) $('#loc-email-link').attr('href', 'mailto:' + $.trim(data.loc_email_text));
+
+        if (data.loc_btn_buka) labelPetaBuka = data.loc_btn_buka;
+        if (data.loc_btn_tutup) labelPetaTutup = data.loc_btn_tutup;
+        if (!$('#map-reveal').hasClass('open')) $('#loc-btn').text(labelPetaBuka);
     });
 
     /* Maps */
@@ -601,6 +671,12 @@ $(document).ready(function() {
         });
 
         $('#store-select').html(storeOptions);
+        $('#store-cards').html(CABANG.map((c, i) => `
+            <button type="button" class="store-card" style="--i:${i}" data-val="${esc(c.nama)}">
+                <span class="store-pin"><i class="fa-solid fa-location-dot"></i></span>
+                <span class="store-info"><strong>${esc(c.nama)}</strong><small>${esc(c.alamat)}</small></span>
+                <i class="fa-solid fa-circle-check store-check"></i>
+            </button>`).join(''));
         $('#checkoutStore').html(checkoutOptions);
     });
 
@@ -700,7 +776,7 @@ $(document).ready(function() {
         const opening = !$('#map-reveal').hasClass('open');
 
         $('#map-reveal').toggleClass('open', opening).attr('aria-hidden', !opening);
-        $(this).attr('aria-expanded', opening).find('span').text(opening ? 'Tutup Peta' : 'Lihat Peta Cabang');
+        $(this).attr('aria-expanded', opening).find('span').text(opening ? labelPetaTutup : labelPetaBuka);
 
         if (!opening) {
             stopHop();
@@ -759,7 +835,6 @@ $(document).ready(function() {
 
     // reservation
     let $reservationForm = $('#reservation-form-group');
-
     $reservationForm.hide();
 
     $('#store-select').on('change', function () {
@@ -772,6 +847,28 @@ $(document).ready(function() {
             $reservationForm.slideUp(300);
         }
     });
+
+    function getStatusReservasiUser(status) {
+        switch (status) {
+            case 'pending':
+                return 'Menunggu';
+
+            case 'approved':
+            case 'dikonfirmasi':
+                return 'Ongoing';
+
+            case 'complete':
+            case 'selesai':
+                return 'Complete';
+
+            case 'dibatalkan':
+            case 'cancelled':
+                return 'Dibatalkan';
+
+            default:
+                return status || '-';
+        }
+    }
 
     // Notification
     function notifPapeda(pesan, tipe = 'success') {
@@ -887,4 +984,12 @@ $(function () {
     });
 
     $('#mm-order').on('click', () => { pesan(aktifId); modal.hide(); });
+});
+
+$('#store-cards').on('click', '.store-card', function () {
+    $('#store-select').val($(this).attr('data-val')).trigger('change');
+});
+$('#store-select').on('change', function () {
+    const v = $(this).val();
+    $('.store-card').each(function () { $(this).toggleClass('active', $(this).attr('data-val') === v); });
 });
