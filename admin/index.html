@@ -11,21 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/admin/style.css">
 </head>
-<!-- POP UP ALERT  -->
-<div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
-            <div class="modal-body p-5 text-center">
-                <h5 class="mb-4 fw-normal text-dark" id="confirmModalText" style="line-height: 1.5;">Apakah Anda yakin?</h5>
-
-                <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="button" class="btn btn-light px-4 py-2 border" data-bs-dismiss="modal" style="min-width: 120px;">Batal</button>
-                    <button type="button" class="btn btn-dark px-4 py-2" id="btn-confirm-lanjutkan" style="min-width: 120px;">Lanjutkan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <body class="d-flex vh-100 admin-locked">
 <div id="admin-login">
     <span class="al-float a1"><i class="fa-solid fa-pepper-hot"></i></span>
@@ -960,24 +945,46 @@
         <section id="tab-reservasi" class="tab-section">
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola User & Reservasi</h1>
-                <div class="reservation-tabs mb-4">
-                    <button class="tab-btn active" data-tab="tab-user">
-                        Users <span class="badge" id="count-user">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="pending">
-                        Pending <span class="badge" id="count-pending">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="approved">
-                        Approved <span class="badge" id="count-approved">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="complete">
-                        Complete <span class="badge" id="count-complete">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">
-                        Dibatalkan <span class="badge" id="count-dibatalkan">0</span>
-                    </button>
+                <div class="reservation-toolbar">
+                    <div class="reservation-tabs"> 
+                        <button class="tab-btn active" data-tab="tab-user">
+                            Users
+                            <span class="badge" id="count-user">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="tab-reservasi" data-status="pending">
+                            Pending
+                            <span class="badge" id="count-pending">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="tab-reservasi" data-status="approved">
+                            Approved
+                            <span class="badge" id="count-approved">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="tab-reservasi" data-status="complete">
+                            Complete
+                            <span class="badge" id="count-complete">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">
+                            Dibatalkan
+                            <span class="badge" id="count-dibatalkan">0</span>
+                        </button>
+                    </div>
+                    <div class="reservation-tools">
+                        <button
+                            type="button"
+                            id="global-filter-btn"
+                            class="btn btn-sm filter-button"
+                            title="Filter"
+                            aria-label="Filter data">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                        <input
+                            type="text"
+                            id="global-search"
+                            class="form-control"
+                            placeholder="Cari data..."
+                            autocomplete="off">
+                    </div>
                 </div>
-
 
                 <div id="panel-tab-user">
                     <div id="user-action-wrapper" style="display: none;">
@@ -1005,16 +1012,16 @@
                     <div class="table-responsive">
                         <table class="table table-striped align-middle">
                             <thead class="table-dark">
-                                <tr>
+                                <tr class="text-center">
                                     <th class="th-checkbox">
                                         <input type="checkbox" id="check-all-users" class="form-check-input">
                                     </th>
                                     <th>User ID</th>
-                                    <th class="text-center">Nama</th>
-                                    <th class="text-center">Email</th>
-                                    <th class="text-center">Tanggal Pembuatan</th>
-                                    <th class="text-center">Jumlah Reserve</th>
-                                    <th class="text-center">Status</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Tanggal Pembuatan</th>
+                                    <th>Jumlah Reserve</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="user-table-body">
@@ -1028,14 +1035,14 @@
                         <table class="admin-table table table-striped align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Gerai</th>
-                                    <th>Nama Tamu</th>
-                                    <th>Kontak</th>
-                                    <th>Tanggal & Waktu</th>
-                                    <th>Jumlah Tamu</th>
-                                    <th>Ruangan</th>
-                                    <th>Catatan</th>
-                                    <th>Aksi</th>
+                                    <th class="text-center">Gerai</th>
+                                    <th class="text-center">Nama Tamu</th>
+                                    <th class="text-center">Kontak</th>
+                                    <th class="text-center">Tanggal & Waktu</th>
+                                    <th class="text-center">Jumlah Tamu</th>
+                                    <th class="text-center">Ruangan</th>
+                                    <th class="text-center">Catatan</th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>      
                             <tbody id="reservation-table-body">
@@ -1209,4 +1216,61 @@
     <script src="/admin/script.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
+
+<!-- POP UP ALERT USER -->
+<div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+            <div class="modal-body p-5 text-center">
+                <h5 class="mb-4 fw-normal text-dark" id="confirmModalText" style="line-height: 1.5;">Apakah Anda yakin?</h5>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="btn btn-light px-4 py-2 border" data-bs-dismiss="modal" style="min-width: 120px;">Batal</button>
+                    <button type="button" class="btn btn-dark px-4 py-2" id="btn-confirm-lanjutkan" style="min-width: 120px;">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- POP UP ALERT RESERVASI ADMIN -->
+<div class="modal fade" id="cancelReservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-confirm-modal">
+
+            <div class="modal-header border-0">
+                <div class="modal-warning-icon">
+                    !
+                </div>
+                <button 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body text-center pt-0">
+                <h4 class="confirm-title">
+                    Batalkan Reservasi?
+                </h4>
+                <p class="confirm-message">
+                    Apakah kamu yakin ingin membatalkan reservasi ini?
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-2">
+                <button 
+                    type="button"
+                    class="btn-confirm-back"
+                    data-bs-dismiss="modal">
+                    Kembali
+            </button>
+                <button 
+                    type="button"
+                    id="btn-confirm-cancel-reservation"
+                    class="btn-confirm-danger">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </html>

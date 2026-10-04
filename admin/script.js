@@ -1356,6 +1356,9 @@ $(function () {
     let dataUsersGlobal = [];
     let isDataLoaded = false;
 
+    let globalSearch = '';
+    let globalFilter = '';
+
     const esc = (str) => {
         if (!str) return '';
         return String(str).replace(/[&<>'"]/g, 
@@ -1368,6 +1371,30 @@ $(function () {
             }[tag])
         );
     };
+
+    function dataCocokSearch(data, keyword) {
+        if (!keyword) return true;
+
+        keyword = keyword.toLowerCase().trim();
+
+        return Object.values(data).some(value =>
+            String(value ?? '').toLowerCase().includes(keyword)
+        );
+    }
+
+    function renderCurrentSearch() {
+        const activeTab = $('.reservation-tabs .tab-btn.active');
+
+        if (!activeTab.length) return;
+
+        const isUserTab = activeTab.data('tab') === 'tab-user';
+
+        if (isUserTab) {
+            renderTableUsers();
+        } else {
+            loadDataReservasi(activeTab.data('status'));
+        }
+    }
 
     async function loadDataUsers() {
         try {
@@ -1383,43 +1410,139 @@ $(function () {
         }
     }
 
-    function renderTableUsers() {
-        $('#count-user').text(dataUsersGlobal.length);
-        const $tbody =$('#user-table-body');
-        $tbody.empty();
+    function formatTanggal(dateString) {
 
-        if (dataUsersGlobal.length === 0) {
-            $tbody.html('<tr><td colspan="7" class="text-center text-muted py-4">Belum ada user terdaftar.</td></tr>');
-            return;
-        }
+        if (!dateString) return '-';
 
-        const rows = dataUsersGlobal.map((u, i) => {
-            console.log("Data User:", u.nama, "-> Kolom Is_Active:", u.Is_Active, "-> is_active:", u.is_active);
-            const formattedId = String(i + 1).padStart(5, '0');
-            const tgl = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
-            const rawActive = u.Is_Active !== undefined ? u.Is_Active : u.is_active;
-            const isActive = (rawActive !== false && rawActive !== 'false' && rawActive !== 0);
-            const statusText = isActive ? 'Active' : 'Blocked';
-            const statusColor = isActive ? 'bg-success' : 'bg-danger';
-            
-            return `
-                <tr>
-                    <td class="text-center">
-                        <input type="checkbox" class="form-check-input user-row-check" value="${esc(u.id)}">
-                    </td>
-                    <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
-                    <td><strong>${esc(u.nama || '-')}</strong></td>
-                    <td>${esc(u.email || '-')}</td>
-                    <td class="text-center">${esc(tgl)}</td>
-                    <td class="text-center"><span class="badge bg-light text-dark border">${esc(u.total_reserve || '0')}</span></td>
-                    <td class="text-center"><span class="badge ${statusColor}">${statusText}</span></td>
-                </tr>
-            `;
-        }).join('');
+        const date = new Date(dateString);
 
-        $tbody.html(rows);
-        syncAction(); 
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric'
+        });
     }
+
+function renderTableUsers() {
+    $('#count-user').text(dataUsersGlobal.length);
+    const $tbody = $('#user-table-body');
+    $tbody.empty();
+    if (dataUsersGlobal.length === 0) {
+        $tbody.html(`
+            <tr>
+                <td colspan="7"
+                    class="text-center text-muted py-4">
+                    Belum ada user terdaftar.
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    const filteredUsers = dataUsersGlobal.filter(u => {
+        if (globalFilter === 'active') {
+            const rawActive =
+                u.Is_Active !== undefined
+                    ? u.Is_Active
+                    : u.is_active;
+            if (
+                rawActive === false ||
+                rawActive === 'false' ||
+                rawActive === 0
+            ) {
+                return false;
+            }
+        }
+        if (globalFilter === 'blocked') {
+            const rawActive =
+                u.Is_Active !== undefined
+                    ? u.Is_Active
+                    : u.is_active;
+            if (!(
+                rawActive === false ||
+                rawActive === 'false' ||
+                rawActive === 0
+            )) {
+                return false;
+            }
+        }
+        return dataCocokSearch(
+            u,
+            globalSearch
+        );
+    });
+
+    const rows = filteredUsers.map(u => {
+        const originalIndex =
+            dataUsersGlobal.indexOf(u);
+
+        const formattedId =
+            String(originalIndex + 1)
+                .padStart(5, '0');
+
+        const tgl = u.created_at
+            ? new Date(u.created_at)
+                .toLocaleDateString('id-ID')
+            : '-';
+
+        const rawActive =
+            u.Is_Active !== undefined
+                ? u.Is_Active
+                : u.is_active;
+
+        const isActive =
+            rawActive !== false &&
+            rawActive !== 'false' &&
+            rawActive !== 0;
+
+        const statusText =
+            isActive
+                ? 'Active'
+                : 'Blocked';
+
+        const statusColor =
+            isActive
+                ? 'bg-success'
+                : 'bg-danger';
+        return `
+            <tr>
+                <td class="text-center">
+                    <input
+                        type="checkbox"
+                        class="form-check-input user-row-check"
+                        value="${esc(u.id)}">
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark border font-monospace">
+                        ${formattedId}
+                    </span>
+                </td>
+                <td>
+                    <strong>
+                        ${esc(u.nama || '-')}
+                    </strong>
+                </td>
+                <td>
+                    ${esc(u.email || '-')}
+                </td>
+                <td class="text-center">
+                    ${esc(tgl)}
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-light text-dark border">
+                        ${esc(u.total_reserve || '0')}
+                    </span>
+                </td>
+                <td class="text-center">
+                    <span class="badge ${statusColor}">
+                        ${statusText}
+                    </span>
+                </td>
+            </tr>`;
+    }).join('');
+    $tbody.html(rows);
+    syncAction();
+}
 
     async function loadDataReservasi(statusFilter = 'pending') {
         try {
@@ -1433,10 +1556,28 @@ $(function () {
             $('#count-dibatalkan').text(semuaReservasi.filter(r => r.status === 'dibatalkan' || r.status === 'cancelled').length);
 
             const filtered = semuaReservasi.filter(r => {
-                if (statusFilter === 'approved') return r.status === 'approved' || r.status === 'dikonfirmasi';
-                if (statusFilter === 'complete') return r.status === 'complete' || r.status === 'selesai';
-                if (statusFilter === 'dibatalkan') return r.status === 'dibatalkan' || r.status === 'cancelled';
-                return r.status === statusFilter;
+                let cocokStatus = false;
+
+                if (statusFilter === 'approved') {
+                    cocokStatus =
+                        r.status === 'approved' ||
+                        r.status === 'dikonfirmasi';
+
+                } else if (statusFilter === 'complete') {
+                    cocokStatus =
+                        r.status === 'complete' ||
+                        r.status === 'selesai';
+
+                } else if (statusFilter === 'dibatalkan') {
+                    cocokStatus =
+                        r.status === 'dibatalkan' ||
+                        r.status === 'cancelled';
+
+                } else {
+                    cocokStatus = r.status === statusFilter;
+                }
+                if (!cocokStatus) return false;
+                return dataCocokSearch(r, globalSearch);
             });
             
             const $tbody =$('#reservation-table-body');
@@ -1456,14 +1597,54 @@ $(function () {
                     <td>${esc(r.jumlah || 0)} Orang</td>
                     <td>${esc(r.ruangan || '-')}</td>
                     <td>${esc(r.catatan || '-')}</td>
-                    <td>
+                    <td class="aksi">
                         ${(r.status === 'complete' || r.status === 'selesai')
-                            ? '<span class="badge bg-success">Selesai</span>'
+                            ? `
+                                <span class="badge bg-success">Selesai</span>
+                            `
                             : (r.status === 'dibatalkan' || r.status === 'cancelled')
-                            ? '<span class="badge bg-danger">Dibatalkan</span>'
+                            ? `
+                                <span class="badge bg-danger">Dibatalkan</span>
+                            `
                             : (r.status === 'approved' || r.status === 'dikonfirmasi')
-                            ? `<button class="btn btn-sm btn-success btn-confirm" data-id="${esc(r.id)}" data-next="complete">✓ Selesaikan</button>`
-                            : `<button class="btn btn-sm btn-outline-dark btn-confirm" data-id="${esc(r.id)}" data-next="approved">✓ Konfirmasi</button>`
+                            ? `
+                                <div class="reservation-actions">
+                                    <button
+                                        type="button"
+                                        class="btn-action-confirm btn-confirm"
+                                        data-id="${esc(r.id)}"
+                                        data-next="complete">
+                                        ✓ Selesaikan
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn-action-cancel btn-cancel"
+                                        data-id="${esc(r.id)}"
+                                        data-next="dibatalkan">
+                                        ✕ Batalkan
+                                    </button>
+                                </div>
+                            `
+                            : `
+                                <div class="reservation-actions">
+                                    <button
+                                        type="button"
+                                        class="btn-action-confirm btn-confirm"
+                                        data-id="${esc(r.id)}"
+                                        data-next="approved">
+                                        ✓ Konfirmasi
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn-action-cancel btn-cancel"
+                                        data-id="${esc(r.id)}"
+                                        data-next="dibatalkan">
+                                        ✕ Batalkan
+                                    </button>
+                                </div>
+                            `
                         }
                     </td>
                 </tr>
@@ -1538,6 +1719,114 @@ $(function () {
         const textHTML = $(this).html();$('#selected-aksi-text').html(textHTML);
         $('#user-action-select').val(value);
     });
+
+$('#reservation-table-body').on('click', '.btn-cancel', async function () {
+
+    const id = $(this).data('id');
+    const nextStatus = $(this).data('next');
+
+    const yakin = await showCancelReservationModal();
+    if (!yakin) return;
+
+    try {
+
+        const res = await fetch(`/api/admin/reservasi/${id}/status`, {
+            method: 'PUT',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                status: nextStatus
+            })
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            throw new Error(
+                result.message || 'Gagal membatalkan reservasi'
+            );
+        }
+
+        const currentStatus =
+            $('.reservation-tabs .tab-btn.active').data('status');
+
+        loadDataReservasi(currentStatus);
+
+        } catch (err) {
+
+            console.error(
+                'Gagal membatalkan reservasi:',
+                err
+            );
+
+            alert(
+                err.message ||
+                'Gagal membatalkan reservasi'
+            );
+        }
+    });
+
+    function showCancelReservationModal() {
+    return new Promise((resolve) => {
+
+        const modalElement = document.getElementById(
+            'cancelReservationModal'
+        );
+
+        const modal = new bootstrap.Modal(modalElement);
+
+        const confirmButton = document.getElementById(
+            'btn-confirm-cancel-reservation'
+        );
+
+        let finished = false;
+
+        const handleConfirm = () => {
+            finished = true;
+
+            modal.hide();
+
+            cleanup();
+
+            resolve(true);
+        };
+
+        const handleHidden = () => {
+
+            if (!finished) {
+                cleanup();
+                resolve(false);
+            }
+        };
+
+        const cleanup = () => {
+            confirmButton.removeEventListener(
+                'click',
+                handleConfirm
+            );
+
+            modalElement.removeEventListener(
+                'hidden.bs.modal',
+                handleHidden
+            );
+        };
+
+        confirmButton.addEventListener(
+            'click',
+            handleConfirm
+        );
+
+        modalElement.addEventListener(
+            'hidden.bs.modal',
+            handleHidden
+        );
+
+        modal.show();
+    });
+    }
 
     function showCustomConfirm(pesan) {
         return new Promise((resolve) => {
@@ -1617,6 +1906,23 @@ $(function () {
         } catch (error) {
             console.error("Terjadi kesalahan:", error);
             alert("Gagal menyimpan perubahan ke database.");
+        }
+    });
+
+    $('#global-search').on('input', function () {
+        globalSearch = $(this).val().trim();
+        renderCurrentSearch();
+    });
+
+    $('#global-filter-btn').on('click', function () {
+        const activeTab = $('.reservation-tabs .tab-btn.active');
+        const isUserTab = activeTab.data('tab') === 'tab-user';
+
+        if (isUserTab) {
+            globalFilter = globalFilter === '' ? 'active'
+            : globalFilter === 'active'? 'blocked': '';
+            renderTableUsers();
+            return;
         }
     });
 
