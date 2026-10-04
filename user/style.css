@@ -654,10 +654,11 @@ main {
 }
 
 .faq-hero .faq-title {
+    font-family: 'Playfair Display', serif;
     font-size: clamp(1.9rem, 4.5vw, 3rem);
     font-weight: 700;
     line-height: 1.15;
-    color: #3b2314; 
+    color: #3b2314;
     margin-bottom: 18px;
     padding: 0;
 }
@@ -1316,12 +1317,14 @@ main {
     --dl: 2.2s;
 }
 
-.loc-title {
+.loc-hero .loc-title {
+    font-family: 'Playfair Display', serif;
     font-size: clamp(1.9rem, 4.5vw, 3rem);
     font-weight: 700;
     line-height: 1.15;
-    color: #3b2314; 
+    color: #3b2314;
     margin-bottom: 18px;
+    padding: 0;
 }
 
 .loc-chips {
@@ -2933,6 +2936,12 @@ html.has-entered #intro { display: none !important; }
 }
 @media (prefers-reduced-motion: reduce) {
     .sec-q, .sec-float, .sec-rings, .sec-hero-bg::before { animation: none; }
+}
+
+.faq-title em,
+.loc-title em {
+    font-style: normal; color: #7a3e1d; padding: 0 6px;
+    background: linear-gradient(transparent 68%, rgba(242, 200, 121, .85) 0);
 }
 
 /* ===== PILIH GERAI ===== */

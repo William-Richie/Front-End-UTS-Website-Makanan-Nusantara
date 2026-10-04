@@ -1234,10 +1234,19 @@ img.preview:hover{
 
 .pv-title {
     margin: 0 0 12px;
+    font-family: 'Playfair Display', serif;
+    color: #3b2314;
     font-size: clamp(1.3rem, 6.5cqw, 1.9rem);
     font-weight: 700;
     line-height: 1.15;
     word-break: break-word;
+}
+
+.pv-title em {
+    font-style: normal;
+    color: #7a3e1d;
+    padding: 0 6px;
+    background: linear-gradient(transparent 68%, rgba(242, 200, 121, .85) 0);
 }
 
 .pv-chips {

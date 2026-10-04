@@ -571,6 +571,15 @@ $(document).ready(function() {
         if (nilai) $(selektor).html(esc(nilai).replace(/\n/g, '<br>'));
     }
 
+    function setJudul(selektor, nilai) {
+        if (!nilai) return;
+        const baris = String(nilai).split('\n');
+        const html = baris.length > 1
+            ? esc(baris[0]) + '<br><em>' + baris.slice(1).map(esc).join('<br>') + '</em>'
+            : esc(baris[0]);
+        $(selektor).html(html);
+    }
+
     function nomorTelepon(teks) {
         let nomor = String(teks).replace(/[^\d+]/g, '');
         if (nomor.charAt(0) === '0') nomor = '+62' + nomor.slice(1);
@@ -599,7 +608,7 @@ $(document).ready(function() {
 
         /* FAQ */
         setTeks('#faq-eyebrow', data.faq_eyebrow);
-        setBaris('#faq-title', data.faq_title);
+        setJudul('#faq-title', data.faq_title);
         setTeks('#faq-total', data.faq_chip1);
         setTeks('#faq-chip2', data.faq_chip2);
         setTeks('#faq-aside-kicker', data.faq_aside_kicker);
@@ -609,7 +618,7 @@ $(document).ready(function() {
 
         /* Lokasi */
         setTeks('#loc-eyebrow', data.loc_eyebrow);
-        setBaris('#loc-title', data.loc_title);
+        setJudul('#loc-title', data.loc_title);
         setTeks('#loc-chip2', data.loc_chip2);
         setTeks('#loc-kicker', data.loc_kicker);
         setTeks('#loc-heading', data.loc_heading);
