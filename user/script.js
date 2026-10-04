@@ -176,7 +176,7 @@ $(document).ready(function() {
         for (let i = 0; i < l; i++) {
             icons += '<i class="fa-solid fa-pepper-hot" style="color: #c0392b; font-size: 0.85em; margin-left: 3px;"></i>';
         }
-        return `<span class="ms-2 d-inline-flex align-items-center">${esc(icons)}</span>`;
+        return `<span class="ms-2 d-inline-flex align-items-center">${icons}</span>`;
     }
 
     function muatMenuFavoritUser() {
@@ -198,7 +198,7 @@ $(document).ready(function() {
                         <div class="menu-desc-item text-center">
                             <h4 class="fw-bold mb-1 d-flex justify-content-center align-items-center">
                                 ${esc(item.nama_makanan)} 
-                                ${esc(renderIconPedasUser(item.pedas))}
+                                ${renderIconPedasUser(item.pedas)}
                             </h4>
                             <p class="small text-muted mb-0">${esc(item.deskripsi || 'Sajian lezat dengan bumbu khas rempah Timur Indonesia.')}</p>
                         </div>
@@ -564,10 +564,21 @@ $(document).ready(function() {
     $.post('/api/pengunjung');
 
     $.get('/api/konten', function(data) {
-        let teksHeroHTML = data.teks_hero.replace(/\n/g, '<br>');
-        
-        $('#judul-hero').html(teksHeroHTML);
-        $('#deskripsi-about').text(data.teks_about);
+        if (data.hero_eyebrow) $('#hero-eyebrow').text(data.hero_eyebrow);
+        if (data.teks_hero) {
+            let teksHeroHTML = data.teks_hero.replace(/\n/g, '<br>');
+            $('#judul-hero').html(teksHeroHTML);
+        }
+        if (data.hero_sub) $('#hero-sub').text(data.hero_sub);
+        if (data.about_eyebrow) $('#about-eyebrow').text(data.about_eyebrow);
+        if (data.about_title) $('#about-title').text(data.about_title);
+        if (data.teks_about) $('#deskripsi-about').text(data.teks_about);
+        if (data.card1_title) $('#card1-title').text(data.card1_title);
+        if (data.card1_desc) $('#card1-desc').text(data.card1_desc);
+        if (data.card2_title) $('#card2-title').text(data.card2_title);
+        if (data.card2_desc) $('#card2-desc').text(data.card2_desc);
+        if (data.card3_title) $('#card3-title').text(data.card3_title);
+        if (data.card3_desc) $('#card3-desc').text(data.card3_desc);
     });
 
     /* Maps */

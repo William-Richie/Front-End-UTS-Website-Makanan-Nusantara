@@ -6,10 +6,10 @@
     <title>Dashboard Admin - Papeda</title>
     <link rel="icon" type="image/png" href="../img/Web-Icon/admin.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="/admin/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/style.css">
 </head>
 <!-- POP UP ALERT  -->
 <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
@@ -99,7 +99,7 @@
                             <a href="#" data-target="tab-konten" class="nav-link text-white">Kelola Konten</a>
                         </li>
                         <li class="nav-item mb-2">
-                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ <span class="nav-badge" id="badge-pertanyaan-nav" style="display:none">0</span></a>
+                            <a href="#" data-target="tab-faq" class="nav-link text-white">Kelola FAQ <span class="nav-badge" id="badge-pertanyaan-nav">0</span></a>
                         </li>
                         <li  class="nav-item mb-2">
                             <a href="#" data-target="tab-lokasi" class="nav-link text-white">Kelola Lokasi</a>
@@ -485,58 +485,174 @@
 
         <!-- TAB 4: KELOLA KONTEN -->
         <section id="tab-konten" class="tab-section">
-            <h1 class="fs-4 fw-bold mb-4">Kelola Teks Halaman Utama</h1>
+            <h1 class="fs-4 fw-bold mb-4">Kelola Konten</h1>
             
             <!-- KONTEN: HERO BANNER -->
-            <div class="row g-4">
-                <div class="col-md-6">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-6">
                     <div class="card shadow-sm border-0 p-4 h-100">
                         <form id="form-konten">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Teks Sambutan (Hero Banner)</label>
-                                <textarea id="teks_hero" class="form-control" rows="3">Memuat...</textarea>
-                                <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                            <!-- BAGIAN 1: HERO BANNER -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-bullhorn me-2"></i>Hero Banner
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="input_hero_eyebrow">Teks Eyebrow (Atas Judul)</label>
+                                    <input type="text" id="input_hero_eyebrow" class="form-control" placeholder="Cita Rasa Timur Indonesia">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="teks_hero">Teks Sambutan (Judul Hero)</label>
+                                    <textarea id="teks_hero" class="form-control" rows="3">Memuat...</textarea>
+                                    <small class="text-muted">Gunakan tombol Enter untuk membuat teks turun baris.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="input_hero_sub">Sub-judul / Deskripsi Hero</label>
+                                    <textarea id="input_hero_sub" class="form-control" rows="2" placeholder="Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning."></textarea>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Deskripsi Tentang Kami</label>
-                                <textarea id="teks_about" class="form-control" rows="6">Memuat...</textarea>
+
+                            <!-- BAGIAN 2: TENTANG KAMI -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-circle-info me-2"></i>Tentang Kami
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="input_about_eyebrow">Teks Eyebrow Tentang Kami</label>
+                                    <input type="text" id="input_about_eyebrow" class="form-control" placeholder="Tentang Kami">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="input_about_title">Judul Bagian Tentang Kami</label>
+                                    <input type="text" id="input_about_title" class="form-control" placeholder="Warisan Rasa dari Timur">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="teks_about">Deskripsi Tentang Kami</label>
+                                    <textarea id="teks_about" class="form-control" rows="4">Memuat...</textarea>
+                                </div>
                             </div>
-                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan">Update</button>
+
+                            <!-- BAGIAN 3: KARTU KEUNGGULAN (FITUR) -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                    <i class="fa-solid fa-shapes me-2"></i>Kartu Keunggulan (Fitur)
+                                </h5>
+
+                                <!-- Kartu 1 -->
+                                <div class="card p-3 mb-3 bg-light border-0">
+                                    <h6 class="fw-bold text-secondary mb-2"><i class="fa-solid fa-leaf text-success me-2"></i>Kartu 1</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="input_card1_title">Judul Kartu 1</label>
+                                        <input type="text" id="input_card1_title" class="form-control form-control-sm" placeholder="Bahan Segar">
+                                    </div>
+                                    <div>
+                                        <label class="form-label small fw-semibold" for="input_card1_desc">Deskripsi Kartu 1</label>
+                                        <textarea id="input_card1_desc" class="form-control form-control-sm" rows="2" placeholder="Sagu dan hasil laut dipilih segar setiap hari."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Kartu 2 -->
+                                <div class="card p-3 mb-3 bg-light border-0">
+                                    <h6 class="fw-bold text-secondary mb-2"><i class="fa-solid fa-fire text-danger me-2"></i>Kartu 2</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="input_card2_title">Judul Kartu 2</label>
+                                        <input type="text" id="input_card2_title" class="form-control form-control-sm" placeholder="Resep Turun-temurun">
+                                    </div>
+                                    <div>
+                                        <label class="form-label small fw-semibold" for="input_card2_desc">Deskripsi Kartu 2</label>
+                                        <textarea id="input_card2_desc" class="form-control form-control-sm" rows="2" placeholder="Resep rahasia yang menjaga keaslian rasa."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Kartu 3 -->
+                                <div class="card p-3 mb-3 bg-light border-0">
+                                    <h6 class="fw-bold text-secondary mb-2"><i class="fa-solid fa-heart text-danger me-2"></i>Kartu 3</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" for="input_card3_title">Judul Kartu 3</label>
+                                        <input type="text" id="input_card3_title" class="form-control form-control-sm" placeholder="Disajikan Sepenuh Hati">
+                                    </div>
+                                    <div>
+                                        <label class="form-label small fw-semibold" for="input_card3_desc">Deskripsi Kartu 3</label>
+                                        <textarea id="input_card3_desc" class="form-control form-control-sm" rows="2" placeholder="Suasana hangat ala rumah, cocok untuk keluarga."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-simpan py-2 shadow-sm">
+                                <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan Konten
+                            </button>
                         </form>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 h-100 overflow-hidden preview-card">
-                        <div class="card-header bg-dark text-white">
-                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                            <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
                         </div>
                         
                         <div class="card-body p-0 d-flex flex-column preview-card-body">
                             
-                            <div class="hero-papeda d-flex flex-column flex-lg-row justify-content-center align-items-center gap-2 py-4 px-3">
-                                
-                                <div class="text-center text-lg-start preview-hero-info">
-                                    <p class="hero-sub preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
-                                    <h1 id="preview-hero">Memuat...</h1>
-                                </div>
-
-                                <div class="papeda-area position-relative">
-                                    <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
-                                    <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
-                                    <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
-                                    <span class="food-icon fish-2 position-absolute"><i class="fa-solid fa-fish"></i></span>
-                                    <span class="food-icon star star-1 position-absolute"><i class="fa-solid fa-star"></i></span>
-                                    <span class="food-icon star star-2 position-absolute"><i class="fa-solid fa-star"></i></span>
-                                    
-                                    <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
-                                    <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                            <!-- Hero Section Preview — compact split layout -->
+                            <div class="hero-papeda position-relative overflow-hidden preview-hero-wrap">
+                                <!-- Text column + image side by side (scaled for preview) -->
+                                <div class="preview-hero-inner">
+                                    <div class="preview-hero-text">
+                                        <p class="hero-eyebrow" id="preview-hero-eyebrow">Cita Rasa Timur Indonesia</p>
+                                        <h2 id="preview-hero" class="preview-hero-title">Memuat...</h2>
+                                        <p class="preview-hero-sub" id="preview-hero-sub">Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.</p>
+                                        <div class="d-flex gap-2 flex-wrap preview-hero-btn-wrap">
+                                            <span class="hero-btn">Lihat Menu</span>
+                                            <span class="hero-btn-outline">Reservasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="preview-hero-img-col">
+                                        <div class="papeda-area position-relative">
+                                            <span class="food-icon chili position-absolute"><i class="fa-solid fa-pepper-hot"></i></span>
+                                            <span class="food-icon lime position-absolute"><i class="fa-solid fa-lemon"></i></span>
+                                            <span class="food-icon fish-1 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                            <span class="food-icon fish-2 position-absolute"><i class="fa-solid fa-fish"></i></span>
+                                            <span class="food-icon star star-1 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                            <span class="food-icon star star-2 position-absolute"><i class="fa-solid fa-star"></i></span>
+                                            <img src="../img/papeda-icon.png" alt="Papeda" class="papeda-img">
+                                            <img src="../img/asap.png" alt="Asap" class="smoke-img position-absolute">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="content-container text-content p-4">
-                                <h2 class="preview-about-title">Tentang Kami</h2>
-                                <p id="preview-about">Memuat...</p>
+                            <!-- Tentang Kami Section Preview -->
+                            <div class="preview-about-section px-3 py-3">
+                                <div class="text-center mb-2">
+                                    <p class="hero-eyebrow mb-1" id="preview-about-eyebrow">Tentang Kami</p>
+                                    <h3 class="preview-section-title mb-2" id="preview-about-title">Warisan Rasa dari Timur</h3>
+                                    <p id="preview-about" class="preview-about-desc mb-3">Memuat...</p>
+                                </div>
+
+                                <!-- Feature cards: always 3 columns using flexbox, not Bootstrap grid -->
+                                <div class="preview-cards-row">
+                                    <div class="preview-feature-card text-center">
+                                        <div class="preview-feature-icon"><i class="fa-solid fa-leaf"></i></div>
+                                        <p class="preview-feature-title" id="preview-card1-title">Bahan Segar</p>
+                                        <p class="preview-feature-desc" id="preview-card1-desc">Sagu dan hasil laut dipilih segar setiap hari.</p>
+                                    </div>
+                                    <div class="preview-feature-card text-center">
+                                        <div class="preview-feature-icon"><i class="fa-solid fa-fire"></i></div>
+                                        <p class="preview-feature-title" id="preview-card2-title">Resep Turun-temurun</p>
+                                        <p class="preview-feature-desc" id="preview-card2-desc">Resep rahasia yang menjaga keaslian rasa.</p>
+                                    </div>
+                                    <div class="preview-feature-card text-center">
+                                        <div class="preview-feature-icon"><i class="fa-solid fa-heart"></i></div>
+                                        <p class="preview-feature-title" id="preview-card3-title">Disajikan Sepenuh Hati</p>
+                                        <p class="preview-feature-desc" id="preview-card3-desc">Suasana hangat ala rumah, cocok untuk keluarga.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -544,8 +660,8 @@
             </div>
 
             <!-- KONTEN: FOOTER -->
-            <div class="row g-4 mt-4">
-                <div class="col-md-6">
+            <div class="row g-4 mt-4 align-items-start">
+                <div class="col-lg-6">
                     <div class="card shadow-sm border-0 p-4 h-100">
                         <form id="form-footer">
                             
@@ -607,19 +723,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0 overflow-hidden preview-card">
-                        <div class="card-header bg-dark text-white">
-                            <i class="fa-solid fa-eye me-2"></i> Live Preview (Tampilan User)
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 overflow-hidden preview-card sticky-preview-card">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-eye me-2"></i> Preview Tampilan User</span>
+                            <span class="badge bg-success small"><i class="fa-solid fa-circle-dot me-1"></i>Real-time</span>
                         </div>
                         
-                        <div class="card-body p-0 preview-card-body" style="background-color: #4a2c17;">
-                            <div class="py-5 w-100 text-white">
-                                <div class="container pt-4">
+                        <div class="card-body p-0 preview-card-body">
+                            <footer class="custom-footer preview-footer py-4 text-white">
+                                <div class="container">
                                     <div class="text-center mb-4">
-                                        <h6 id="preview_footer_title" class="fw-bold mb-4 text-warning" style="letter-spacing: 1px;">Ikuti Kami</h6>
+                                        <h6 id="preview_footer_title" class="fw-bold mb-4 mt-2 text-warning preview-footer-title">Ikuti Kami</h6>
                                         
-                                        <div class="d-flex justify-content-center gap-3 mt-4">
+                                        <div class="d-flex justify-content-center gap-3">
                                             <span class="custom-social-btn"><i class="fa-brands fa-instagram"></i></span>
                                             <span class="custom-social-btn"><i class="fa-brands fa-tiktok"></i></span>
                                             <span class="custom-social-btn"><i class="fa-brands fa-whatsapp"></i></span>
@@ -635,8 +752,7 @@
                                         &copy; 2026 Papeda Restaurant. All Rights Reserved.
                                     </div>
                                 </div>
-                            </div>
-
+                            </footer>
                         </div>
                     </div>
                 </div>
@@ -653,14 +769,14 @@
                         <p class="kpi-value" id="faq-total">0</p>
                     </div>
                 </div>
-                <div class="card lok-stat" style="--d:.08s">
+                <div class="card lok-stat">
                     <div class="kpi-icon"><i class="fa-solid fa-envelope"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Belum Dibaca</p>
                         <p class="kpi-value" id="faq-belum-dibaca">0</p>
                     </div>
                 </div>
-                <div class="card lok-stat lok-stat-wide" style="--d:.16s">
+                <div class="card lok-stat lok-stat-wide">
                     <div class="kpi-icon"><i class="fa-solid fa-inbox"></i></div>
                     <div class="lok-stat-body">
                         <p class="kpi-label">Total Pertanyaan Masuk</p>
@@ -735,7 +851,7 @@
             <div class="card shadow-sm border-0 p-4 mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="fs-5 fw-bold m-0">Daftar FAQ</h2>
-                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan..." style="max-width: 250px;">
+                    <input type="text" id="search-faq" class="form-control" placeholder="Cari pertanyaan...">
                 </div>
 
                 <div class="table-responsive">

@@ -5,7 +5,7 @@ const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { stat } = require('fs');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -348,18 +348,96 @@ app.post('/api/pengunjung', async (req, res) => {
 });
 
 /* KONTEN WEBSITE */
+const KONTEN_EXTRA_PATH = path.join(__dirname, 'konten_extra.json');
+const defaultKontenExtra = {
+    hero_eyebrow: "Cita Rasa Timur Indonesia",
+    hero_sub: "Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.",
+    about_eyebrow: "Tentang Kami",
+    about_title: "Warisan Rasa dari Timur",
+    card1_title: "Bahan Segar",
+    card1_desc: "Sagu dan hasil laut dipilih segar setiap hari.",
+    card2_title: "Resep Turun-temurun",
+    card2_desc: "Resep rahasia yang menjaga keaslian rasa.",
+    card3_title: "Disajikan Sepenuh Hati",
+    card3_desc: "Suasana hangat ala rumah, cocok untuk keluarga."
+};
+
+function getKontenExtra() {
+    try {
+        if (fs.existsSync(KONTEN_EXTRA_PATH)) {
+            const raw = fs.readFileSync(KONTEN_EXTRA_PATH, 'utf-8');
+            return { ...defaultKontenExtra, ...JSON.parse(raw) };
+        }
+    } catch (e) {
+        console.error('Error reading konten_extra.json:', e);
+    }
+    return { ...defaultKontenExtra };
+}
+
+function saveKontenExtra(extra) {
+    try {
+        const current = getKontenExtra();
+        const merged = { ...current, ...extra };
+        fs.writeFileSync(KONTEN_EXTRA_PATH, JSON.stringify(merged, null, 2), 'utf-8');
+    } catch (e) {
+        console.error('Error writing konten_extra.json:', e);
+    }
+}
+
 /* Get */
 app.get('/api/konten', async (req, res) => {
-    const { data, error } = await supabase.from('konten_web').select('*').eq('id', 1).single();
-    if (error) return res.status(500).json({ error: error.message });
-    res.json(data);
+    let baseData = { teks_hero: 'Welcome to Our Papeda Restaurant', teks_about: 'Selamat datang di Papeda Restaurant...' };
+    try {
+        const { data, error } = await supabase.from('konten_web').select('*').eq('id', 1).single();
+        if (!error && data) baseData = data;
+    } catch (err) {
+        console.error('Supabase konten_web error:', err);
+    }
+    const extra = getKontenExtra();
+    res.json({ ...extra, ...baseData });
 });
 
 /* Update */
 app.put('/api/konten', async (req, res) => {
-    const { teks_hero, teks_about } = req.body;
-    const { error } = await supabase.from('konten_web').update({ teks_hero, teks_about }).eq('id', 1);
-    if (error) return res.status(500).json({ error: error.message });
+    const {
+        teks_hero,
+        teks_about,
+        hero_eyebrow,
+        hero_sub,
+        about_eyebrow,
+        about_title,
+        card1_title,
+        card1_desc,
+        card2_title,
+        card2_desc,
+        card3_title,
+        card3_desc
+    } = req.body;
+
+    try {
+        if (teks_hero !== undefined || teks_about !== undefined) {
+            const updatePayload = {};
+            if (teks_hero !== undefined) updatePayload.teks_hero = teks_hero;
+            if (teks_about !== undefined) updatePayload.teks_about = teks_about;
+            await supabase.from('konten_web').update(updatePayload).eq('id', 1);
+        }
+    } catch (err) {
+        console.error('Supabase update konten_web error:', err);
+    }
+
+    saveKontenExtra({
+        hero_eyebrow,
+        hero_sub,
+        about_eyebrow,
+        about_title,
+        card1_title,
+        card1_desc,
+        card2_title,
+        card2_desc,
+        card3_title,
+        card3_desc
+    });
+
     res.json({ pesan: 'Konten web berhasil diperbarui!' });
 });
 

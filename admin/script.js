@@ -99,7 +99,20 @@ function esc(str) {
 }
 
 $(document).ready(function() {
-    let dataKontenAsli = { hero: '', about: '' };
+    let dataKontenAsli = {
+        hero: '',
+        about: '',
+        hero_eyebrow: '',
+        hero_sub: '',
+        about_eyebrow: '',
+        about_title: '',
+        card1_title: '',
+        card1_desc: '',
+        card2_title: '',
+        card2_desc: '',
+        card3_title: '',
+        card3_desc: ''
+    };
     let dataFooterAsli = {
         judul: '',
         copyright: '',
@@ -139,8 +152,18 @@ $(document).ready(function() {
         e.preventDefault();
          
         if (typeof dataKontenAsli !== 'undefined') {
-            $('#teks_hero').val(esc(dataKontenAsli.hero));
-            $('#teks_about').val(esc(dataKontenAsli.about));
+            $('#input_hero_eyebrow').val(esc(dataKontenAsli.hero_eyebrow || ''));
+            $('#teks_hero').val(esc(dataKontenAsli.hero || ''));
+            $('#input_hero_sub').val(esc(dataKontenAsli.hero_sub || ''));
+            $('#input_about_eyebrow').val(esc(dataKontenAsli.about_eyebrow || ''));
+            $('#input_about_title').val(esc(dataKontenAsli.about_title || ''));
+            $('#teks_about').val(esc(dataKontenAsli.about || ''));
+            $('#input_card1_title').val(esc(dataKontenAsli.card1_title || ''));
+            $('#input_card1_desc').val(esc(dataKontenAsli.card1_desc || ''));
+            $('#input_card2_title').val(esc(dataKontenAsli.card2_title || ''));
+            $('#input_card2_desc').val(esc(dataKontenAsli.card2_desc || ''));
+            $('#input_card3_title').val(esc(dataKontenAsli.card3_title || ''));
+            $('#input_card3_desc').val(esc(dataKontenAsli.card3_desc || ''));
             updateLivePreviewKonten(); 
         }
 
@@ -176,21 +199,69 @@ $(document).ready(function() {
     }
 
     function updateLivePreviewKonten() {
+        let heroEyebrow = $('#input_hero_eyebrow').val() || 'Cita Rasa Timur Indonesia';
         let heroText = $('#teks_hero').val() || '';
+        let heroSub = $('#input_hero_sub').val() || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.';
+
+        let aboutEyebrow = $('#input_about_eyebrow').val() || 'Tentang Kami';
+        let aboutTitle = $('#input_about_title').val() || 'Warisan Rasa dari Timur';
         let aboutText = $('#teks_about').val() || '';
 
+        let card1Title = $('#input_card1_title').val() || 'Bahan Segar';
+        let card1Desc = $('#input_card1_desc').val() || 'Sagu dan hasil laut dipilih segar setiap hari.';
+        let card2Title = $('#input_card2_title').val() || 'Resep Turun-temurun';
+        let card2Desc = $('#input_card2_desc').val() || 'Resep rahasia yang menjaga keaslian rasa.';
+        let card3Title = $('#input_card3_title').val() || 'Disajikan Sepenuh Hati';
+        let card3Desc = $('#input_card3_desc').val() || 'Suasana hangat ala rumah, cocok untuk keluarga.';
+
+        $('#preview-hero-eyebrow').text(heroEyebrow);
         $('#preview-hero').html(esc(heroText).replace(/\n/g, '<br>'));
+        $('#preview-hero-sub').text(heroSub);
+
+        $('#preview-about-eyebrow').text(aboutEyebrow);
+        $('#preview-about-title').text(aboutTitle);
         $('#preview-about').text(esc(aboutText));
+
+        $('#preview-card1-title').text(card1Title);
+        $('#preview-card1-desc').text(card1Desc);
+        $('#preview-card2-title').text(card2Title);
+        $('#preview-card2-desc').text(card2Desc);
+        $('#preview-card3-title').text(card3Title);
+        $('#preview-card3-desc').text(card3Desc);
     }
 
     function muatDataKonten() {
         $.get('/api/konten', function(data) {
-            $('#teks_hero').val(data.teks_hero);
-            $('#teks_about').val(data.teks_about);
-            
-            dataKontenAsli.hero = data.teks_hero;
-            dataKontenAsli.about = data.teks_about;
-            
+            $('#input_hero_eyebrow').val(data.hero_eyebrow || 'Cita Rasa Timur Indonesia');
+            $('#teks_hero').val(data.teks_hero || '');
+            $('#input_hero_sub').val(data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.');
+
+            $('#input_about_eyebrow').val(data.about_eyebrow || 'Tentang Kami');
+            $('#input_about_title').val(data.about_title || 'Warisan Rasa dari Timur');
+            $('#teks_about').val(data.teks_about || '');
+
+            $('#input_card1_title').val(data.card1_title || 'Bahan Segar');
+            $('#input_card1_desc').val(data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.');
+            $('#input_card2_title').val(data.card2_title || 'Resep Turun-temurun');
+            $('#input_card2_desc').val(data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.');
+            $('#input_card3_title').val(data.card3_title || 'Disajikan Sepenuh Hati');
+            $('#input_card3_desc').val(data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.');
+
+            dataKontenAsli = {
+                hero: data.teks_hero || '',
+                about: data.teks_about || '',
+                hero_eyebrow: data.hero_eyebrow || 'Cita Rasa Timur Indonesia',
+                hero_sub: data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.',
+                about_eyebrow: data.about_eyebrow || 'Tentang Kami',
+                about_title: data.about_title || 'Warisan Rasa dari Timur',
+                card1_title: data.card1_title || 'Bahan Segar',
+                card1_desc: data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.',
+                card2_title: data.card2_title || 'Resep Turun-temurun',
+                card2_desc: data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.',
+                card3_title: data.card3_title || 'Disajikan Sepenuh Hati',
+                card3_desc: data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.'
+            };
+
             updateLivePreviewKonten();
         });
     }
@@ -218,18 +289,29 @@ $(document).ready(function() {
         });
     }
 
-    $('#teks_hero, #teks_about').on('input', updateLivePreviewKonten);
+    $('#form-konten').on('input', 'input, textarea', updateLivePreviewKonten);
     $('#footer_title, #footer_copyright, #input_link_ig, #input_link_tiktok, #input_link_wa, #input_email, #input_link_linkedin').on('input', updateLivePreviewFooter);
 
     /* Update Content */
     $('#form-konten .btn-simpan').on('click', function(e) {
         e.preventDefault();
-        let $btn =$(this);
-        let originalText = $btn.text();$btn.prop('disabled', true).text('Memperbarui...'); 
+        let $btn = $(this);
+        let originalText = $btn.text();
+        $btn.prop('disabled', true).text('Memperbarui...'); 
 
         let dataKonten = {
             teks_hero: $('#teks_hero').val(),
-            teks_about: $('#teks_about').val()
+            teks_about: $('#teks_about').val(),
+            hero_eyebrow: $('#input_hero_eyebrow').val(),
+            hero_sub: $('#input_hero_sub').val(),
+            about_eyebrow: $('#input_about_eyebrow').val(),
+            about_title: $('#input_about_title').val(),
+            card1_title: $('#input_card1_title').val(),
+            card1_desc: $('#input_card1_desc').val(),
+            card2_title: $('#input_card2_title').val(),
+            card2_desc: $('#input_card2_desc').val(),
+            card3_title: $('#input_card3_title').val(),
+            card3_desc: $('#input_card3_desc').val()
         };
 
         $.ajax({
@@ -239,8 +321,11 @@ $(document).ready(function() {
             success: function(response) {
                 tampilkanNotif(response.pesan);
 
-                dataKontenAsli.hero = dataKonten.teks_hero;
-                dataKontenAsli.about = dataKonten.teks_about;
+                dataKontenAsli = {
+                    hero: dataKonten.teks_hero,
+                    about: dataKonten.teks_about,
+                    ...dataKonten
+                };
             }
         }).always(function() {
             $btn.prop('disabled', false).text(originalText);

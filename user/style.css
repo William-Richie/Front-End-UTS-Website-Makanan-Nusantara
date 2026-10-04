@@ -1980,6 +1980,10 @@ h6.fw-bold {
     background-color: #5b3e31;
 }
 
+.user-toast-container {
+    z-index: 9999;
+}
+
 /* HERO PAPEDA */
 .hero-papeda {
     background:
