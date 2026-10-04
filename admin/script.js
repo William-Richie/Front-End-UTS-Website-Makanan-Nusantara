@@ -198,73 +198,120 @@ $(document).ready(function() {
         });
     }
 
-    function updateLivePreviewKonten() {
-        let heroEyebrow = $('#input_hero_eyebrow').val() || 'Cita Rasa Timur Indonesia';
-        let heroText = $('#teks_hero').val() || '';
-        let heroSub = $('#input_hero_sub').val() || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.';
+    /* Kelola Konten: Home, FAQ, Lokasi */
+    const PREVIEW_KONTEN = {
+        teks_hero: '#preview-hero',
+        teks_about: '#preview-about',
+        hero_eyebrow: '#preview-hero-eyebrow',
+        hero_sub: '#preview-hero-sub',
+        about_eyebrow: '#preview-about-eyebrow',
+        about_title: '#preview-about-title',
+        card1_title: '#preview-card1-title',
+        card1_desc: '#preview-card1-desc',
+        card2_title: '#preview-card2-title',
+        card2_desc: '#preview-card2-desc',
+        card3_title: '#preview-card3-title',
+        card3_desc: '#preview-card3-desc',
 
-        let aboutEyebrow = $('#input_about_eyebrow').val() || 'Tentang Kami';
-        let aboutTitle = $('#input_about_title').val() || 'Warisan Rasa dari Timur';
-        let aboutText = $('#teks_about').val() || '';
+        faq_eyebrow: '#pv-faq-eyebrow',
+        faq_title: '#pv-faq-title',
+        faq_chip1: '#pv-faq-chip1',
+        faq_chip2: '#pv-faq-chip2',
+        faq_aside_kicker: '#pv-faq-aside-kicker',
+        faq_aside_title: '#pv-faq-aside-title',
+        faq_aside_desc: '#pv-faq-aside-desc',
+        faq_aside_btn: '#pv-faq-aside-btn',
 
-        let card1Title = $('#input_card1_title').val() || 'Bahan Segar';
-        let card1Desc = $('#input_card1_desc').val() || 'Sagu dan hasil laut dipilih segar setiap hari.';
-        let card2Title = $('#input_card2_title').val() || 'Resep Turun-temurun';
-        let card2Desc = $('#input_card2_desc').val() || 'Resep rahasia yang menjaga keaslian rasa.';
-        let card3Title = $('#input_card3_title').val() || 'Disajikan Sepenuh Hati';
-        let card3Desc = $('#input_card3_desc').val() || 'Suasana hangat ala rumah, cocok untuk keluarga.';
+        loc_eyebrow: '#pv-loc-eyebrow',
+        loc_title: '#pv-loc-title',
+        loc_chip2: '#pv-loc-chip2',
+        loc_kicker: '#pv-loc-kicker',
+        loc_heading: '#pv-loc-heading',
+        loc_desc: '#pv-loc-desc',
+        loc_btn_buka: '#pv-loc-btn',
+        loc_utama_title: '#pv-loc-utama-title',
+        loc_utama_text: '#pv-loc-utama-text',
+        loc_telp_title: '#pv-loc-telp-title',
+        loc_telp_text: '#pv-loc-telp-text',
+        loc_email_title: '#pv-loc-email-title',
+        loc_email_text: '#pv-loc-email-text',
+        loc_parkir_title: '#pv-loc-parkir-title',
+        loc_parkir_text: '#pv-loc-parkir-text'
+    };
+    const KONTEN_BARIS_BARU = ['teks_hero', 'faq_title', 'loc_title'];
 
-        $('#preview-hero-eyebrow').text(heroEyebrow);
-        $('#preview-hero').html(esc(heroText).replace(/\n/g, '<br>'));
-        $('#preview-hero-sub').text(heroSub);
-
-        $('#preview-about-eyebrow').text(aboutEyebrow);
-        $('#preview-about-title').text(aboutTitle);
-        $('#preview-about').text(esc(aboutText));
-
-        $('#preview-card1-title').text(card1Title);
-        $('#preview-card1-desc').text(card1Desc);
-        $('#preview-card2-title').text(card2Title);
-        $('#preview-card2-desc').text(card2Desc);
-        $('#preview-card3-title').text(card3Title);
-        $('#preview-card3-desc').text(card3Desc);
+    function isiFormKonten(data) {
+        $('[data-konten]').each(function() {
+            const nilai = data[$(this).attr('data-konten')];
+            $(this).val(nilai === undefined || nilai === null ? '' : nilai);
+        });
     }
+
+    function nilaiKonten(kunci) {
+        return $(`[data-konten="${kunci}"]`).val() || DEFAULT_KONTEN[kunci];
+    }
+
+    function updateLivePreviewKonten() {
+        $.each(PREVIEW_KONTEN, function(kunci, selektor) {
+            const teks = nilaiKonten(kunci);
+            if (KONTEN_BARIS_BARU.includes(kunci)) $(selektor).html(esc(teks).replace(/\n/g, '<br>'));
+            else $(selektor).text(teks);
+        });
+    }
+
+    function muatSampelFaqPreview() {
+        $.get('/api/faq', function(response) {
+            const daftar = (Array.isArray(response) ? response : (response.data || [])).slice(0, 3);
+
+            if (daftar.length === 0) {
+                $('#pv-faq-list').html('<p class="pv-faq-empty"><i class="fa-regular fa-circle-question me-2"></i>Belum ada FAQ yang tersedia.</p>');
+                return;
+            }
+
+            $('#pv-faq-list').html(daftar.map((item, i) => `
+                <div class="pv-faq-item${i === 0 ? ' open' : ''}">
+                    <div class="pv-faq-question">
+                        <span class="pv-faq-num">${String(i + 1).padStart(2, '0')}</span>
+                        <span class="pv-faq-q-text">${esc(item.pertanyaan)}</span>
+                        <span class="pv-faq-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+                    <div class="pv-faq-answer">${esc(item.jawaban)}</div>
+                </div>`).join(''));
+        });
+    }
+
+    $('#pv-faq-list').on('click', '.pv-faq-question', function() {
+        const $item = $(this).parent('.pv-faq-item');
+        $('#pv-faq-list .pv-faq-item').not($item).removeClass('open');
+        $item.toggleClass('open');
+    });
 
     function muatDataKonten() {
         $.get('/api/konten', function(data) {
-            $('#input_hero_eyebrow').val(data.hero_eyebrow || 'Cita Rasa Timur Indonesia');
-            $('#teks_hero').val(data.teks_hero || '');
-            $('#input_hero_sub').val(data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.');
+            const isi = {};
+            Object.keys(DEFAULT_KONTEN).forEach(function(kunci) {
+                isi[kunci] = data[kunci] || DEFAULT_KONTEN[kunci];
+            });
 
-            $('#input_about_eyebrow').val(data.about_eyebrow || 'Tentang Kami');
-            $('#input_about_title').val(data.about_title || 'Warisan Rasa dari Timur');
-            $('#teks_about').val(data.teks_about || '');
-
-            $('#input_card1_title').val(data.card1_title || 'Bahan Segar');
-            $('#input_card1_desc').val(data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.');
-            $('#input_card2_title').val(data.card2_title || 'Resep Turun-temurun');
-            $('#input_card2_desc').val(data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.');
-            $('#input_card3_title').val(data.card3_title || 'Disajikan Sepenuh Hati');
-            $('#input_card3_desc').val(data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.');
-
-            dataKontenAsli = {
-                hero: data.teks_hero || '',
-                about: data.teks_about || '',
-                hero_eyebrow: data.hero_eyebrow || 'Cita Rasa Timur Indonesia',
-                hero_sub: data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.',
-                about_eyebrow: data.about_eyebrow || 'Tentang Kami',
-                about_title: data.about_title || 'Warisan Rasa dari Timur',
-                card1_title: data.card1_title || 'Bahan Segar',
-                card1_desc: data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.',
-                card2_title: data.card2_title || 'Resep Turun-temurun',
-                card2_desc: data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.',
-                card3_title: data.card3_title || 'Disajikan Sepenuh Hati',
-                card3_desc: data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.'
-            };
-
+            dataKontenAsli = isi;
+            isiFormKonten(isi);
             updateLivePreviewKonten();
         });
     }
+
+    /* Sub-tab Kelola Konten */
+    $('#konten-tabs').on('click', '.konten-tab', function() {
+        const target = $(this).attr('data-konten-tab');
+
+        $('#konten-tabs .konten-tab').removeClass('active').attr('aria-selected', 'false');
+        $(this).addClass('active').attr('aria-selected', 'true');
+
+        $('#tab-konten .konten-panel').removeClass('active');
+        $('#' + target).addClass('active');
+
+        if (target === 'konten-faq') muatSampelFaqPreview();
+        this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
 
     function updateLivePreviewFooter() {
         let titleVal = $('#footer_title').val();
@@ -289,30 +336,19 @@ $(document).ready(function() {
         });
     }
 
-    $('#form-konten').on('input', 'input, textarea', updateLivePreviewKonten);
+    $('.form-konten').on('input', 'input, textarea', updateLivePreviewKonten);
     $('#footer_title, #footer_copyright, #input_link_ig, #input_link_tiktok, #input_link_wa, #input_email, #input_link_linkedin').on('input', updateLivePreviewFooter);
 
-    /* Update Content */
-    $('#form-konten .btn-simpan').on('click', function(e) {
+    $('.form-konten .btn-simpan').on('click', function(e) {
         e.preventDefault();
         let $btn = $(this);
-        let originalText = $btn.text();
-        $btn.prop('disabled', true).text('Memperbarui...'); 
+        let originalHtml = $btn.html();
+        $btn.prop('disabled', true).text('Memperbarui...');
 
-        let dataKonten = {
-            teks_hero: $('#teks_hero').val(),
-            teks_about: $('#teks_about').val(),
-            hero_eyebrow: $('#input_hero_eyebrow').val(),
-            hero_sub: $('#input_hero_sub').val(),
-            about_eyebrow: $('#input_about_eyebrow').val(),
-            about_title: $('#input_about_title').val(),
-            card1_title: $('#input_card1_title').val(),
-            card1_desc: $('#input_card1_desc').val(),
-            card2_title: $('#input_card2_title').val(),
-            card2_desc: $('#input_card2_desc').val(),
-            card3_title: $('#input_card3_title').val(),
-            card3_desc: $('#input_card3_desc').val()
-        };
+        let dataKonten = {};
+        $btn.closest('form').find('[data-konten]').each(function() {
+            dataKonten[$(this).attr('data-konten')] = $(this).val();
+        });
 
         $.ajax({
             url: '/api/konten',
@@ -320,15 +356,13 @@ $(document).ready(function() {
             data: dataKonten,
             success: function(response) {
                 tampilkanNotif(response.pesan);
-
-                dataKontenAsli = {
-                    hero: dataKonten.teks_hero,
-                    about: dataKonten.teks_about,
-                    ...dataKonten
-                };
+                dataKontenAsli = { ...dataKontenAsli, ...dataKonten };
+            },
+            error: function() {
+                tampilkanNotif('Gagal menyimpan konten.', 'danger');
             }
         }).always(function() {
-            $btn.prop('disabled', false).text(originalText);
+            $btn.prop('disabled', false).html(originalHtml);
         });
     });
 

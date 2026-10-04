@@ -560,6 +560,23 @@ $(document).ready(function() {
         });
     });
 
+    let labelPetaBuka = 'Lihat Peta Cabang';
+    let labelPetaTutup = 'Tutup Peta';
+
+    function setTeks(selektor, nilai) {
+        if (nilai) $(selektor).text(nilai);
+    }
+
+    function setBaris(selektor, nilai) {
+        if (nilai) $(selektor).html(esc(nilai).replace(/\n/g, '<br>'));
+    }
+
+    function nomorTelepon(teks) {
+        let nomor = String(teks).replace(/[^\d+]/g, '');
+        if (nomor.charAt(0) === '0') nomor = '+62' + nomor.slice(1);
+        return nomor;
+    }
+
     /* Banner hero */
     $.post('/api/pengunjung');
 
@@ -579,6 +596,39 @@ $(document).ready(function() {
         if (data.card2_desc) $('#card2-desc').text(data.card2_desc);
         if (data.card3_title) $('#card3-title').text(data.card3_title);
         if (data.card3_desc) $('#card3-desc').text(data.card3_desc);
+
+        /* FAQ */
+        setTeks('#faq-eyebrow', data.faq_eyebrow);
+        setBaris('#faq-title', data.faq_title);
+        setTeks('#faq-total', data.faq_chip1);
+        setTeks('#faq-chip2', data.faq_chip2);
+        setTeks('#faq-aside-kicker', data.faq_aside_kicker);
+        setTeks('#faq-aside-title', data.faq_aside_title);
+        setTeks('#faq-aside-desc', data.faq_aside_desc);
+        setTeks('#faq-aside-btn', data.faq_aside_btn);
+
+        /* Lokasi */
+        setTeks('#loc-eyebrow', data.loc_eyebrow);
+        setBaris('#loc-title', data.loc_title);
+        setTeks('#loc-chip2', data.loc_chip2);
+        setTeks('#loc-kicker', data.loc_kicker);
+        setTeks('#loc-heading', data.loc_heading);
+        setTeks('#loc-desc', data.loc_desc);
+        setTeks('#loc-utama-title', data.loc_utama_title);
+        setTeks('#loc-utama-text', data.loc_utama_text);
+        setTeks('#loc-telp-title', data.loc_telp_title);
+        setTeks('#loc-telp-text', data.loc_telp_text);
+        setTeks('#loc-email-title', data.loc_email_title);
+        setTeks('#loc-email-text', data.loc_email_text);
+        setTeks('#loc-parkir-title', data.loc_parkir_title);
+        setTeks('#loc-parkir-text', data.loc_parkir_text);
+
+        if (data.loc_telp_text) $('#loc-telp-link').attr('href', 'tel:' + nomorTelepon(data.loc_telp_text));
+        if (data.loc_email_text) $('#loc-email-link').attr('href', 'mailto:' + $.trim(data.loc_email_text));
+
+        if (data.loc_btn_buka) labelPetaBuka = data.loc_btn_buka;
+        if (data.loc_btn_tutup) labelPetaTutup = data.loc_btn_tutup;
+        if (!$('#map-reveal').hasClass('open')) $('#loc-btn').text(labelPetaBuka);
     });
 
     /* Maps */
@@ -717,7 +767,7 @@ $(document).ready(function() {
         const opening = !$('#map-reveal').hasClass('open');
 
         $('#map-reveal').toggleClass('open', opening).attr('aria-hidden', !opening);
-        $(this).attr('aria-expanded', opening).find('span').text(opening ? 'Tutup Peta' : 'Lihat Peta Cabang');
+        $(this).attr('aria-expanded', opening).find('span').text(opening ? labelPetaTutup : labelPetaBuka);
 
         if (!opening) {
             stopHop();
