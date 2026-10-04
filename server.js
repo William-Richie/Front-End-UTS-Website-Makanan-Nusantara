@@ -928,7 +928,14 @@ app.get('/api/pendapatan', async (req, res) => {
             if (!perHari[t]) return;
 
             const nilai = Number(r.total) || 0;
-            const daftar = String(r.item || '').replace(/^\[[^\]]*\]\s*/, '').split(',').map(s => s.trim()).filter(Boolean);
+            const itemText = String(r.item || '')
+                .replace(/\[[^\]]*\]\s*/g, '')
+                .trim();
+
+            const daftar = itemText
+                .split(/,(?![^(]*\))/)
+                .map(s => s.trim())
+                .filter(Boolean);
 
             let itemsCountInOrder = 0;
             daftar.forEach(namaRaw => {
