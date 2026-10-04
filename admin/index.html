@@ -1224,43 +1224,39 @@
             <div class="card shadow-sm border-0 p-4 mb-4">
                 <h1 class="fs-4 fw-bold mb-4">Kelola User & Reservasi</h1>
                 <div class="reservation-toolbar">
-                    <div class="reservation-tabs"> 
-                        <button class="tab-btn active" data-tab="tab-user">
-                            Users
+                    <div class="reservation-tabs">
+
+                        <button class="tab-btn active" data-tab="tab-user">Users
                             <span class="badge" id="count-user">0</span>
                         </button>
-                        <button class="tab-btn" data-tab="tab-reservasi" data-status="pending">
-                            Pending
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi"data-status="pending">Pending
                             <span class="badge" id="count-pending">0</span>
                         </button>
-                        <button class="tab-btn" data-tab="tab-reservasi" data-status="approved">
-                            Approved
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="approved">Approved
                             <span class="badge" id="count-approved">0</span>
                         </button>
-                        <button class="tab-btn" data-tab="tab-reservasi" data-status="complete">
-                            Complete
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="complete">Complete
                             <span class="badge" id="count-complete">0</span>
                         </button>
-                        <button class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">
-                            Dibatalkan
+
+                        <button
+                            class="tab-btn" data-tab="tab-reservasi" data-status="dibatalkan">Dibatalkan
                             <span class="badge" id="count-dibatalkan">0</span>
                         </button>
                     </div>
+
                     <div class="reservation-tools">
-                        <button
-                            type="button"
-                            id="global-filter-btn"
-                            class="btn btn-sm filter-button"
-                            title="Filter"
-                            aria-label="Filter data">
+                        <button type="button" id="global-filter-btn" class="filter-button" title="Filter"> 
                             <i class="fa-solid fa-filter"></i>
                         </button>
-                        <input
-                            type="text"
-                            id="global-search"
-                            class="form-control"
-                            placeholder="Cari data..."
-                            autocomplete="off">
+
+                        <input type="text" id="global-search" class="form-control" placeholder="Cari data...">
                     </div>
                 </div>
 
@@ -1510,7 +1506,7 @@
         </div>
     </div>
 </div>
-<!-- POP UP ALERT RESERVASI ADMIN -->
+<!-- POP UP ALERT TOLAK RESERVASI ADMIN -->
 <div class="modal fade" id="cancelReservationModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content custom-confirm-modal">
@@ -1519,11 +1515,7 @@
                 <div class="modal-warning-icon">
                     !
                 </div>
-                <button 
-                    type="button" 
-                    class="btn-close" 
-                    data-bs-dismiss="modal"
-                    aria-label="Close">
+                <button  type="button"  class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body text-center pt-0">
@@ -1535,17 +1527,41 @@
                 </p>
             </div>
             <div class="modal-footer border-0 justify-content-center gap-2">
-                <button 
-                    type="button"
-                    class="btn-confirm-back"
-                    data-bs-dismiss="modal">
+                <button type="button" class="btn-confirm-back" data-bs-dismiss="modal">
                     Kembali
-            </button>
-                <button 
-                    type="button"
-                    id="btn-confirm-cancel-reservation"
-                    class="btn-confirm-danger">
+                </button>
+                <button  type="button" id="btn-confirm-cancel-reservation" class="btn-confirm-danger">
                     Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- POP UP ALERT KONFIRMASI RESERVASI ADMIN -->
+<div class="modal fade" id="confirmReservationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-confirm-modal">
+            <div class="modal-header border-0">
+                <div class="modal-warning-icon">?</div>
+                <button  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            
+            <div class="modal-body text-center pt-0">
+                <h4 class="confirm-title" id="confirmReservationTitle">
+                    Konfirmasi Reservasi?
+                </h4>
+                <p class="confirm-message" id="confirmReservationMessage">
+                    Apakah kamu yakin ingin mengonfirmasi reservasi ini?
+                </p>
+            </div>
+
+            <div class="modal-footer border-0 justify-content-center gap-2">
+                <button type="button" class="btn-confirm-back" data-bs-dismiss="modal">
+                    Kembali
+                </button>
+                <button  type="button" id="btn-confirm-reservation-action" class="btn-confirm-danger">
+                    Ya, Konfirmasi
                 </button>
             </div>
         </div>

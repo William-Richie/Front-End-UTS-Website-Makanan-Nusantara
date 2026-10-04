@@ -1370,20 +1370,16 @@ $(function () {
     let semuaReservasi = [];
     let dataUsersGlobal = [];
     let isDataLoaded = false;
-
     let globalSearch = '';
     let globalFilter = '';
 
     const esc = (str) => {
         if (!str) return '';
         return String(str).replace(/[&<>'"]/g, 
-            tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag])
+            tag => (
+                {'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}
+                [tag]
+            )
         );
     };
 
@@ -1401,9 +1397,9 @@ $(function () {
         const activeTab = $('.reservation-tabs .tab-btn.active');
 
         if (!activeTab.length) return;
-
+        
         const isUserTab = activeTab.data('tab') === 'tab-user';
-
+        
         if (isUserTab) {
             renderTableUsers();
         } else {
@@ -1426,15 +1422,12 @@ $(function () {
     }
 
     function formatTanggal(dateString) {
-
         if (!dateString) return '-';
 
         const date = new Date(dateString);
 
         return date.toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric'
+            day: 'numeric', month: 'numeric', year: 'numeric'
         });
     }
 
@@ -1445,10 +1438,7 @@ function renderTableUsers() {
     if (dataUsersGlobal.length === 0) {
         $tbody.html(`
             <tr>
-                <td colspan="7"
-                    class="text-center text-muted py-4">
-                    Belum ada user terdaftar.
-                </td>
+                <td colspan="7" class="text-center text-muted py-4"> Belum ada user terdaftar. </td>
             </tr>
         `);
         return;
@@ -1456,7 +1446,7 @@ function renderTableUsers() {
 
     const filteredUsers = dataUsersGlobal.filter(u => {
         if (globalFilter === 'active') {
-            const rawActive =
+            const rawActive = 
                 u.Is_Active !== undefined
                     ? u.Is_Active
                     : u.is_active;
@@ -1471,8 +1461,7 @@ function renderTableUsers() {
         if (globalFilter === 'blocked') {
             const rawActive =
                 u.Is_Active !== undefined
-                    ? u.Is_Active
-                    : u.is_active;
+                ? u.Is_Active : u.is_active;
             if (!(
                 rawActive === false ||
                 rawActive === 'false' ||
@@ -1481,10 +1470,7 @@ function renderTableUsers() {
                 return false;
             }
         }
-        return dataCocokSearch(
-            u,
-            globalSearch
-        );
+        return dataCocokSearch(u,globalSearch);
     });
 
     const rows = filteredUsers.map(u => {
@@ -1496,29 +1482,22 @@ function renderTableUsers() {
                 .padStart(5, '0');
 
         const tgl = u.created_at
-            ? new Date(u.created_at)
-                .toLocaleDateString('id-ID')
-            : '-';
+            ? new Date(u.created_at).toLocaleDateString('id-ID'): '-';
 
         const rawActive =
             u.Is_Active !== undefined
-                ? u.Is_Active
-                : u.is_active;
+            ? u.Is_Active : u.is_active;
 
         const isActive =
             rawActive !== false &&
             rawActive !== 'false' &&
             rawActive !== 0;
 
-        const statusText =
-            isActive
-                ? 'Active'
-                : 'Blocked';
+        const statusText = isActive
+            ? 'Active': 'Blocked';
 
-        const statusColor =
-            isActive
-                ? 'bg-success'
-                : 'bg-danger';
+        const statusColor = isActive
+            ? 'bg-success' : 'bg-danger';
         return `
             <tr>
                 <td class="text-center">
@@ -1613,17 +1592,12 @@ function renderTableUsers() {
                     <td>${esc(r.ruangan || '-')}</td>
                     <td>${esc(r.catatan || '-')}</td>
                     <td class="aksi">
-                        ${(r.status === 'complete' || r.status === 'selesai')
-                            ? `
-                                <span class="badge bg-success">Selesai</span>
-                            `
+                        ${(r.status === 'complete' || r.status === 'selesai') 
+                            ? ` <span class="badge bg-success">Selesai</span>`
                             : (r.status === 'dibatalkan' || r.status === 'cancelled')
-                            ? `
-                                <span class="badge bg-danger">Dibatalkan</span>
-                            `
+                            ? `<span class="badge bg-danger">Dibatalkan</span>`
                             : (r.status === 'approved' || r.status === 'dikonfirmasi')
-                            ? `
-                                <div class="reservation-actions">
+                            ? `<div class="reservation-actions">
                                     <button
                                         type="button"
                                         class="btn-action-confirm btn-confirm"
@@ -1639,10 +1613,8 @@ function renderTableUsers() {
                                         data-next="dibatalkan">
                                         ✕ Batalkan
                                     </button>
-                                </div>
-                            `
-                            : `
-                                <div class="reservation-actions">
+                                </div> `
+                            : `<div class="reservation-actions">
                                     <button
                                         type="button"
                                         class="btn-action-confirm btn-confirm"
@@ -1658,8 +1630,7 @@ function renderTableUsers() {
                                         data-next="dibatalkan">
                                         ✕ Batalkan
                                     </button>
-                                </div>
-                            `
+                                </div>`
                         }
                     </td>
                 </tr>
@@ -1684,25 +1655,74 @@ function renderTableUsers() {
         }
     });
 
-    $('#reservation-table-body').on('click', '.btn-confirm', async function () {
-        const id = $(this).data('id');
-        const nextStatus = $(this).data('next');
+    function showConfirmReservationModal(title,message,buttonText) {
+    return new Promise((resolve) => {
+        const modalElement =
+            document.getElementById('confirmReservationModal');
 
-        try {
-            const res = await fetch(`/api/admin/reservasi/${id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: nextStatus })
-            });
-
-            if (res.ok) {
-                const currentStatus = $('.reservation-tabs .tab-btn.active').data('status');
-                loadDataReservasi(currentStatus);
-            }
-        } catch (err) {
-            console.error('Gagal memperbarui status reservasi:', err);
+        if (!modalElement) {
+            console.error( 'confirmReservationModal tidak ditemukan' );
+            resolve(false);
+            return;
         }
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+        const titleElement =
+            document.getElementById(
+                'confirmReservationTitle'
+            );
+
+        const messageElement =
+            document.getElementById(
+                'confirmReservationMessage'
+            );
+
+        const confirmButton =
+            document.getElementById(
+                'btn-confirm-reservation-action'
+            );
+
+        titleElement.textContent = title;
+        messageElement.textContent = message;
+        confirmButton.textContent = buttonText;
+
+        let confirmed = false;
+
+        const cleanup = () => {
+
+            confirmButton.removeEventListener(
+                'click',
+                handleConfirm
+            );
+
+            modalElement.removeEventListener(
+                'hidden.bs.modal',
+                handleHidden
+            );
+        };
+
+        const handleConfirm = () => {
+            confirmed = true;
+            cleanup();
+            modal.hide();
+            resolve(true);
+        };
+
+        const handleHidden = () => {
+            cleanup();
+            if (!confirmed) { resolve(false); }
+        };
+
+        confirmButton.addEventListener( 'click', handleConfirm);
+        modalElement.addEventListener( 'hidden.bs.modal', handleHidden );
+
+        modal.show();
     });
+}
 
     const syncAction = () => {
         const checked = $('.user-row-check:checked');
@@ -1735,40 +1755,131 @@ function renderTableUsers() {
         $('#user-action-select').val(value);
     });
 
-$('#reservation-table-body').on('click', '.btn-cancel', async function () {
+    $('#reservation-table-body').on(
+        'click', '.btn-confirm',
+        async function () {
+            const id = $(this).data('id');
+            const nextStatus = $(this).data('next');
 
-    const id = $(this).data('id');
-    const nextStatus = $(this).data('next');
+            let title = '';
+            let message = '';
+            let buttonText = '';
 
-    const yakin = await showCancelReservationModal();
-    if (!yakin) return;
+            if (nextStatus === 'approved') {
+                title = 'Konfirmasi Reservasi?';
+                message = 'Apakah kamu yakin ingin mengonfirmasi reservasi ini?';
+                buttonText = 'Ya, Konfirmasi';
 
-    try {
+            } else if (nextStatus === 'complete') {
+                title = 'Selesaikan Reservasi?';
+                message = 'Apakah kamu yakin reservasi ini sudah selesai?';
+                buttonText = 'Ya, Selesaikan';
 
-        const res = await fetch(`/api/admin/reservasi/${id}/status`, {
-            method: 'PUT',
+            } else {
+                console.warn(
+                    'Status konfirmasi tidak dikenali:',
+                    nextStatus
+                );
+                return;
+            }
 
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            const yakin = await showConfirmReservationModal(
+                title,
+                message,
+                buttonText
+            );
 
-            body: JSON.stringify({
-                status: nextStatus
-            })
+            if (!yakin) return;
+            try {
+                const res = await fetch(
+                    `/api/admin/reservasi/${id}/status`,
+                    {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            status: nextStatus
+                        })
+                    }
+                );
+
+                const result = await res.json();
+                if (!res.ok) {
+                    throw new Error(
+                        result.message ||
+                        'Gagal memperbarui status reservasi'
+                    );
+                }
+
+                const currentStatus = $('.reservation-tabs .tab-btn.active').data('status');
+
+                loadDataReservasi(currentStatus);
+
+            } catch (err) {
+                console.error('Gagal memperbarui status reservasi:', err);
+                alert(
+                    err.message ||
+                    'Gagal memperbarui status reservasi'
+                );
+            }
+        }
+    );
+    $('#reservation-table-body').on(
+    'click',
+    '.btn-cancel',
+    async function () {
+
+        const id = $(this).data('id');
+        const nextStatus = $(this).data('next');
+
+        console.log('Tombol Batalkan diklik:', {
+            id: id,
+            nextStatus: nextStatus
         });
 
-        const result = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                result.message || 'Gagal membatalkan reservasi'
+        if (!id || nextStatus !== 'dibatalkan') {
+            console.warn(
+                'Data tombol Batalkan tidak valid:',
+                id,
+                nextStatus
             );
+            return;
         }
 
-        const currentStatus =
-            $('.reservation-tabs .tab-btn.active').data('status');
+        const yakin = await showCancelReservationModal();
 
-        loadDataReservasi(currentStatus);
+        if (!yakin) {
+            return;
+        }
+
+        try {
+
+            const res = await fetch(
+                `/api/admin/reservasi/${id}/status`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: nextStatus
+                    })
+                }
+            );
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                throw new Error(
+                    result.message ||
+                    'Gagal membatalkan reservasi'
+                );
+            }
+
+            const currentStatus =
+                $('.reservation-tabs .tab-btn.active')
+                    .data('status');
+
+            await loadDataReservasi(currentStatus);
 
         } catch (err) {
 
@@ -1782,65 +1893,82 @@ $('#reservation-table-body').on('click', '.btn-cancel', async function () {
                 'Gagal membatalkan reservasi'
             );
         }
-    });
+    }
+);
 
     function showCancelReservationModal() {
-    return new Promise((resolve) => {
+        return new Promise((resolve) => {
 
-        const modalElement = document.getElementById(
-            'cancelReservationModal'
-        );
+            const modalElement = document.getElementById(
+                'cancelReservationModal'
+            );
 
-        const modal = new bootstrap.Modal(modalElement);
+            if (!modalElement) {
+                console.error(
+                    'cancelReservationModal tidak ditemukan'
+                );
 
-        const confirmButton = document.getElementById(
-            'btn-confirm-cancel-reservation'
-        );
-
-        let finished = false;
-
-        const handleConfirm = () => {
-            finished = true;
-
-            modal.hide();
-
-            cleanup();
-
-            resolve(true);
-        };
-
-        const handleHidden = () => {
-
-            if (!finished) {
-                cleanup();
                 resolve(false);
+                return;
             }
-        };
 
-        const cleanup = () => {
-            confirmButton.removeEventListener(
+            const modal =
+                bootstrap.Modal.getOrCreateInstance(
+                    modalElement
+                );
+
+            const confirmButton =
+                document.getElementById(
+                    'btn-confirm-cancel-reservation'
+                );
+
+            let finished = false;
+
+            const handleConfirm = () => {
+
+                finished = true;
+
+                cleanup();
+
+                modal.hide();
+
+                resolve(true);
+            };
+
+            const handleHidden = () => {
+
+                cleanup();
+
+                if (!finished) {
+                    resolve(false);
+                }
+            };
+
+            const cleanup = () => {
+
+                confirmButton.removeEventListener(
+                    'click',
+                    handleConfirm
+                );
+
+                modalElement.removeEventListener(
+                    'hidden.bs.modal',
+                    handleHidden
+                );
+            };
+
+            confirmButton.addEventListener(
                 'click',
                 handleConfirm
             );
 
-            modalElement.removeEventListener(
+            modalElement.addEventListener(
                 'hidden.bs.modal',
                 handleHidden
             );
-        };
 
-        confirmButton.addEventListener(
-            'click',
-            handleConfirm
-        );
-
-        modalElement.addEventListener(
-            'hidden.bs.modal',
-            handleHidden
-        );
-
-        modal.show();
-    });
+            modal.show();
+        });
     }
 
     function showCustomConfirm(pesan) {
@@ -1897,8 +2025,7 @@ $('#reservation-table-body').on('click', '.btn-cancel', async function () {
                 dataUsersGlobal = dataUsersGlobal.filter(u => !ids.includes(String(u.id)));
 
             } else if (aksi === 'blokir' || aksi === 'modifikasi') {
-                const targetIsActive = (aksi === 'modifikasi');
-                
+                const targetIsActive = (aksi === 'modifikasi');   
                 const res = await fetch('/api/admin/users/status', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
