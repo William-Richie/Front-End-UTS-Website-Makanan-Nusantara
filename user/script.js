@@ -612,6 +612,12 @@ $(document).ready(function() {
         });
 
         $('#store-select').html(storeOptions);
+        $('#store-cards').html(CABANG.map((c, i) => `
+            <button type="button" class="store-card" style="--i:${i}" data-val="${esc(c.nama)}">
+                <span class="store-pin"><i class="fa-solid fa-location-dot"></i></span>
+                <span class="store-info"><strong>${esc(c.nama)}</strong><small>${esc(c.alamat)}</small></span>
+                <i class="fa-solid fa-circle-check store-check"></i>
+            </button>`).join(''));
         $('#checkoutStore').html(checkoutOptions);
     });
 
@@ -898,4 +904,12 @@ $(function () {
     });
 
     $('#mm-order').on('click', () => { pesan(aktifId); modal.hide(); });
+});
+
+$('#store-cards').on('click', '.store-card', function () {
+    $('#store-select').val($(this).attr('data-val')).trigger('change');
+});
+$('#store-select').on('change', function () {
+    const v = $(this).val();
+    $('.store-card').each(function () { $(this).toggleClass('active', $(this).attr('data-val') === v); });
 });
