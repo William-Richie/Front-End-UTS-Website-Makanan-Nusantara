@@ -115,11 +115,11 @@
 
                     <!-- Kolom teks -->
                     <div class="col-md-6 text-center text-md-start">
-                        <p class="hero-eyebrow reveal">Cita Rasa Timur Indonesia</p>
+                        <p class="hero-eyebrow reveal" id="hero-eyebrow">Cita Rasa Timur Indonesia</p>
                         <h1 id="judul-hero" class="reveal reveal-d1">
                             Welcome to Our<br>Papeda Restaurant
                         </h1>
-                        <p class="hero-sub mx-auto mx-md-0 reveal reveal-d2">
+                        <p class="hero-sub mx-auto mx-md-0 reveal reveal-d2" id="hero-sub">
                             Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.
                         </p>
                         <div class="d-flex gap-2 justify-content-center justify-content-md-start reveal reveal-d3">
@@ -195,8 +195,8 @@
     <section id="about" class="page-section">
         <div class="content-container text-content">
             <div class="text-center mb-4 reveal">
-                <p class="hero-eyebrow">Tentang Kami</p>
-                <h2 class="section-title">Warisan Rasa dari Timur</h2>
+                <p class="hero-eyebrow" id="about-eyebrow">Tentang Kami</p>
+                <h2 class="section-title" id="about-title">Warisan Rasa dari Timur</h2>
                 <p id="deskripsi-about" class="mx-auto about-desc">
                     Selamat datang di Papeda Restaurant, tempat terbaik untuk menikmati hidangan khas Nusantara Timur. Kami menyajikan berbagai menu tradisional dengan cita rasa otentik yang akan memanjakan lidah Anda.
                 </p>
@@ -206,22 +206,22 @@
                 <div class="col reveal reveal-d1">
                     <div class="feature-card h-100 text-center">
                         <div class="feature-icon"><i class="fa-solid fa-leaf"></i></div>
-                        <h3>Bahan Segar</h3>
-                        <p>Sagu dan hasil laut dipilih segar setiap hari.</p>
+                        <h3 id="card1-title">Bahan Segar</h3>
+                        <p id="card1-desc">Sagu dan hasil laut dipilih segar setiap hari.</p>
                     </div>
                 </div>
                 <div class="col reveal reveal-d2p5">
                     <div class="feature-card h-100 text-center">
                         <div class="feature-icon"><i class="fa-solid fa-fire"></i></div>
-                        <h3>Resep Turun-temurun</h3>
-                        <p>Resep rahasia yang menjaga keaslian rasa.</p>
+                        <h3 id="card2-title">Resep Turun-temurun</h3>
+                        <p id="card2-desc">Resep rahasia yang menjaga keaslian rasa.</p>
                     </div>
                 </div>
                 <div class="col reveal reveal-d4">
                     <div class="feature-card h-100 text-center">
                         <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
-                        <h3>Disajikan Sepenuh Hati</h3>
-                        <p>Suasana hangat ala rumah, cocok untuk keluarga.</p>
+                        <h3 id="card3-title">Disajikan Sepenuh Hati</h3>
+                        <p id="card3-desc">Suasana hangat ala rumah, cocok untuk keluarga.</p>
                     </div>
                 </div>
             </div>
@@ -247,8 +247,27 @@
 
     <!-- Menu Section -->
     <section id="menu" class="page-section">
-        <div class="hero-banner reveal">
-            <h1>Taste Our Papeda<br>Menu's</h1>
+        <div class="hero-banner sec-hero">
+            <div class="sec-hero-bg" aria-hidden="true">
+                <span class="sec-rings"></span>
+                <span class="sec-float f1"><i class="fa-solid fa-leaf"></i></span>
+                <span class="sec-float f2"><i class="fa-solid fa-pepper-hot"></i></span>
+                <span class="sec-float f3"><i class="fa-solid fa-fish"></i></span>
+            </div>
+            <span class="sec-q s1" aria-hidden="true"><i class="fa-solid fa-fish"></i></span>
+            <span class="sec-q s2" aria-hidden="true"><i class="fa-solid fa-pepper-hot"></i></span>
+            <span class="sec-q s3" aria-hidden="true"><i class="fa-solid fa-bowl-food"></i></span>
+            <span class="sec-q s4" aria-hidden="true"><i class="fa-solid fa-lemon"></i></span>
+
+            <div class="container text-center position-relative section-content-wrap">
+                <p class="hero-eyebrow reveal">Cita Rasa Timur Nusantara</p>
+                <h1 class="sec-title reveal reveal-d1">Taste Our Papeda<br><em>Menu's</em></h1>
+                <ul class="loc-chips reveal reveal-d2">
+                    <li><i class="fa-solid fa-utensils"></i>5 Kategori Menu</li>
+                    <li><i class="fa-solid fa-pepper-hot"></i>Rempah Pilihan</li>
+                </ul>
+            </div>
+        </div>
         </div>
 
         <div class="content-container" id="tempat-menu-dinamis">
@@ -271,10 +290,10 @@
             <span class="faq-q q3" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
             <span class="faq-q q4" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
 
-            <div class="container text-center position-relative" style="z-index:1">
+            <div class="container text-center position-relative section-content-wrap">
                 <p class="hero-eyebrow reveal">Pertanyaan Umum</p>
-                <h1 class="faq-title reveal" style="--d:.15s">Frequently Asked<br>Questions</h1>
-                <ul class="loc-chips reveal" style="--d:.3s">
+                <h1 class="faq-title reveal reveal-d1">Frequently Asked<br>Questions</h1>
+                <ul class="loc-chips reveal reveal-d2">
                     <li><i class="fa-solid fa-list-check"></i><span id="faq-total">Jawaban Cepat</span></li>
                     <li><i class="fa-solid fa-comments"></i>Tanya Langsung ke Kami</li>
                 </ul>
@@ -434,8 +453,27 @@
 
     <!-- Reservation -->
     <section id="reservation" class="page-section">
-        <div class="hero-banner reveal">
-            <h1>Reservation</h1>
+        <div class="hero-banner sec-hero">
+            <div class="sec-hero-bg" aria-hidden="true">
+                <span class="sec-rings"></span>
+                <span class="sec-float f1"><i class="fa-solid fa-leaf"></i></span>
+                <span class="sec-float f2"><i class="fa-solid fa-clock"></i></span>
+                <span class="sec-float f3"><i class="fa-solid fa-users"></i></span>
+            </div>
+            <span class="sec-q s1" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></span>
+            <span class="sec-q s2" aria-hidden="true"><i class="fa-solid fa-clock"></i></span>
+            <span class="sec-q s3" aria-hidden="true"><i class="fa-solid fa-bell-concierge"></i></span>
+            <span class="sec-q s4" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+
+            <div class="container text-center position-relative section-content-wrap">
+                <p class="hero-eyebrow reveal">Pesan Meja Anda</p>
+                <h1 class="sec-title reveal reveal-d1">Table<br><em>Reservation</em></h1>
+                <ul class="loc-chips reveal reveal-d2">
+                    <li><i class="fa-solid fa-bolt"></i>Konfirmasi Cepat</li>
+                    <li><i class="fa-solid fa-ticket"></i>Gratis Reservasi</li>
+                </ul>
+            </div>
+        </div>
         </div>
         <div id="reservation-lock" class="auth-lock text-center">
             <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
@@ -449,9 +487,10 @@
 
         <div class="content-containers text-content">
 
-            <div class="mb-3">
-                <label class="form-label fw-bold" for="store-select">Select a store</label>
-                <select id="store-select" name="store" class="form-select" required>
+            <div class="mb-4">
+                <label class="form-label fw-bold store-label"><i class="fa-solid fa-store me-2"></i>Select a store</label>
+                <div id="store-cards" class="store-cards"><p class="text-muted small mb-0">Memuat gerai...</p></div>
+                <select id="store-select" name="store" class="form-select d-none" required>
                     <option value="" disabled selected>-- Choose The Store --</option>
                 </select>
             </div>
@@ -527,7 +566,28 @@
 
     <!-- My Reservation -->
     <section id="my-reservation" class="page-section">
-        <div class="hero-banner reveal"><h1>My Reservation</h1></div>
+        <div class="hero-banner sec-hero">
+            <div class="sec-hero-bg" aria-hidden="true">
+                <span class="sec-rings"></span>
+                <span class="sec-float f1"><i class="fa-solid fa-leaf"></i></span>
+                <span class="sec-float f2"><i class="fa-solid fa-calendar-check"></i></span>
+                <span class="sec-float f3"><i class="fa-solid fa-utensils"></i></span>
+            </div>
+            <span class="sec-q s1" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></span>
+            <span class="sec-q s2" aria-hidden="true"><i class="fa-solid fa-hourglass-half"></i></span>
+            <span class="sec-q s3" aria-hidden="true"><i class="fa-solid fa-bell-concierge"></i></span>
+            <span class="sec-q s4" aria-hidden="true"><i class="fa-solid fa-utensils"></i></span>
+
+            <div class="container text-center position-relative section-content-wrap">
+                <p class="hero-eyebrow reveal">Riwayat Anda</p>
+                <h1 class="sec-title reveal reveal-d1">My<br><em>Reservation</em></h1>
+                <ul class="loc-chips reveal reveal-d2">
+                    <li><i class="fa-solid fa-hourglass-half"></i>Pantau Status</li>
+                    <li><i class="fa-solid fa-rotate-left"></i>Bisa Dibatalkan</li>
+                </ul>
+            </div>
+        </div>
+        </div>
         <div class="content-container">
             <div id="my-reservation-list" class="row g-3">
                 <p class="text-center py-4">Memuat reservasi...</p>
@@ -666,7 +726,7 @@
     </div>
 
     <!-- Notification -->
-    <div class="toast-container position-fixed" style="z-index: 9999;">
+    <div class="toast-container position-fixed user-toast-container">
         <div id="papedaToast" class="toast align-items-center custom-papeda-toast border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body fw-medium d-flex align-items-center">

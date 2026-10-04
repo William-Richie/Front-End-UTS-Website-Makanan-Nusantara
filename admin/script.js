@@ -99,7 +99,20 @@ function esc(str) {
 }
 
 $(document).ready(function() {
-    let dataKontenAsli = { hero: '', about: '' };
+    let dataKontenAsli = {
+        hero: '',
+        about: '',
+        hero_eyebrow: '',
+        hero_sub: '',
+        about_eyebrow: '',
+        about_title: '',
+        card1_title: '',
+        card1_desc: '',
+        card2_title: '',
+        card2_desc: '',
+        card3_title: '',
+        card3_desc: ''
+    };
     let dataFooterAsli = {
         judul: '',
         copyright: '',
@@ -139,8 +152,18 @@ $(document).ready(function() {
         e.preventDefault();
          
         if (typeof dataKontenAsli !== 'undefined') {
-            $('#teks_hero').val(esc(dataKontenAsli.hero));
-            $('#teks_about').val(esc(dataKontenAsli.about));
+            $('#input_hero_eyebrow').val(esc(dataKontenAsli.hero_eyebrow || ''));
+            $('#teks_hero').val(esc(dataKontenAsli.hero || ''));
+            $('#input_hero_sub').val(esc(dataKontenAsli.hero_sub || ''));
+            $('#input_about_eyebrow').val(esc(dataKontenAsli.about_eyebrow || ''));
+            $('#input_about_title').val(esc(dataKontenAsli.about_title || ''));
+            $('#teks_about').val(esc(dataKontenAsli.about || ''));
+            $('#input_card1_title').val(esc(dataKontenAsli.card1_title || ''));
+            $('#input_card1_desc').val(esc(dataKontenAsli.card1_desc || ''));
+            $('#input_card2_title').val(esc(dataKontenAsli.card2_title || ''));
+            $('#input_card2_desc').val(esc(dataKontenAsli.card2_desc || ''));
+            $('#input_card3_title').val(esc(dataKontenAsli.card3_title || ''));
+            $('#input_card3_desc').val(esc(dataKontenAsli.card3_desc || ''));
             updateLivePreviewKonten(); 
         }
 
@@ -176,21 +199,69 @@ $(document).ready(function() {
     }
 
     function updateLivePreviewKonten() {
+        let heroEyebrow = $('#input_hero_eyebrow').val() || 'Cita Rasa Timur Indonesia';
         let heroText = $('#teks_hero').val() || '';
+        let heroSub = $('#input_hero_sub').val() || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.';
+
+        let aboutEyebrow = $('#input_about_eyebrow').val() || 'Tentang Kami';
+        let aboutTitle = $('#input_about_title').val() || 'Warisan Rasa dari Timur';
         let aboutText = $('#teks_about').val() || '';
 
+        let card1Title = $('#input_card1_title').val() || 'Bahan Segar';
+        let card1Desc = $('#input_card1_desc').val() || 'Sagu dan hasil laut dipilih segar setiap hari.';
+        let card2Title = $('#input_card2_title').val() || 'Resep Turun-temurun';
+        let card2Desc = $('#input_card2_desc').val() || 'Resep rahasia yang menjaga keaslian rasa.';
+        let card3Title = $('#input_card3_title').val() || 'Disajikan Sepenuh Hati';
+        let card3Desc = $('#input_card3_desc').val() || 'Suasana hangat ala rumah, cocok untuk keluarga.';
+
+        $('#preview-hero-eyebrow').text(heroEyebrow);
         $('#preview-hero').html(esc(heroText).replace(/\n/g, '<br>'));
+        $('#preview-hero-sub').text(heroSub);
+
+        $('#preview-about-eyebrow').text(aboutEyebrow);
+        $('#preview-about-title').text(aboutTitle);
         $('#preview-about').text(esc(aboutText));
+
+        $('#preview-card1-title').text(card1Title);
+        $('#preview-card1-desc').text(card1Desc);
+        $('#preview-card2-title').text(card2Title);
+        $('#preview-card2-desc').text(card2Desc);
+        $('#preview-card3-title').text(card3Title);
+        $('#preview-card3-desc').text(card3Desc);
     }
 
     function muatDataKonten() {
         $.get('/api/konten', function(data) {
-            $('#teks_hero').val(data.teks_hero);
-            $('#teks_about').val(data.teks_about);
-            
-            dataKontenAsli.hero = data.teks_hero;
-            dataKontenAsli.about = data.teks_about;
-            
+            $('#input_hero_eyebrow').val(data.hero_eyebrow || 'Cita Rasa Timur Indonesia');
+            $('#teks_hero').val(data.teks_hero || '');
+            $('#input_hero_sub').val(data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.');
+
+            $('#input_about_eyebrow').val(data.about_eyebrow || 'Tentang Kami');
+            $('#input_about_title').val(data.about_title || 'Warisan Rasa dari Timur');
+            $('#teks_about').val(data.teks_about || '');
+
+            $('#input_card1_title').val(data.card1_title || 'Bahan Segar');
+            $('#input_card1_desc').val(data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.');
+            $('#input_card2_title').val(data.card2_title || 'Resep Turun-temurun');
+            $('#input_card2_desc').val(data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.');
+            $('#input_card3_title').val(data.card3_title || 'Disajikan Sepenuh Hati');
+            $('#input_card3_desc').val(data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.');
+
+            dataKontenAsli = {
+                hero: data.teks_hero || '',
+                about: data.teks_about || '',
+                hero_eyebrow: data.hero_eyebrow || 'Cita Rasa Timur Indonesia',
+                hero_sub: data.hero_sub || 'Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.',
+                about_eyebrow: data.about_eyebrow || 'Tentang Kami',
+                about_title: data.about_title || 'Warisan Rasa dari Timur',
+                card1_title: data.card1_title || 'Bahan Segar',
+                card1_desc: data.card1_desc || 'Sagu dan hasil laut dipilih segar setiap hari.',
+                card2_title: data.card2_title || 'Resep Turun-temurun',
+                card2_desc: data.card2_desc || 'Resep rahasia yang menjaga keaslian rasa.',
+                card3_title: data.card3_title || 'Disajikan Sepenuh Hati',
+                card3_desc: data.card3_desc || 'Suasana hangat ala rumah, cocok untuk keluarga.'
+            };
+
             updateLivePreviewKonten();
         });
     }
@@ -218,18 +289,29 @@ $(document).ready(function() {
         });
     }
 
-    $('#teks_hero, #teks_about').on('input', updateLivePreviewKonten);
+    $('#form-konten').on('input', 'input, textarea', updateLivePreviewKonten);
     $('#footer_title, #footer_copyright, #input_link_ig, #input_link_tiktok, #input_link_wa, #input_email, #input_link_linkedin').on('input', updateLivePreviewFooter);
 
     /* Update Content */
     $('#form-konten .btn-simpan').on('click', function(e) {
         e.preventDefault();
-        let $btn =$(this);
-        let originalText = $btn.text();$btn.prop('disabled', true).text('Memperbarui...'); 
+        let $btn = $(this);
+        let originalText = $btn.text();
+        $btn.prop('disabled', true).text('Memperbarui...'); 
 
         let dataKonten = {
             teks_hero: $('#teks_hero').val(),
-            teks_about: $('#teks_about').val()
+            teks_about: $('#teks_about').val(),
+            hero_eyebrow: $('#input_hero_eyebrow').val(),
+            hero_sub: $('#input_hero_sub').val(),
+            about_eyebrow: $('#input_about_eyebrow').val(),
+            about_title: $('#input_about_title').val(),
+            card1_title: $('#input_card1_title').val(),
+            card1_desc: $('#input_card1_desc').val(),
+            card2_title: $('#input_card2_title').val(),
+            card2_desc: $('#input_card2_desc').val(),
+            card3_title: $('#input_card3_title').val(),
+            card3_desc: $('#input_card3_desc').val()
         };
 
         $.ajax({
@@ -239,8 +321,11 @@ $(document).ready(function() {
             success: function(response) {
                 tampilkanNotif(response.pesan);
 
-                dataKontenAsli.hero = dataKonten.teks_hero;
-                dataKontenAsli.about = dataKonten.teks_about;
+                dataKontenAsli = {
+                    hero: dataKonten.teks_hero,
+                    about: dataKonten.teks_about,
+                    ...dataKonten
+                };
             }
         }).always(function() {
             $btn.prop('disabled', false).text(originalText);
@@ -370,13 +455,13 @@ $(document).ready(function() {
         $(`#${formId}`)[0].reset();
         $(`#${inputId}`).val('');
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Simpan ke Database').css('background-color', '#27ae60');
+        $(`#${btnSubmitId}`).text('Simpan ke Database').removeClass('is-editing');
         $(`#${btnCancelId}`).hide();
     }
 
     function setFormEdit(judulId, textJudul, btnSubmitId, btnCancelId, tabSelector) {
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Update Data').css('background-color', '#f39c12');
+        $(`#${btnSubmitId}`).text('Update Data').addClass('is-editing');
         $(`#${btnCancelId}`).show();
 
         const $main = $('main');
@@ -444,7 +529,7 @@ $(document).ready(function() {
                     appetizerRows += buatRow(noApp++);
                 } else if (item.nama_kategori === 'DESSERT') {
                     dessertRows += buatRow(noDessert++);
-                } else if (item.nama_kategori === 'DRINK') {
+                } else if (item.nama_kategori === 'DRINK' || item.nama_kategori === 'MINUMAN') {
                     drinkRows += buatRow(noDrink++);
                 } else if (item.nama_kategori === 'ADDITIONAL') {
                     additionalRows += buatRow(noAdd++);
@@ -465,7 +550,7 @@ $(document).ready(function() {
         $('#judul-form-menu').text('Input Menu Baru');
         $('#btn-menu-submit')
             .text('Tambah')
-            .css('background-color', '#27ae60');
+            .removeClass('is-editing');
         $('#btn-menu-cancel').hide();
         setPedas(0);
     }
@@ -550,13 +635,9 @@ $(document).ready(function() {
 
     $('#search-menu').on('keyup', function() {
         let keyword = $(this).val().toLowerCase();
-        $('#tabel-main-course tbody tr, \
-        #tabel-appetizer tbody tr, \
-        #tabel-dessert tbody tr')
+        $('#tabel-main-course tbody tr, #tabel-appetizer tbody tr, #tabel-dessert tbody tr, #tabel-drink tbody tr, #tabel-additional tbody tr')
         .filter(function() {
-            $(this).toggle(
-                $(this).text().toLowerCase().indexOf(keyword) > -1
-            );
+            $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
         });
     });
     muatDataMenu();
@@ -575,15 +656,21 @@ $(document).ready(function() {
                     <tr>
                         <td><div class="menu-no">${i + 1}</div></td>
                         <td><span class="faq-clamp faq-q-text">${esc(item.pertanyaan)}</span></td>
-                        <td><span class="faq-clamp">${esc(item.jawaban)}</span></td>
+                        <td><span class="faq-clamp faq-a-text">${esc(item.jawaban)}</span></td>
                         <td>
-                            <button class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
-                            <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">Hapus</button>
+                            <div class="faq-aksi">
+                                <button type="button" class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">
+                                    <i class="fa-solid fa-pen-to-square"></i><span>Edit</span>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">
+                                    <i class="fa-solid fa-trash"></i><span>Hapus</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>`;
             }).join('');
 
-            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-center text-muted py-4">Belum ada FAQ.</td></tr>');
+            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-muted">Belum ada FAQ.</td></tr>');
             $('#search-faq').trigger('keyup');
         });
     }
@@ -625,7 +712,7 @@ $(document).ready(function() {
         $('#judul_faq').val($(this).data('pertanyaan'));
         $('#jawaban_faq').val($(this).data('jawaban'));
         $('#judul-form-faq').text('Edit FAQ');
-        $('#btn-faq-submit').text('Update Data').css('background-color', '#f39c12');
+        $('#btn-faq-submit').text('Update Data').addClass('is-editing');
         $('#btn-faq-cancel').show();
         scrollKeFormFaq();
     });
@@ -663,7 +750,7 @@ $(document).ready(function() {
         $('#faq-belum-dibaca, #faq-count-belum').text(belum);
         $('#faq-total-masuk, #faq-count-semua').text(total);
         $('#faq-count-sudah').text(total - belum);
-        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggle(belum > 0);
+        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggleClass('d-none', belum <= 0);
         $('#btn-baca-semua').prop('disabled', belum === 0);
 
         const kata = $('#search-pertanyaan').val().toLowerCase().trim();
@@ -2001,7 +2088,7 @@ $(function () {
 
         $('#top-menu').html(
             list.map((m, i) => `
-                <div class="top-item" style="--d:${i * 0.08}s">
+                <div class="top-item">
 
                     <div class="top-rank">
                         ${MEDALI[i] || `<span class="rank-number">${i + 1}</span>`}
@@ -2020,13 +2107,17 @@ $(function () {
                         </div>
 
                         <div class="top-bar">
-                            <span style="width:${(m.qty / maks) * 100}%"></span>
+                            <span data-lebar="${(m.qty / maks) * 100}"></span>
                         </div>
 
                     </div>
                 </div>
             `).join('')
         );
+
+        $('#top-menu .top-bar span').each(function() {
+            this.style.width = this.dataset.lebar + '%';
+        });
     }
 
     function renderLaporan(laporan, r) {
