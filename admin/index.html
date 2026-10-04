@@ -11,6 +11,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/admin/style.css">
 </head>
+<!-- POP UP ALERT  -->
+<div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+            <div class="modal-body p-5 text-center">
+                <h5 class="mb-4 fw-normal text-dark" id="confirmModalText" style="line-height: 1.5;">Apakah Anda yakin?</h5>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="btn btn-light px-4 py-2 border" data-bs-dismiss="modal" style="min-width: 120px;">Batal</button>
+                    <button type="button" class="btn btn-dark px-4 py-2" id="btn-confirm-lanjutkan" style="min-width: 120px;">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <body class="d-flex vh-100 admin-locked">
 <div id="admin-login">
     <span class="al-float a1"><i class="fa-solid fa-pepper-hot"></i></span>
@@ -964,17 +979,27 @@
                     </button>
                 </div>
 
+
                 <div id="panel-tab-user">
-                    <div id="user-action-bar" class="d-none d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
-                        <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <select id="user-action-select" class="form-select form-select-sm">
-                                <option value="" disabled selected>Pilih Aksi...</option>
-                                <option value="modifikasi">✏️ Modifikasi Akun</option>
-                                <option value="blokir">🚫 Blokir Akun</option>
-                                <option value="hapus">🗑️ Hapus Akun</option>
-                            </select>
-                            <button id="btn-eksekusi-user-aksi" class="btn btn-sm btn-dark fw-bold">Terapkan</button>
+                    <div id="user-action-wrapper" style="display: none;">
+                        <div id="user-action-bar" class="d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-light border">
+                            <span id="selected-user-count" class="fw-semibold text-secondary">0 akun dipilih</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="dropdown custom-action-dropdown">
+                                    <button class="btn form-select form-select-sm text-start shadow-none d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span id="selected-aksi-text">Pilih Aksi</span>
+                                    </button>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        <li><a class="dropdown-item text-muted" href="#" data-value="">Pilih Aksi...</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item fw-medium" href="#" data-value="modifikasi">✏️ Modifikasi Akun</a></li>
+                                        <li><a class="dropdown-item fw-medium text-danger" href="#" data-value="blokir">🚫 Blokir Akun</a></li>
+                                        <li><a class="dropdown-item fw-medium text-secondary" href="#" data-value="hapus">🗑️ Hapus Akun</a></li>
+                                    </ul>
+                                    <input type="hidden" id="user-action-select" value="">
+                                </div>
+                                <button id="btn-eksekusi-user-aksi" class="btn btn-sm btn-dark fw-bold">Terapkan</button>
+                            </div>
                         </div>
                     </div>
 
@@ -986,10 +1011,11 @@
                                         <input type="checkbox" id="check-all-users" class="form-check-input">
                                     </th>
                                     <th>User ID</th>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Tanggal Pembuatan</th>
-                                    <th>Jumlah Reserve</th>
+                                    <th class="text-center">Nama</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Tanggal Pembuatan</th>
+                                    <th class="text-center">Jumlah Reserve</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="user-table-body">

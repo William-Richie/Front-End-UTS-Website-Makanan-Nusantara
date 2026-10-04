@@ -1634,6 +1634,55 @@ img.preview:hover{
     color: #ffffff !important;
 }
 
+.custom-action-dropdown .btn {
+    border: 1px solid #d3c3b3;
+    background-color: #ffffff;
+    min-width: 170px;
+    height: 31px; 
+}
+
+.custom-action-dropdown .dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    padding: 8px 0;
+    border: 1px solid #e9ecef;
+}
+
+.custom-action-dropdown .dropdown-item {
+    padding: 8px 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.custom-action-dropdown .dropdown-item:hover {
+    background-color: #f8f4f0;
+    color: #4a3b32;
+}
+
+.text-center {
+    text-align: center;
+}
+
+#customConfirmModal #confirmModalText {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333; 
+    letter-spacing: 0.3px;  
+}
+
+#customConfirmModal .btn-light {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a3b32; 
+}
+
+#customConfirmModal #btn-confirm-lanjutkan {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
 
 /* Live Preview */
 .hero-papeda {
