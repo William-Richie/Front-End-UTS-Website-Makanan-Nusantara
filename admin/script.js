@@ -2115,7 +2115,7 @@ $(function () {
                             <strong>${esc(m.nama)}</strong>
 
                             <span class="text-muted small">
-                                ${m.qty} order
+                                ${m.qty} terjual
                                 &middot;
                                 ${m.pendapatan ? rp(m.pendapatan) : '-'}
                             </span>
@@ -2236,7 +2236,7 @@ $(function () {
                     <span class="fw-bold">${rp(o.total)}</span><span class="badge text-bg-${s[1]}">${s[0]}</span></div>`;
             }).join('') : '<p class="text-muted mb-0">Belum ada pesanan masuk.</p>');
         });
-    $.get('/api/pendapatan', { range: 'bulan' }, res => {
+    $.get('/api/pendapatan', { range: 'hari' }, res => {
         const total = res.ringkasan?.total || 0;
         $('#dash-revenue').text(rp(total));
     });
