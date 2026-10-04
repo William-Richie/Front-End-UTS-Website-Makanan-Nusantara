@@ -455,13 +455,13 @@ $(document).ready(function() {
         $(`#${formId}`)[0].reset();
         $(`#${inputId}`).val('');
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Simpan ke Database').css('background-color', '#27ae60');
+        $(`#${btnSubmitId}`).text('Simpan ke Database').removeClass('is-editing');
         $(`#${btnCancelId}`).hide();
     }
 
     function setFormEdit(judulId, textJudul, btnSubmitId, btnCancelId, tabSelector) {
         $(`#${judulId}`).text(textJudul);
-        $(`#${btnSubmitId}`).text('Update Data').css('background-color', '#f39c12');
+        $(`#${btnSubmitId}`).text('Update Data').addClass('is-editing');
         $(`#${btnCancelId}`).show();
 
         const $main = $('main');
@@ -550,7 +550,7 @@ $(document).ready(function() {
         $('#judul-form-menu').text('Input Menu Baru');
         $('#btn-menu-submit')
             .text('Tambah')
-            .css('background-color', '#27ae60');
+            .removeClass('is-editing');
         $('#btn-menu-cancel').hide();
         setPedas(0);
     }
@@ -660,15 +660,21 @@ $(document).ready(function() {
                     <tr>
                         <td><div class="menu-no">${i + 1}</div></td>
                         <td><span class="faq-clamp faq-q-text">${esc(item.pertanyaan)}</span></td>
-                        <td><span class="faq-clamp">${esc(item.jawaban)}</span></td>
+                        <td><span class="faq-clamp faq-a-text">${esc(item.jawaban)}</span></td>
                         <td>
-                            <button class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">Edit</button>
-                            <button class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">Hapus</button>
+                            <div class="faq-aksi">
+                                <button type="button" class="btn btn-warning btn-sm fw-bold btn-edit-faq" data-id="${esc(item.id)}" data-pertanyaan="${esc(item.pertanyaan)}" data-jawaban="${esc(item.jawaban)}">
+                                    <i class="fa-solid fa-pen-to-square"></i><span>Edit</span>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm fw-bold btn-hapus-faq" data-id="${esc(item.id)}">
+                                    <i class="fa-solid fa-trash"></i><span>Hapus</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>`;
             }).join('');
 
-            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-center text-muted py-4">Belum ada FAQ.</td></tr>');
+            $('#tabel-faq tbody').html(rows || '<tr><td colspan="4" class="text-muted">Belum ada FAQ.</td></tr>');
             $('#search-faq').trigger('keyup');
         });
     }
@@ -710,7 +716,7 @@ $(document).ready(function() {
         $('#judul_faq').val($(this).data('pertanyaan'));
         $('#jawaban_faq').val($(this).data('jawaban'));
         $('#judul-form-faq').text('Edit FAQ');
-        $('#btn-faq-submit').text('Update Data').css('background-color', '#f39c12');
+        $('#btn-faq-submit').text('Update Data').addClass('is-editing');
         $('#btn-faq-cancel').show();
         scrollKeFormFaq();
     });
@@ -748,7 +754,7 @@ $(document).ready(function() {
         $('#faq-belum-dibaca, #faq-count-belum').text(belum);
         $('#faq-total-masuk, #faq-count-semua').text(total);
         $('#faq-count-sudah').text(total - belum);
-        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggle(belum > 0);
+        $('#badge-pertanyaan-nav').text(belum > 99 ? '99+' : belum).toggleClass('d-none', belum <= 0);
         $('#btn-baca-semua').prop('disabled', belum === 0);
 
         const kata = $('#search-pertanyaan').val().toLowerCase().trim();
@@ -1780,7 +1786,7 @@ $(function () {
 
         $('#top-menu').html(
             list.map((m, i) => `
-                <div class="top-item" style="--d:${i * 0.08}s">
+                <div class="top-item">
 
                     <div class="top-rank">
                         ${MEDALI[i] || `<span class="rank-number">${i + 1}</span>`}
@@ -1799,13 +1805,17 @@ $(function () {
                         </div>
 
                         <div class="top-bar">
-                            <span style="width:${(m.qty / maks) * 100}%"></span>
+                            <span data-lebar="${(m.qty / maks) * 100}"></span>
                         </div>
 
                     </div>
                 </div>
             `).join('')
         );
+
+        $('#top-menu .top-bar span').each(function() {
+            this.style.width = this.dataset.lebar + '%';
+        });
     }
 
     function renderLaporan(laporan, r) {
