@@ -99,20 +99,7 @@ function esc(str) {
 }
 
 $(document).ready(function() {
-    let dataKontenAsli = {
-        hero: '',
-        about: '',
-        hero_eyebrow: '',
-        hero_sub: '',
-        about_eyebrow: '',
-        about_title: '',
-        card1_title: '',
-        card1_desc: '',
-        card2_title: '',
-        card2_desc: '',
-        card3_title: '',
-        card3_desc: ''
-    };
+    let dataKontenAsli = {};
     let dataFooterAsli = {
         judul: '',
         copyright: '',
@@ -151,31 +138,19 @@ $(document).ready(function() {
     $('#admin-nav a').on('click', function(e) {
         e.preventDefault();
          
-        if (typeof dataKontenAsli !== 'undefined') {
-            $('#input_hero_eyebrow').val(esc(dataKontenAsli.hero_eyebrow || ''));
-            $('#teks_hero').val(esc(dataKontenAsli.hero || ''));
-            $('#input_hero_sub').val(esc(dataKontenAsli.hero_sub || ''));
-            $('#input_about_eyebrow').val(esc(dataKontenAsli.about_eyebrow || ''));
-            $('#input_about_title').val(esc(dataKontenAsli.about_title || ''));
-            $('#teks_about').val(esc(dataKontenAsli.about || ''));
-            $('#input_card1_title').val(esc(dataKontenAsli.card1_title || ''));
-            $('#input_card1_desc').val(esc(dataKontenAsli.card1_desc || ''));
-            $('#input_card2_title').val(esc(dataKontenAsli.card2_title || ''));
-            $('#input_card2_desc').val(esc(dataKontenAsli.card2_desc || ''));
-            $('#input_card3_title').val(esc(dataKontenAsli.card3_title || ''));
-            $('#input_card3_desc').val(esc(dataKontenAsli.card3_desc || ''));
-            updateLivePreviewKonten(); 
+        if (Object.keys(dataKontenAsli).length) {
+            isiFormKonten(dataKontenAsli);
+            updateLivePreviewKonten();
         }
 
-        if (typeof dataFooterAsli !== 'undefined') {
-            $('#footer_title').val(esc(dataFooterAsli.judul));
-            $('#footer_copyright').val(esc(dataFooterAsli.copyright));
-            $('#input_link_ig').val(esc(dataFooterAsli.link_ig));
-            $('#input_link_tiktok').val(esc(dataFooterAsli.link_tiktok));
-            $('#input_link_wa').val(esc(dataFooterAsli.link_wa));
-            $('#input_email').val(esc(dataFooterAsli.email));
-            $('#input_link_linkedin').val(esc(dataFooterAsli.link_linkedin));
-        }
+        $('#footer_title').val(dataFooterAsli.judul || '');
+        $('#footer_copyright').val(dataFooterAsli.copyright || '');
+        $('#input_link_ig').val(dataFooterAsli.link_ig || '');
+        $('#input_link_tiktok').val(dataFooterAsli.link_tiktok || '');
+        $('#input_link_wa').val(dataFooterAsli.link_wa || '');
+        $('#input_email').val(dataFooterAsli.email || '');
+        $('#input_link_linkedin').val(dataFooterAsli.link_linkedin || '');
+        updateLivePreviewFooter();
 
         $('#admin-nav a').removeClass('active');
         $(this).addClass('active');
@@ -183,6 +158,7 @@ $(document).ready(function() {
         let targetId = $(this).data('target');
         $('.tab-section').hide();
         $('#' + targetId).fadeIn(300);
+        if (targetId === 'tab-konten') muatSampelFaqPreview();
     });
 
     $('.nav-link').on('click', function(e) {
@@ -239,6 +215,13 @@ $(document).ready(function() {
         loc_parkir_text: '#pv-loc-parkir-text'
     };
     const KONTEN_BARIS_BARU = ['teks_hero', 'faq_title', 'loc_title'];
+    /* Judul banner FAQ & Lokasi: baris pertama biasa, baris berikutnya disorot (<em>) seperti di web user */
+    const JUDUL_BANNER = ['faq_title', 'loc_title'];
+    function htmlJudulBanner(teks) {
+        const baris = String(teks).split('\n');
+        if (baris.length < 2) return esc(baris[0]);
+        return esc(baris[0]) + '<br><em>' + baris.slice(1).map(esc).join('<br>') + '</em>';
+    }
 
     function isiFormKonten(data) {
         $('[data-konten]').each(function() {
@@ -248,20 +231,21 @@ $(document).ready(function() {
     }
 
     function nilaiKonten(kunci) {
-        return $(`[data-konten="${kunci}"]`).val() || DEFAULT_KONTEN[kunci];
+        return $(`[data-konten="${kunci}"]`).val() || dataKontenAsli[kunci] || '';
     }
 
     function updateLivePreviewKonten() {
         $.each(PREVIEW_KONTEN, function(kunci, selektor) {
             const teks = nilaiKonten(kunci);
-            if (KONTEN_BARIS_BARU.includes(kunci)) $(selektor).html(esc(teks).replace(/\n/g, '<br>'));
+            if (JUDUL_BANNER.includes(kunci)) $(selektor).html(htmlJudulBanner(teks));
+            else if (KONTEN_BARIS_BARU.includes(kunci)) $(selektor).html(esc(teks).replace(/\n/g, '<br>'));
             else $(selektor).text(teks);
         });
     }
 
     function muatSampelFaqPreview() {
         $.get('/api/faq', function(response) {
-            const daftar = (Array.isArray(response) ? response : (response.data || [])).slice(0, 3);
+            const daftar = Array.isArray(response) ? response : (response.data || []);
 
             if (daftar.length === 0) {
                 $('#pv-faq-list').html('<p class="pv-faq-empty"><i class="fa-regular fa-circle-question me-2"></i>Belum ada FAQ yang tersedia.</p>');
@@ -288,10 +272,7 @@ $(document).ready(function() {
 
     function muatDataKonten() {
         $.get('/api/konten', function(data) {
-            const isi = {};
-            Object.keys(DEFAULT_KONTEN).forEach(function(kunci) {
-                isi[kunci] = data[kunci] || DEFAULT_KONTEN[kunci];
-            });
+            const isi = { ...data };
 
             dataKontenAsli = isi;
             isiFormKonten(isi);
