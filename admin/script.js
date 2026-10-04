@@ -529,7 +529,7 @@ $(document).ready(function() {
                     appetizerRows += buatRow(noApp++);
                 } else if (item.nama_kategori === 'DESSERT') {
                     dessertRows += buatRow(noDessert++);
-                } else if (item.nama_kategori === 'DRINK') {
+                } else if (item.nama_kategori === 'DRINK' || item.nama_kategori === 'MINUMAN') {
                     drinkRows += buatRow(noDrink++);
                 } else if (item.nama_kategori === 'ADDITIONAL') {
                     additionalRows += buatRow(noAdd++);
@@ -635,13 +635,9 @@ $(document).ready(function() {
 
     $('#search-menu').on('keyup', function() {
         let keyword = $(this).val().toLowerCase();
-        $('#tabel-main-course tbody tr, \
-        #tabel-appetizer tbody tr, \
-        #tabel-dessert tbody tr')
+        $('#tabel-main-course tbody tr, #tabel-appetizer tbody tr, #tabel-dessert tbody tr, #tabel-drink tbody tr, #tabel-additional tbody tr')
         .filter(function() {
-            $(this).toggle(
-                $(this).text().toLowerCase().indexOf(keyword) > -1
-            );
+            $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
         });
     });
     muatDataMenu();

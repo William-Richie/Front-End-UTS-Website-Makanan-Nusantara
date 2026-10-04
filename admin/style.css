@@ -944,17 +944,17 @@ img.preview:hover{
     transform: translateY(-2px);
 }
 
-.table-responsive > :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) {
+.table-responsive > :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) {
     min-width: 0;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) {
     display: block;
     width: 100%;
     margin-bottom: 0;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > thead {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -966,11 +966,11 @@ img.preview:hover{
     border: 0;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody {
     display: block;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr {
     display: grid;
     grid-template-columns: 36px 70px minmax(0, 1fr);
     grid-template-areas:
@@ -989,15 +989,15 @@ img.preview:hover{
     transition: background-color .25s ease;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr:last-child {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr:last-child {
     margin-bottom: 0;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr:hover {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr:hover {
     background: #f4e6d8;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td {
     display: block;
     min-width: 0;
     padding: 0 !important;
@@ -1008,12 +1008,12 @@ img.preview:hover{
     color: #5c4433 !important;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(1) { grid-area: no;     justify-self: center; }
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(2) { grid-area: img; }
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(3) { grid-area: name;   align-self: end;   font-weight: 600; overflow-wrap: anywhere; }
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(4) { grid-area: price;  align-self: start; }
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(5) { grid-area: status; justify-self: start; }
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(6) {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(1) { grid-area: no;     justify-self: center; }
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(2) { grid-area: img; }
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(3) { grid-area: name;   align-self: end;   font-weight: 600; overflow-wrap: anywhere; }
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(4) { grid-area: price;  align-self: start; }
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(5) { grid-area: status; justify-self: start; }
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(6) {
     grid-area: actions;
     display: flex;
     flex-wrap: wrap;
@@ -1021,19 +1021,19 @@ img.preview:hover{
     gap: 8px;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td[colspan] {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td[colspan] {
     grid-area: auto;
     grid-column: 1 / -1;
     text-align: center !important;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) .menu-no {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) .menu-no {
     width: 36px;
     height: 36px;
     font-size: .9rem;
 }
 
-:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) .status-badge {
+:is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) .status-badge {
     min-width: 100px;
     height: 40px;
     padding: 6px 14px;
@@ -2507,12 +2507,12 @@ img.preview:hover{
 
 /* >= 1200px */
 @media (min-width: 1200px) {
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) {
         display: table;
         table-layout: fixed;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > thead {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > thead {
         display: table-header-group;
         position: static;
         width: auto;
@@ -2523,11 +2523,11 @@ img.preview:hover{
         white-space: normal;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody {
         display: table-row-group;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr {
         display: table-row;
         padding: 0;
         margin: 0;
@@ -2537,7 +2537,7 @@ img.preview:hover{
         background: transparent;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr > td:nth-child(n) {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr > td:nth-child(n) {
         display: table-cell;
         padding: 16px 20px !important;
         vertical-align: middle;
@@ -2547,11 +2547,11 @@ img.preview:hover{
         transition: background-color .25s ease;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > tbody > tr:hover > td:nth-child(n) {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > tbody > tr:hover > td:nth-child(n) {
         background-color: #f4e6d8 !important;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > thead > tr > th {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > thead > tr > th {
         padding: 16px 20px !important;
         vertical-align: middle;
         background-color: #6b4226 !important;
@@ -2559,38 +2559,38 @@ img.preview:hover{
         border: none !important;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > thead > tr > th:first-child { border-top-left-radius: 12px; }
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > thead > tr > th:last-child  { border-top-right-radius: 12px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > thead > tr > th:first-child { border-top-left-radius: 12px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > thead > tr > th:last-child  { border-top-right-radius: 12px; }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td) {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td) {
         text-align: left;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):is(:nth-child(1), :nth-child(2), :nth-child(5), :nth-child(6)) {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):is(:nth-child(1), :nth-child(2), :nth-child(5), :nth-child(6)) {
         text-align: center !important;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):nth-child(1) { width: 80px; }
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):nth-child(2) { width: 120px; }
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):nth-child(4) { width: 150px; }
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):nth-child(5) { width: 160px; }
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) > :is(thead, tbody) > tr > :is(th, td):nth-child(6) { width: 170px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):nth-child(1) { width: 80px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):nth-child(2) { width: 120px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):nth-child(4) { width: 150px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):nth-child(5) { width: 160px; }
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) > :is(thead, tbody) > tr > :is(th, td):nth-child(6) { width: 170px; }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) .menu-no,
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) img.preview {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) .menu-no,
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) img.preview {
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) .menu-no {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) .menu-no {
         display: flex;
         width: 48px;
         height: 48px;
         font-size: inherit;
     }
 
-    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert) .status-badge {
+    :is(#tabel-appetizer, #tabel-main-course, #tabel-dessert, #tabel-drink, #tabel-additional) .status-badge {
         min-width: 110px;
         height: 48px;
         padding: 8px 16px;
