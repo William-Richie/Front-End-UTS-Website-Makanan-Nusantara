@@ -350,6 +350,7 @@ app.post('/api/pengunjung', async (req, res) => {
 /* KONTEN WEBSITE */
 const KONTEN_EXTRA_PATH = path.join(__dirname, 'konten_extra.json');
 const defaultKontenExtra = {
+    /* Home */
     hero_eyebrow: "Cita Rasa Timur Indonesia",
     hero_sub: "Cita rasa asli Timur Indonesia, dari sagu hingga kuah kuning.",
     about_eyebrow: "Tentang Kami",
@@ -359,8 +360,37 @@ const defaultKontenExtra = {
     card2_title: "Resep Turun-temurun",
     card2_desc: "Resep rahasia yang menjaga keaslian rasa.",
     card3_title: "Disajikan Sepenuh Hati",
-    card3_desc: "Suasana hangat ala rumah, cocok untuk keluarga."
+    card3_desc: "Suasana hangat ala rumah, cocok untuk keluarga.",
+
+    /* FAQ */
+    faq_eyebrow: "Pertanyaan Umum",
+    faq_title: "Frequently Asked\nQuestions",
+    faq_chip1: "Jawaban Cepat",
+    faq_chip2: "Tanya Langsung ke Kami",
+    faq_aside_kicker: "Masih Penasaran?",
+    faq_aside_title: "Let us know !",
+    faq_aside_desc: "Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.",
+    faq_aside_btn: "Tulis Pertanyaan",
+
+    /* Lokasi */
+    loc_eyebrow: "Temukan Kami",
+    loc_title: "Let's See Our\nRestaurant Location",
+    loc_chip2: "Jakarta hingga Papua",
+    loc_kicker: "Rasakan Cita Rasa Kami",
+    loc_heading: "Warmth in Every Dish, Flavors from Eastern Indonesia",
+    loc_desc: "Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.",
+    loc_btn_buka: "Lihat Peta Cabang",
+    loc_btn_tutup: "Tutup Peta",
+    loc_utama_title: "Cabang Utama",
+    loc_utama_text: "Jl. Cendrawasih No. 45, Jakarta",
+    loc_telp_title: "Telepon",
+    loc_telp_text: "(021) 1234-5678",
+    loc_email_title: "Email",
+    loc_email_text: "halo@papedarestaurant.com",
+    loc_parkir_title: "Parkir",
+    loc_parkir_text: "Area luas untuk roda dua maupun roda empat"
 };
+const KUNCI_KONTEN_EXTRA = Object.keys(defaultKontenExtra);
 
 function getKontenExtra() {
     try {
@@ -377,7 +407,11 @@ function getKontenExtra() {
 function saveKontenExtra(extra) {
     try {
         const current = getKontenExtra();
-        const merged = { ...current, ...extra };
+        const bersih = {};
+        KUNCI_KONTEN_EXTRA.forEach(k => {
+            if (extra[k] !== undefined) bersih[k] = String(extra[k]);
+        });
+        const merged = { ...current, ...bersih };
         fs.writeFileSync(KONTEN_EXTRA_PATH, JSON.stringify(merged, null, 2), 'utf-8');
     } catch (e) {
         console.error('Error writing konten_extra.json:', e);
@@ -399,20 +433,7 @@ app.get('/api/konten', async (req, res) => {
 
 /* Update */
 app.put('/api/konten', async (req, res) => {
-    const {
-        teks_hero,
-        teks_about,
-        hero_eyebrow,
-        hero_sub,
-        about_eyebrow,
-        about_title,
-        card1_title,
-        card1_desc,
-        card2_title,
-        card2_desc,
-        card3_title,
-        card3_desc
-    } = req.body;
+    const { teks_hero, teks_about } = req.body;
 
     try {
         if (teks_hero !== undefined || teks_about !== undefined) {
@@ -425,18 +446,7 @@ app.put('/api/konten', async (req, res) => {
         console.error('Supabase update konten_web error:', err);
     }
 
-    saveKontenExtra({
-        hero_eyebrow,
-        hero_sub,
-        about_eyebrow,
-        about_title,
-        card1_title,
-        card1_desc,
-        card2_title,
-        card2_desc,
-        card3_title,
-        card3_desc
-    });
+    saveKontenExtra(req.body);
 
     res.json({ pesan: 'Konten web berhasil diperbarui!' });
 });

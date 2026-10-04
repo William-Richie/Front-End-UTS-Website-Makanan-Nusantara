@@ -291,11 +291,11 @@
             <span class="faq-q q4" aria-hidden="true"><i class="fa-solid fa-question"></i></span>
 
             <div class="container text-center position-relative section-content-wrap">
-                <p class="hero-eyebrow reveal">Pertanyaan Umum</p>
-                <h1 class="faq-title reveal reveal-d1">Frequently Asked<br>Questions</h1>
+                <p class="hero-eyebrow reveal" id="faq-eyebrow">Pertanyaan Umum</p>
+                <h1 class="faq-title reveal reveal-d1" id="faq-title">Frequently Asked<br>Questions</h1>
                 <ul class="loc-chips reveal reveal-d2">
                     <li><i class="fa-solid fa-list-check"></i><span id="faq-total">Jawaban Cepat</span></li>
-                    <li><i class="fa-solid fa-comments"></i>Tanya Langsung ke Kami</li>
+                    <li><i class="fa-solid fa-comments"></i><span id="faq-chip2">Tanya Langsung ke Kami</span></li>
                 </ul>
             </div>
         </div>
@@ -306,12 +306,12 @@
                     <aside class="faq-aside reveal">
                         <div class="faq-aside-body">
                             <div class="faq-aside-icon"><i class="fa-solid fa-comments"></i></div>
-                            <p class="loc-kicker">Masih Penasaran?</p>
-                            <h2>Let us know !</h2>
+                            <p class="loc-kicker" id="faq-aside-kicker">Masih Penasaran?</p>
+                            <h2 id="faq-aside-title">Let us know !</h2>
                             <div class="mc-orn"><span></span><i class="fa-solid fa-leaf"></i><span></span></div>
-                            <p class="faq-aside-desc">Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.</p>
+                            <p class="faq-aside-desc" id="faq-aside-desc">Tulis pertanyaan Anda, tim kami akan membacanya dan menambahkannya ke FAQ bila sering ditanyakan.</p>
                             <button type="button" class="btn-map-open faq-ask-btn" data-bs-toggle="modal" data-bs-target="#faqAskModal">
-                                <i class="fa-solid fa-pen-to-square me-2"></i>Tulis Pertanyaan
+                                <i class="fa-solid fa-pen-to-square me-2"></i><span id="faq-aside-btn">Tulis Pertanyaan</span>
                             </button>
                         </div>
                     </aside>
@@ -383,14 +383,14 @@
             <span class="loc-pin p4" aria-hidden="true"><i class="fa-solid fa-map-pin"></i></span>
 
             <div class="container text-center position-relative section-content-wrap">
-                <p class="hero-eyebrow reveal">Temukan Kami</p>
-                <h1 class="loc-title reveal">Let's See Our<br>Restaurant Location</h1>
+                <p class="hero-eyebrow reveal" id="loc-eyebrow">Temukan Kami</p>
+                <h1 class="loc-title reveal" id="loc-title">Let's See Our<br>Restaurant Location</h1>
                 <ul class="loc-chips reveal">
                     <li>
                         <i class="fa-solid fa-store"></i>
                         <span id="banner-total-cabang">5 Cabang</span>
                     </li>
-                    <li><i class="fa-solid fa-route"></i>Jakarta hingga Papua</li>
+                    <li><i class="fa-solid fa-route"></i><span id="loc-chip2">Jakarta hingga Papua</span></li>
                 </ul>
             </div>
         </div>
@@ -398,11 +398,11 @@
         <div class="loc-wrap">
             <div class="loc-grid">
                 <article class="loc-intro reveal">
-                    <p class="loc-kicker">Rasakan Cita Rasa Kami</p>
-                    <h2>Warmth in Every Dish, Flavors from Eastern Indonesia</h2>
-                    <p class="loc-desc">Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.</p>
+                    <p class="loc-kicker" id="loc-kicker">Rasakan Cita Rasa Kami</p>
+                    <h2 id="loc-heading">Warmth in Every Dish, Flavors from Eastern Indonesia</h2>
+                    <p class="loc-desc" id="loc-desc">Mampir ke gerai terdekat dan nikmati papeda dengan kuah kuning yang masih hangat. Buka peta untuk menjelajahi semua cabang kami.</p>
                     <button type="button" id="btn-open-map" class="btn-map-open" aria-expanded="false" aria-controls="map-reveal">
-                        <i class="fa-solid fa-location-dot me-2"></i><span>Lihat Peta Cabang</span>
+                        <i class="fa-solid fa-location-dot me-2"></i><span id="loc-btn">Lihat Peta Cabang</span>
                     </button>
                 </article>
 
@@ -410,25 +410,25 @@
                     <li class="reveal">
                         <div class="loc-card">
                             <span class="loc-icon"><i class="fa-solid fa-location-dot"></i></span>
-                            <div><h3>Cabang Utama</h3><p>Jl. Cendrawasih No. 45, Jakarta</p></div>
+                            <div><h3 id="loc-utama-title">Cabang Utama</h3><p id="loc-utama-text">Jl. Cendrawasih No. 45, Jakarta</p></div>
                         </div>
                     </li>
                     <li class="reveal">
-                        <a class="loc-card" href="tel:+622112345678">
+                        <a class="loc-card" id="loc-telp-link" href="tel:+622112345678">
                             <span class="loc-icon"><i class="fa-solid fa-phone"></i></span>
-                            <div><h3>Telepon</h3><p>(021) 1234-5678</p></div>
+                            <div><h3 id="loc-telp-title">Telepon</h3><p id="loc-telp-text">(021) 1234-5678</p></div>
                         </a>
                     </li>
                     <li class="reveal">
-                        <a class="loc-card" href="mailto:halo@papedarestaurant.com">
+                        <a class="loc-card" id="loc-email-link" href="mailto:halo@papedarestaurant.com">
                             <span class="loc-icon"><i class="fa-solid fa-envelope"></i></span>
-                            <div><h3>Email</h3><p>halo@papedarestaurant.com</p></div>
+                            <div><h3 id="loc-email-title">Email</h3><p id="loc-email-text">halo@papedarestaurant.com</p></div>
                         </a>
                     </li>
                     <li class="reveal">
                         <div class="loc-card">
                             <span class="loc-icon"><i class="fa-solid fa-square-parking"></i></span>
-                            <div><h3>Parkir</h3><p>Area luas untuk roda dua maupun roda empat</p></div>
+                            <div><h3 id="loc-parkir-title">Parkir</h3><p id="loc-parkir-text">Area luas untuk roda dua maupun roda empat</p></div>
                         </div>
                     </li>
                 </ul>
