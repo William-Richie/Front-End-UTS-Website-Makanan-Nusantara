@@ -1266,46 +1266,72 @@ $(document).ready(function() {
 /* Reservasi */
 $(function () {
     let semuaReservasi = [];
+    let dataUsersGlobal = [];
+    let isDataLoaded = false;
+
+    const esc = (str) => {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    };
 
     async function loadDataUsers() {
         try {
-            const res = await fetch('/api/admin/users');
-            const result = await res.json();
-            const users = result.data || [];
-
-            $('#count-user').text(users.length);
-
-            const $tbody =$('#user-table-body');
-            $tbody.empty();
-
-            if (users.length === 0) {
-                $tbody.html('<tr><td colspan="6" class="text-center text-muted py-4">Belum ada user terdaftar.</td></tr>');
-                return;
+            if (!isDataLoaded) {
+                const res = await fetch('/api/admin/users');
+                const result = await res.json();
+                dataUsersGlobal = result.data || [];
+                isDataLoaded = true;
             }
-
-            const rows = users.map((u, i) => {
-                const formattedId = String(i + 1).padStart(5, '0');
-                const tgl = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
-                
-                return `
-                    <tr>
-                        <td class="text-center">
-                            <input type="checkbox" class="form-check-input user-row-check" value="${esc(u.id)}">
-                        </td>
-                        <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
-                        <td><strong>${esc(u.nama || '-')}</strong></td>
-                        <td>${esc(u.email || '-')}</td>
-                        <td>${esc(tgl)}</td>
-                        <td><span class="badge bg-secondary">${esc(u.total_reserve ?? 0)} Kali</span></td>
-                    </tr>
-                `;
-            }).join('');
-
-            $tbody.html(rows);
-            syncAction();
+            renderTableUsers();
         } catch (err) {
             console.error('Gagal mengambil data user:', err);
         }
+    }
+
+    function renderTableUsers() {
+        $('#count-user').text(dataUsersGlobal.length);
+        const $tbody =$('#user-table-body');
+        $tbody.empty();
+
+        if (dataUsersGlobal.length === 0) {
+            $tbody.html('<tr><td colspan="7" class="text-center text-muted py-4">Belum ada user terdaftar.</td></tr>');
+            return;
+        }
+
+        const rows = dataUsersGlobal.map((u, i) => {
+            console.log("Data User:", u.nama, "-> Kolom Is_Active:", u.Is_Active, "-> is_active:", u.is_active);
+            const formattedId = String(i + 1).padStart(5, '0');
+            const tgl = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
+            const rawActive = u.Is_Active !== undefined ? u.Is_Active : u.is_active;
+            const isActive = (rawActive !== false && rawActive !== 'false' && rawActive !== 0);
+            const statusText = isActive ? 'Active' : 'Blocked';
+            const statusColor = isActive ? 'bg-success' : 'bg-danger';
+            
+            return `
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input user-row-check" value="${esc(u.id)}">
+                    </td>
+                    <td><span class="badge bg-light text-dark border font-monospace">${formattedId}</span></td>
+                    <td><strong>${esc(u.nama || '-')}</strong></td>
+                    <td>${esc(u.email || '-')}</td>
+                    <td class="text-center">${esc(tgl)}</td>
+                    <td class="text-center"><span class="badge bg-light text-dark border">${esc(u.total_reserve || '0')}</span></td>
+                    <td class="text-center"><span class="badge ${statusColor}">${statusText}</span></td>
+                </tr>
+            `;
+        }).join('');
+
+        $tbody.html(rows);
+        syncAction(); 
     }
 
     async function loadDataReservasi(statusFilter = 'pending') {
@@ -1325,6 +1351,7 @@ $(function () {
                 if (statusFilter === 'dibatalkan') return r.status === 'dibatalkan' || r.status === 'cancelled';
                 return r.status === statusFilter;
             });
+            
             const $tbody =$('#reservation-table-body');
             $tbody.empty();
 
@@ -1395,30 +1422,115 @@ $(function () {
     });
 
     const syncAction = () => {
-        const checked = $('.user-row-check:checked');$('#user-action-bar').toggleClass('d-none', checked.length === 0);
-        $('#selected-user-count').text(`${checked.length} akun dipilih`);
-        $('#check-all-users').prop('checked', checked.length > 0 && checked.length === $('.user-row-check').length);
+        const checked = $('.user-row-check:checked');
+        const total = $('.user-row-check').length;
+        const $actionWrapper =$('#user-action-wrapper');
+
+        $('#check-all-users').prop('checked', checked.length > 0 && checked.length === total);
+
+        if (checked.length > 0) {
+            $('#selected-user-count').text(`${checked.length} akun dipilih`);
+            if (!$actionWrapper.is(':visible')) {
+                $actionWrapper.slideDown(300);            
+            }         
+        } else {
+            $actionWrapper.slideUp(300);
+        }
     };
 
     $(document).on('change', '#check-all-users', function () {
         $('.user-row-check').prop('checked', this.checked);
         syncAction();
-    }).on('change', '.user-row-check', syncAction);
+    });
 
-    $('#btn-eksekusi-user-aksi').on('click', function () {
-        const aksi = $('#user-action-select').val();
-        const ids = $('.user-row-check:checked').map((_, el) => el.value).get();
+    $('#user-table-body').on('change', '.user-row-check', syncAction);
+
+    $('.custom-action-dropdown .dropdown-item').on('click', function(e) {
+        e.preventDefault();
+        const value = $(this).data('value');
+        const textHTML = $(this).html();$('#selected-aksi-text').html(textHTML);
+        $('#user-action-select').val(value);
+    });
+
+    function showCustomConfirm(pesan) {
+        return new Promise((resolve) => {
+            $('#confirmModalText').text(pesan);
+            
+            const modalElement = document.getElementById('customConfirmModal');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            let isConfirmed = false;
+
+            $('#btn-confirm-lanjutkan').off('click').on('click', function () {
+                isConfirmed = true; 
+                modalInstance.hide();
+            });
+
+            $(modalElement).off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                resolve(isConfirmed); 
+            });
+
+            modalInstance.show();
+        });
+    }
+
+    $('#btn-eksekusi-user-aksi').off('click').on('click', async function () { 
+        const aksi = $('#user-action-select').val(); 
+        const ids = $('.user-row-check:checked').map((_, el) => String(el.value)).get();
         
-        if (!aksi || !ids.length) return alert('Pilih aksi dan minimal 1 akun!');
-        
-        if (aksi === 'hapus' && confirm(`Hapus permanen ${ids.length} akun terpilih?`)) {
-            console.log('Hapus ID:', ids);
-        } else if (aksi === 'blokir') {
-            alert(`${ids.length} akun diblokir.`);
-        } else if (aksi === 'modifikasi') {
-            ids.length === 1 ? console.log('Edit ID:', ids[0]) : alert('Pilih 1 akun saja untuk diedit.');
+        if (!aksi || !ids.length){ 
+            alert('Pilih aksi dan minimal 1 akun!');
+            return;
         }
-        $('#user-action-select').val('');
+
+        let pesanKonfirmasi = '';
+        if (aksi === 'hapus') {
+            pesanKonfirmasi = `Yakin ingin menghapus permanen ${ids.length} akun ini?`;
+        } else if (aksi === 'blokir') {
+            pesanKonfirmasi = `Blokir ${ids.length} akun terpilih? Mereka tidak akan bisa login.`;
+        } else if (aksi === 'modifikasi') {
+            pesanKonfirmasi = `Ubah status ${ids.length} akun menjadi Active (Buka Blokir)?`;
+        }
+        
+        const isConfirmed = await showCustomConfirm(pesanKonfirmasi);
+        if (!isConfirmed) return; 
+
+        try {
+            if (aksi === 'hapus') {
+                const res = await fetch('/api/admin/users', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids })
+                });
+                if (!res.ok) throw new Error('Gagal menghapus di database');
+
+                dataUsersGlobal = dataUsersGlobal.filter(u => !ids.includes(String(u.id)));
+
+            } else if (aksi === 'blokir' || aksi === 'modifikasi') {
+                const targetIsActive = (aksi === 'modifikasi');
+                
+                const res = await fetch('/api/admin/users/status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids, Is_Active: targetIsActive })
+                });
+                if (!res.ok) throw new Error('Gagal memperbarui status di database');
+
+                dataUsersGlobal.forEach(u => {
+                    if (ids.includes(String(u.id))) u.Is_Active = targetIsActive;
+                });
+            }
+
+            $('#user-action-select').val('');
+            $('#selected-aksi-text').text('Pilih Aksi...');
+            $('#check-all-users').prop('checked', false);
+            $('#user-action-wrapper').slideUp(300);
+            
+            renderTableUsers();
+
+        } catch (error) {
+            console.error("Terjadi kesalahan:", error);
+            alert("Gagal menyimpan perubahan ke database.");
+        }
     });
 
     loadDataUsers();
