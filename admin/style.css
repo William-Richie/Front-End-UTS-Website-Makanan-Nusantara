@@ -140,6 +140,22 @@ main.p-4 {
     box-shadow: 0 4px 12px rgba(59,35,20,.06) !important;
 }
 
+#recent-orders {
+    min-width: 750px;
+}
+
+.ro-col-id {
+    width: 50px;
+}
+
+.ro-col-harga {
+    width: 120px;
+}
+
+.ro-col-status {
+    width: 100px;
+}
+
 .card-header {
     background-color: #4a2c17 !important;
     color: #ffffff !important;
