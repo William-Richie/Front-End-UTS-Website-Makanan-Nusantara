@@ -19,7 +19,7 @@ const ADMIN_SECRET = process.env.JWT_SECRET + '-admin';
 const API_PUBLIK = [
     ['GET',  /^\/(menu|favorit|faq|konten|maps)$/],
     ['POST', /^\/(pengunjung|pesanan|faq\/pertanyaan|register|login|admin\/login)$/],
-    ['ANY',  /^\/(me|reservasi)(\/|$)/]   // punya auth user sendiri
+    ['ANY',  /^\/(me|reservasi)(\/|$)/]
 ];
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -891,7 +891,7 @@ function daftarTanggal(n) {
 
 app.get('/api/pendapatan', async (req, res) => {
     try {
-        const range = req.query.range || '7'; // hari | 7 | 30 | bulan
+        const range = req.query.range || '7';
         const hariIni = tglWIB(Date.now());
         const n = range === 'hari' ? 1 : range === '30' ? 30 : range === 'bulan' ? parseInt(hariIni.slice(8, 10)) : 7;
         const tanggal = daftarTanggal(n);
@@ -967,9 +967,8 @@ app.post('/api/admin/login', async (req, res) => {
         return res.status(429).json({ error: 'Terlalu banyak percobaan gagal.', sisa: Math.ceil((g.sampai - Date.now()) / 1000) });
 
     const { username = '', password = '' } = req.body;
-    // let ok = false;
-    // try { ok = username === process.env.ADMIN_USER && await bcrypt.compare(password, process.env.ADMIN_PASS_HASH || ''); } catch {}
-    ok = (username === 'a' && password === 'a');
+    let ok = false;
+try { ok = username === process.env.ADMIN_USER && await bcrypt.compare(password, process.env.ADMIN_PASS_HASH || ''); } catch {}
 
     if (!ok) {
         g.n++;
