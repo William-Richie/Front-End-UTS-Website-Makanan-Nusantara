@@ -356,7 +356,7 @@ $(document).ready(function() {
                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 bg-transparent" data-id="${item.id}">
                     <div class="me-2" style="max-width: 50%;">
                         <div class="cart-item-title text-truncate" title="${esc(item.nama)}">${esc(item.nama)}</div>
-                        <div class="cart-item-price">Rp ${(parseInt(item.harga, 10) || 0).toLocaleString('id-ID')}</div>
+                        <div class="cart-item-price">Rp ${((parseInt(item.harga, 10) || 0) * (parseInt(item.qty, 10) || 1)).toLocaleString('id-ID')}</div>
                     </div>
                     
                     <div class="d-flex align-items-center gap-3">
