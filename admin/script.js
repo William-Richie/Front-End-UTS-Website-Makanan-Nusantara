@@ -2358,11 +2358,18 @@ $(function () {
         $('#recent-orders').html(d.length ? d.slice(0, 5).map(o => {
                 const s = STATUS[o.status] || [o.status, 'secondary'];
                 const item = String(o.item || '').replace(/^\[[^\]]*\]\s*/, '');
-                return `<div class="recent-row"><strong>#${String(o.id).slice(0, 6)}</strong>
-                    <span class="flex-grow-1 text-truncate">${$('<div>').text(item).html()}</span>
-                    <span class="fw-bold">${rp(o.total)}</span><span class="badge text-bg-${s[1]}">${s[0]}</span></div>`;
+                
+                return `<div class="d-flex align-items-center gap-3 py-3 border-bottom w-100">
+                    <strong class="text-nowrap flex-shrink-0" style="width: 45px;">#${String(o.id).slice(0, 6)}</strong>
+                    <span class="text-truncate text-muted small" style="flex: 1; min-width: 0;">${$('<div>').text(item).html()}</span>
+                    <span class="fw-bold text-nowrap flex-shrink-0 text-end" style="width: 100px;">${rp(o.total)}</span>
+                    <span class="text-nowrap flex-shrink-0 text-end" style="width: 85px;">
+                        <span class="badge text-bg-${s[1]} w-100">${s[0]}</span>
+                    </span>
+                </div>`;
             }).join('') : '<p class="text-muted mb-0">Belum ada pesanan masuk.</p>');
         });
+        
     $.get('/api/pendapatan', { range: 'hari' }, res => {
         const total = res.ringkasan?.total || 0;
         $('#dash-revenue').text(rp(total));
