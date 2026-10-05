@@ -3,6 +3,8 @@
 1. Install node modules dan jsonwebtoken
     - Buka Terminal di VS Code, dan pastikan path nya sudah sesuai
     - Ketikkan di terminal
+        ###### npm install
+    - Lalu, ketikkan di terminal
         ###### npm install cors
     - Setelah itu, ketik di terminal
         ###### npm i bcryptjs jsonwebtoken 
