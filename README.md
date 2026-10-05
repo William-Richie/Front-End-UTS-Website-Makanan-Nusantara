@@ -3,9 +3,9 @@
 1. Install node modules dan jsonwebtoken
     - Buka Terminal di VS Code, dan pastikan path nya sudah sesuai
     - Ketikkan di terminal
-        npm install cors
+        ###### npm install cors
     - Setelah itu, ketik di terminal
-        npm i bcryptjs jsonwebtoken 
+        ###### npm i bcryptjs jsonwebtoken 
 
 2. Membuat file .env
     - Buat file .env diluar dari semua file website 
@@ -17,7 +17,8 @@
     Langkah ini wajib dilakukan karena website membutuhkan akses untuk terhubung dengan Supabase dan adanya secret key
 
 3. Jalankan Website
-    - Untuk menjalankan website, cukup ketikkan "node server.js" di terminal
+    - Untuk menjalankan website, cukup ketikkan di terminal
+        ###### node server.js 
     - Terminal akan menunjukkan server lokal yang berjalan
     - Untuk User, tambahkan /user pada link >>> http://localhost:3000/user/index.html
       Untuk admin, tambahkan /admin pada link >>> http://localhost:3000/admin/index.html
