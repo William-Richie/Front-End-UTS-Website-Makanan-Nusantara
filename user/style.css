@@ -221,6 +221,10 @@ main {
 }
 
 /* Favorite Menu */
+#favorite-menus {
+    overflow-x: hidden;
+}
+
 .orbit-wrapper {
     width: 350px;
     height: 350px;
