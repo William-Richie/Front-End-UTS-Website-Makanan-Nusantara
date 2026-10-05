@@ -21,7 +21,7 @@
         ###### node server.js 
     - Terminal akan menunjukkan server lokal yang berjalan
     - Untuk User, tambahkan /user pada link >>> http://localhost:3000/user/index.html
-      Untuk admin, tambahkan /admin pada link >>> http://localhost:3000/admin/index.html
+    - Untuk admin, tambahkan /admin pada link >>> http://localhost:3000/admin/index.html
 
 ## Akun dan Password Admin
 Berikut adalah username beserta password dari akun admin
